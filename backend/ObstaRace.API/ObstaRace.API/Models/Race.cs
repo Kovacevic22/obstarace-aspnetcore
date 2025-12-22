@@ -20,4 +20,6 @@ public class Race
     public string ImageUrl { get; set; }
     public int ElevationGain { get; set; }
     public int MaxParticipants { get; set; }
+    public IList<Registration> Registrations { get; set; }
+    public IList<RaceObstacle> RaceObstacles { get; set; }
 }

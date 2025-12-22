@@ -17,4 +17,5 @@ public class User
     public string EmergencyContact { get; set; }
     public string EmergencyPhone { get; set; }
     public Role Role {get; set; }
+    public IList<Registration> Registrations {get; set;}
 }
