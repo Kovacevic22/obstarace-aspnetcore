@@ -15,7 +15,6 @@ public class User
     public string PhoneNumber {get; set; }
     public DateTime DateOfBirth { get; set; }
     public string EmergencyContact { get; set; }
-    public string EmergencyPhone { get; set; }
     public Role Role {get; set; }
     public IList<Registration> Registrations {get; set;}
 }
