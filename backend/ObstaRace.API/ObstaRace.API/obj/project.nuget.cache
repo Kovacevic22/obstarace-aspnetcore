@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "jVSEgrfc6SI=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\vukas\\Desktop\\ASP.NET\\backend\\ObstaRace.API\\ObstaRace.API\\ObstaRace.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vukas\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.1\\microsoft.aspnetcore.openapi.10.0.1.nupkg.sha512",
+    "C:\\Users\\vukas\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\vukas\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}
