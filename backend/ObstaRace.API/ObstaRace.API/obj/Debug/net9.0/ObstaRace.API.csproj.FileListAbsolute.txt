@@ -148,3 +148,8 @@ C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net
 C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\ObstaRace.API.pdb
 C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\ObstaRace.API.genruntimeconfig.cache
 C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\ref\ObstaRace.API.dll
+C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\rjimswa.dswa.cache.json
+C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
+C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
+C:\Users\vukas\Desktop\ASP.NET\backend\ObstaRace.API\ObstaRace.API\obj\Debug\net9.0\swae.build.ex.cache

@@ -12,7 +12,71 @@ public class Seed
     }
 
     public void SeedData()
-    {
+    { 
+        if (!_context.Users.Any())
+        {
+            var users = new List<User>()
+            {
+                new User
+                {
+                    Name = "John",
+                    Surname = "Doe",
+                    Email = "john.doe@example.com",
+                    Password = "password123", 
+                    PhoneNumber = "+44 7700 900000",
+                    DateOfBirth = new DateTime(1990, 5, 15),
+                    EmergencyContact = "+44 7700 900001",
+                    Role = Role.User
+                },
+                new User
+                {
+                    Name = "Jane",
+                    Surname = "Smith",
+                    Email = "jane.smith@example.com",
+                    Password = "password123",
+                    PhoneNumber = "+44 7700 900002",
+                    DateOfBirth = new DateTime(1992, 8, 22),
+                    EmergencyContact = "+44 7700 900003",
+                    Role = Role.User
+                },
+                new User
+                {
+                    Name = "Admin",
+                    Surname = "User",
+                    Email = "admin@obstarace.com",
+                    Password = "admin123",
+                    PhoneNumber = "+44 7700 900004",
+                    DateOfBirth = new DateTime(1985, 3, 10),
+                    EmergencyContact = "+44 7700 900005",
+                    Role = Role.Admin
+                },
+                new User
+                {
+                    Name = "Mike",
+                    Surname = "Organizer",
+                    Email = "mike.organizer@obstarace.com",
+                    Password = "organizer123",
+                    PhoneNumber = "+44 7700 900006",
+                    DateOfBirth = new DateTime(1988, 11, 5),
+                    EmergencyContact = "+44 7700 900007",
+                    Role = Role.Organizer
+                },
+                new User
+                {
+                    Name = "Sarah",
+                    Surname = "Johnson",
+                    Email = "sarah.johnson@example.com",
+                    Password = "password123",
+                    PhoneNumber = "+44 7700 900008",
+                    DateOfBirth = new DateTime(1995, 1, 30),
+                    EmergencyContact = "+44 7700 900009",
+                    Role = Role.User
+                }
+            };
+
+            _context.Users.AddRange(users);
+            _context.SaveChanges();
+        }
        if (!_context.Races.Any())
             {
                 var obstacles = new List<Obstacle>()
