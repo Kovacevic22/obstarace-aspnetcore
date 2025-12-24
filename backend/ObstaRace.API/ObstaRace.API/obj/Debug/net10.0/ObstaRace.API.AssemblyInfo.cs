@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObstaRace.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a486485831b9089666aafe7aa3ccc6aae7e075a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d061b9969aaf571bba8828c30a77ea853515c46")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObstaRace.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObstaRace.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

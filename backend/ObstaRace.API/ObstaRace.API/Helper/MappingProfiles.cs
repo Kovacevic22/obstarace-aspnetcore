@@ -9,5 +9,8 @@ public class MappingProfiles: Profile
     public MappingProfiles()
     {
         CreateMap<User,UserDto>();
+        CreateMap<Race,RaceDto>();
+        CreateMap<Registration,RegistrationDto>();
+        CreateMap<Obstacle,ObstacleDto>();
     }
 }
