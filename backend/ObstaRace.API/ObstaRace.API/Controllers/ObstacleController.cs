@@ -25,7 +25,9 @@ public class ObstacleController : Controller
             return BadRequest(ModelState);
         return Ok(obstacles);
     }
-
+    [HttpGet("{obstacleId:int}")]
+    [ProducesResponseType(200, Type = typeof(ObstacleDto))]
+    [ProducesResponseType(400)]
     public IActionResult GetObstacle(int obstacleId)
     {
         if (!_obstacleRepository.ObstacleExists(obstacleId))
