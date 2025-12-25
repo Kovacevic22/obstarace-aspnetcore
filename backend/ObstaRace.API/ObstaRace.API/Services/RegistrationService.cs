@@ -1,0 +1,118 @@
+using AutoMapper;
+using ObstaRace.API.Dto;
+using ObstaRace.API.Interfaces;
+using ObstaRace.API.Interfaces.Services;
+using ObstaRace.API.Models;
+using ObstaRace.API.Repository;
+
+namespace ObstaRace.API.Services;
+
+public class RegistrationService : IRegistrationService
+{
+    private IRegistrationRepository  _registrationRepository;
+    private IUserRepository _userRepository;
+    private IRaceRepository _raceRepository;
+    private IMapper _mapper;
+    private ILogger<RegistrationService> _logger;
+    public RegistrationService(IRegistrationRepository registrationRepository, IMapper mapper, ILogger<RegistrationService> logger, IUserRepository userRepository, IRaceRepository raceRepository)
+    {
+        _registrationRepository = registrationRepository;
+        _mapper = mapper;
+        _logger = logger;
+        _userRepository = userRepository;
+        _raceRepository = raceRepository;
+    }
+    public async Task<ICollection<RegistrationDto>> GetAllRegistrations()
+    {
+        var registrations = await _registrationRepository.GetAllRegistrations();
+        return _mapper.Map<List<RegistrationDto>>(registrations);
+    }
+    public async Task<RegistrationDto?> GetRegistration(int id)
+    {
+        var registration = await _registrationRepository.GetRegistration(id);
+        return registration==null?null:_mapper.Map<RegistrationDto>(registration);
+    }
+
+    public async Task<RegistrationDto> CreateRegistration(int raceId, int userId, Category category)
+    {
+        var user = await _userRepository.GetUser(userId);
+        if (user == null)
+        {
+            _logger.LogWarning("User with id {UserId} does not exist", userId);
+            throw new ArgumentException("User does not exist");
+        }
+        var race = await _raceRepository.GetRace(raceId);
+        if (race==null)
+        {
+            _logger.LogWarning("Race with id {RaceId} does not exist", raceId);
+            throw new ArgumentException("Race does not exist");
+        }
+
+        if (await _registrationRepository.UserRegistered(userId, raceId))
+        {
+            _logger.LogWarning("User with id {UserId} has already registered for race {RaceId}", userId, raceId);
+            throw new ArgumentException("User has already registered for race");
+        }
+        if (race.RegistrationDeadLine < DateTime.UtcNow)
+        {
+            _logger.LogWarning("Registration deadline for race {RaceId} has passed", raceId);
+            throw new ArgumentException("Registration deadline has passed");
+        }
+
+        var currentRegistration = await _registrationRepository.GetRegistrationsByRaceId(raceId);
+        if (currentRegistration?.Count >= race.MaxParticipants)
+        {
+            _logger.LogWarning("Race {RaceId} has reached maximum participants", raceId);
+            throw new ArgumentException("Race has reached maximum participants");
+        }
+        var bibNumber = GenerateBibNumber(raceId, currentRegistration?.Count ?? 0);
+        var registration = new Registration
+        {
+            UserId = userId,
+            RaceId = raceId,
+            BibNumber = bibNumber.ToString(),
+            Category = category,
+            Status = Status.UpComing
+        };
+        await _registrationRepository.CreateRegistration(registration);
+        return _mapper.Map<RegistrationDto>(registration);
+    }
+    public async Task<RegistrationDto> UpdateRegistration(RegistrationDto registration, int id)
+    {
+        _logger.LogInformation("Updating registration {RegistrationId}", id);
+        var existingRegistration = await _registrationRepository.GetRegistration(id);
+        if (existingRegistration == null)
+        {
+            _logger.LogWarning("Registration with id {RegistrationId} not found", id);
+            throw new ArgumentException("Registration not found");
+        }
+        existingRegistration.Category= registration.Category;
+        existingRegistration.Status = registration.Status;
+        await _registrationRepository.UpdateRegistration(existingRegistration);
+        return _mapper.Map<RegistrationDto>(existingRegistration);
+    }
+
+    public async Task<bool> DeleteRegistration(int registrationId)
+    {
+        _logger.LogInformation("Deleting registration {RegistrationId}", registrationId);
+        var registration = await _registrationRepository.GetRegistration(registrationId);
+        if (registration == null)
+        {
+            _logger.LogWarning("Registration with id {RegistrationId} not found", registrationId);
+            throw new ArgumentException("Registration not found");
+        }
+
+        if (registration.Status != Status.UpComing)
+        {
+            _logger.LogWarning("Registration with id {RegistrationId} cannot be deleted", registrationId);
+            throw new ArgumentException("Registration cannot be deleted");
+        }
+
+        return await _registrationRepository.DeleteRegistration(registrationId);
+    }
+    //ADDITIONAL METHODS
+    private int GenerateBibNumber(int raceId, int count)
+    {
+        return (raceId*100) + (count + 1);
+    }
+}

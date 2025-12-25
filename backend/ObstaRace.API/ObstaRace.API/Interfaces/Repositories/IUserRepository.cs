@@ -7,4 +7,6 @@ public interface IUserRepository
     Task<ICollection<User>> GetAllUsers();
     Task<User?> GetUser(int id);
     Task<bool> UserExists(int id);
+    
+    //CRUD
 }

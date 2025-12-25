@@ -9,9 +9,9 @@ namespace ObstaRace.API.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
-    private readonly ILogger<UserController> _logger;
+    private IUserRepository _userRepository;
+    private IMapper _mapper;
+    private ILogger<UserController> _logger;
     public UserController(IUserRepository userRepository, IMapper mapper, ILogger<UserController> logger)
     {
         _userRepository = userRepository;

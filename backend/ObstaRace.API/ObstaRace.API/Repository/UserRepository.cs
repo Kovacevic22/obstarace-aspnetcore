@@ -7,7 +7,7 @@ namespace ObstaRace.API.Repository;
 
 public class UserRepository : IUserRepository
 {
-    private readonly DataContext _context;
+    private DataContext _context;
     public UserRepository(DataContext context)
     {
         _context = context;
