@@ -4,36 +4,58 @@ using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces;
 
 namespace ObstaRace.API.Controllers;
-[Route("api/[controller]")]
+[Route("api/obstacles")]
 [ApiController]
-public class ObstacleController : Controller
+public class ObstacleController : ControllerBase
 {
     private readonly IObstacleRepository _obstacleRepository;
     private readonly IMapper _mapper;
-    public ObstacleController(IObstacleRepository obstacleRepository, IMapper mapper)
+    private readonly ILogger<ObstacleController> _logger;
+    public ObstacleController(IObstacleRepository obstacleRepository, IMapper mapper, ILogger<ObstacleController> logger)
     {
         _obstacleRepository = obstacleRepository;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<ObstacleDto>))]
-    public IActionResult GetAllObstacle()
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetAllObstacles()
     {
-        var obstacles = _mapper.Map<List<ObstacleDto>>(_obstacleRepository.GetAllObstacle());
-        if(!ModelState.IsValid)
-            return BadRequest(ModelState);
-        return Ok(obstacles);
+        try
+        {
+            _logger.LogInformation("Getting all obstacles");
+            var obstacles = _mapper.Map<List<ObstacleDto>>(await _obstacleRepository.GetAllObstacles());
+            return Ok(obstacles);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,"Error retrieving obstacles");
+            return StatusCode(500, "Error retrieving obstacles");
+        }
     }
     [HttpGet("{obstacleId:int}")]
     [ProducesResponseType(200, Type = typeof(ObstacleDto))]
-    [ProducesResponseType(400)]
-    public IActionResult GetObstacle(int obstacleId)
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetObstacle(int obstacleId)
     {
-        if (!_obstacleRepository.ObstacleExists(obstacleId))
-            return NotFound();
-        var obstacle = _mapper.Map<ObstacleDto>(_obstacleRepository.GetObstacle(obstacleId));
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        return Ok(obstacle);
+        try
+        {
+            _logger.LogInformation("Getting obstacle with id {ObstacleId}", obstacleId);
+            var obstacle = _mapper.Map<ObstacleDto>(await _obstacleRepository.GetObstacle(obstacleId));
+            if (obstacle == null)
+            {
+                _logger.LogWarning("Obstacle with id {ObstacleId} not found", obstacleId);
+                return NotFound($"Obstacle with id {obstacleId} not found");
+            }
+            return Ok(obstacle);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving obstacle with id {ObstacleId}", obstacleId);
+            return StatusCode(500, "Error retrieving obstacle");
+        }
     }
 }

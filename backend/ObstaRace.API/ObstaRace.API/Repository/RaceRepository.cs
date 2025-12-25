@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ObstaRace.API.Data;
 using ObstaRace.API.Interfaces;
 using ObstaRace.API.Models;
@@ -11,18 +12,18 @@ public class RaceRepository : IRaceRepository
     {
         _context = context;
     }
-    public ICollection<Race> GetAllRaces()
+    public async Task<ICollection<Race>> GetAllRaces()
     {
-        return _context.Races.OrderBy(r => r.Id).ToList();
+        return await _context.Races.OrderBy(r => r.Id).ToListAsync();
     }
 
-    public Race GetRace(int id)
+    public async Task<Race?> GetRace(int id)
     {
-        return _context.Races.Where(r => r.Id == id).FirstOrDefault();
+        return await _context.Races.FindAsync(id);
     }
 
-    public bool RaceExists(int id)
+    public async Task<bool> RaceExists(int id)
     {
-        return _context.Races.Any(r => r.Id == id);
+        return await _context.Races.AnyAsync(r => r.Id == id);
     }
 }

@@ -8,7 +8,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="" />
+    <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IObstacleRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IObstacleRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IRaceRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IRaceRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IRegistrationRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IRegistrationRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/IUserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/ObstacleRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/ObstacleRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/RaceRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/RaceRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/RegistrationRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/RegistrationRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/UserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/UserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Seed.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Seed.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -131,7 +149,7 @@
       <workItem from="1766437572025" duration="161000" />
       <workItem from="1766437811137" duration="1841000" />
       <workItem from="1766520642587" duration="8022000" />
-      <workItem from="1766582198454" duration="5747000" />
+      <workItem from="1766582198454" duration="12836000" />
     </task>
     <task id="LOCAL-00001" summary="Models minor fixes">
       <option name="closed" value="true" />

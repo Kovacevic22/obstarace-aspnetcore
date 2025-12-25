@@ -4,7 +4,7 @@ namespace ObstaRace.API.Interfaces;
 
 public interface IRaceRepository
 {
-    ICollection<Race> GetAllRaces();
-    Race GetRace(int id);
-    bool RaceExists(int id);
+    Task<ICollection<Race>> GetAllRaces();
+    Task<Race?> GetRace(int id);
+    Task<bool> RaceExists(int id);
 }

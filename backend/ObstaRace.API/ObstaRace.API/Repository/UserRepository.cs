@@ -1,4 +1,5 @@
-﻿using ObstaRace.API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ObstaRace.API.Data;
 using ObstaRace.API.Interfaces;
 using ObstaRace.API.Models;
 
@@ -13,17 +14,17 @@ public class UserRepository : IUserRepository
     }
     //--------------USER-----------------//
     //GET
-    public ICollection<User> GetAllUsers()
+    public async Task<ICollection<User>> GetAllUsers()
     {
-        return _context.Users.OrderBy(u => u.Id).ToList();
+        return await _context.Users.OrderBy(u => u.Id).ToListAsync();
     }
-    public User GetUser(int id)
+    public async Task<User?> GetUser(int id)
     {
-        return _context.Users.FirstOrDefault(u => u.Id == id);
+        return await _context.Users.FindAsync(id);
     }
-    public bool UserExists(int id)
+    public async Task<bool> UserExists(int id)
     {
-        return _context.Users.Any(u => u.Id == id);
+        return await _context.Users.AnyAsync(u => u.Id == id);
     }
     
 }

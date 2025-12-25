@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using ObstaRace.API.Data;
+using ObstaRace.API.Interfaces;
 using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Repository;
 
-public class RegistrationRepository
+public class RegistrationRepository : IRegistrationRepository
 {
     private readonly DataContext _context;
     public RegistrationRepository(DataContext context)
@@ -11,17 +13,17 @@ public class RegistrationRepository
         _context = context;
     }
 
-    public ICollection<Registration> GetAllRegistrations()
+    public async Task<ICollection<Registration>> GetAllRegistrations()
     {
-        return _context.Registrations.OrderBy(r => r.Id).ToList();
+        return await _context.Registrations.OrderBy(r => r.Id).ToListAsync();
     }
 
-    public Registration GetRegistration(int id)
+    public async Task<Registration?> GetRegistration(int id)
     {
-        return _context.Registrations.Where(r => r.Id == id).FirstOrDefault();
+        return await _context.Registrations.FindAsync(id);
     }
-    public bool RegistrationExists(int id)
+    public async Task<bool> RegistrationExists(int id)
     {
-        return _context.Registrations.Any(r => r.Id == id);
+        return await _context.Registrations.AnyAsync(r => r.Id == id);
     }
 }

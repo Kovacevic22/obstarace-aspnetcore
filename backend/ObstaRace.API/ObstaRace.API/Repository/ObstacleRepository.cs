@@ -1,26 +1,28 @@
+using Microsoft.EntityFrameworkCore;
 using ObstaRace.API.Data;
+using ObstaRace.API.Interfaces;
 using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Repository;
 
-public class ObstacleRepository
+public class ObstacleRepository : IObstacleRepository
 {
     private readonly DataContext _context;
     public ObstacleRepository(DataContext context)
     {
         _context = context;
     }
-    public ICollection<Obstacle> GetAllObstacle()
+    public async Task<ICollection<Obstacle>> GetAllObstacles()
     {
-        return _context.Obstacles.OrderBy(o => o.Id).ToList();
+        return await _context.Obstacles.OrderBy(o => o.Id).ToListAsync();
     }
 
-    public Obstacle GetObstacle(int id)
+    public async Task<Obstacle?> GetObstacle(int id)
     {
-        return _context.Obstacles.Where(o => o.Id == id).FirstOrDefault();
+        return await _context.Obstacles.FindAsync(id);
     }
-    public bool ObstacleExists(int id)
+    public async Task<bool> ObstacleExists(int id)
     {
-        return _context.Obstacles.Any(o => o.Id == id);
+        return  await _context.Obstacles.AnyAsync(o => o.Id == id);
     }
 }
