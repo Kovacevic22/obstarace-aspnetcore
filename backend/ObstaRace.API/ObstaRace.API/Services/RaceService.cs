@@ -31,7 +31,7 @@ public class RaceService : IRaceService
 
     public async Task<RaceDto> CreateRace(CreateRaceDto raceDto)
     {
-        if (raceDto.Date < DateTime.UtcNow)
+        if (raceDto.Date.Date < DateTime.UtcNow.Date)
         {
             _logger.LogWarning("Cannot create race in the past");
             throw new ArgumentException("Cannot create race in the past");
@@ -61,7 +61,7 @@ public class RaceService : IRaceService
             _logger.LogWarning("Race with id {id} does not exist", id);
             throw new ArgumentException($"Race with id {id} does not exist");
         }
-        if (raceDto.Date < DateTime.UtcNow)
+        if (raceDto.Date.Date < DateTime.UtcNow.Date)
         {
             _logger.LogWarning("Race date cannot be in the past");
             throw new ArgumentException("Race date cannot be in the past");

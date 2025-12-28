@@ -1,9 +1,9 @@
 ﻿namespace ObstaRace.API.Models;
 public enum Difficulty
 {
-    Easy,
-    Normal,
-    Hard,
+    Easy =0,
+    Normal =1,
+    Hard = 2,
 }
 public class Race
 {

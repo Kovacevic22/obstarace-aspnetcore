@@ -90,13 +90,19 @@ public class UserService : IUserService
     private string CreateToken(User user)
     {
         if(user==null) throw new ArgumentNullException(nameof(user));
+        var jwtKey = _configuration["Jwt:Key"];
+        if (string.IsNullOrEmpty(jwtKey))
+        {
+            _logger.LogError("JWT Key is not configured");
+            throw new InvalidOperationException("JWT configuration is missing");
+        }
         var claims = new List<Claim>()
         {
             new Claim(ClaimTypes.Name, user.Email),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Role, user.Role.ToString())
         };
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
         var tokenDescriptor = new JwtSecurityToken(
         issuer: _configuration.GetValue<string>("Jwt:Issuer"),

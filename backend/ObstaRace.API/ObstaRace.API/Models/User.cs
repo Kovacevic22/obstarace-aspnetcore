@@ -1,9 +1,9 @@
 ﻿namespace ObstaRace.API.Models;
 public enum Role
 {
-    User,
-    Admin,
-    Organizer
+    User = 0,
+    Admin = 1,
+    Organizer = 2
 }
 public class User
 {

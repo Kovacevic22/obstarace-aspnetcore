@@ -55,7 +55,7 @@ public class RegistrationService : IRegistrationService
             _logger.LogWarning("User with id {UserId} has already registered for race {RaceId}", userId, raceId);
             throw new ArgumentException("User has already registered for race");
         }
-        if (race.RegistrationDeadLine < DateTime.UtcNow)
+        if (race.RegistrationDeadLine.Date < DateTime.UtcNow.Date)
         {
             _logger.LogWarning("Registration deadline for race {RaceId} has passed", raceId);
             throw new ArgumentException("Registration deadline has passed");

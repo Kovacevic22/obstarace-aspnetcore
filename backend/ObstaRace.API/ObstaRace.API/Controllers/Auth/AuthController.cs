@@ -27,18 +27,18 @@ public class AuthController : ControllerBase
             if (user == null)
             {
                 _logger.LogError("Error registering user");
-                return BadRequest("Error registering user");
+                return BadRequest(new { error = "Error registering user" });
             }
             return Ok(user);
         }
         catch (ArgumentException ax)
         {
-            return BadRequest(ax.Message);
+            return BadRequest(new { error = ax.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error registering user");
-            return StatusCode(500, "Error registering user");
+            return StatusCode(500, new { error = "Error registering user" });
         }
     }
 
@@ -55,18 +55,18 @@ public class AuthController : ControllerBase
             if (response == null)
             {
                 _logger.LogError("Error logging in user");
-                return Unauthorized("Invalid email or password");
+                return Unauthorized(new { error = "Invalid email or password" });
             }
             return Ok(response);
         }
         catch (ArgumentException)
         {
-            return Unauthorized("Invalid email or password");
+            return Unauthorized(new { error = "Invalid email or password" });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error logging in user");
-            return StatusCode(500, "Error logging in user");
+            return StatusCode(500, new { error = "Error logging in user" });
         }
     }
 }

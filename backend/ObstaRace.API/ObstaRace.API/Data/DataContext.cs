@@ -23,5 +23,14 @@ public class DataContext : DbContext
         modelBuilder.Entity<Registration>().HasOne(p => p.Race).WithMany(p => p.Registrations).HasForeignKey(po => po.RaceId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Registration>().HasOne(p => p.User).WithMany(p => p.Registrations).HasForeignKey(po => po.UserId).OnDelete(DeleteBehavior.Restrict);
         
+        modelBuilder.Entity<Registration>() .HasIndex(r => new { r.UserId, r.RaceId }).IsUnique();
+        
+        modelBuilder.Entity<Registration>().HasIndex(r => r.BibNumber).IsUnique();
+        
+        modelBuilder.Entity<Race>().Property(r => r.Date).HasColumnType("date");
+        modelBuilder.Entity<Race>().Property(r => r.RegistrationDeadLine).HasColumnType("date");
+    
+        modelBuilder.Entity<User>().Property(u => u.DateOfBirth).HasColumnType("date");
+        
     }
 }

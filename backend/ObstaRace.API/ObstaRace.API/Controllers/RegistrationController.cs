@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
@@ -32,7 +33,7 @@ public class RegistrationController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving registrations");
-            return StatusCode(500, "Error retrieving registrations");
+            return StatusCode(500, new { error = "Error retrieving registrations" });
         }
     }
     [HttpGet("{id:int}")]
@@ -48,17 +49,18 @@ public class RegistrationController : ControllerBase
             if (registration == null)
             {
                 _logger.LogWarning("Registration with id {RegistrationId} not found", id);
-                return NotFound($"Registration with id {id} not found");
+                return NotFound(new { error = $"Registration with id {id} not found" });
             }
             return Ok(registration);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving registration with id {RegistrationId}", id);
-            return StatusCode(500, "Error retrieving registration");
+            _logger.LogError(ex, "Error retrieving registration");
+            return StatusCode(500, new { error = "Error retrieving registration" });
         }
     }
     [HttpPost]
+    [Authorize]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -67,22 +69,23 @@ public class RegistrationController : ControllerBase
         try
         {
             if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating registration for race {RaceId} and user {UserId}", registrationDto.RaceId, registrationDto.UserId);
             var registration = await _registrationService.CreateRegistration(registrationDto.RaceId, registrationDto.UserId, registrationDto.Category);
             return CreatedAtAction(nameof(GetRegistration), new {id = registration.Id}, registration);
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error creating registration");
-            return StatusCode(500, "Error creating registration");
+            return StatusCode(500, new { error = "Error creating registration" });
         }
     }
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -91,22 +94,23 @@ public class RegistrationController : ControllerBase
         try
         {
             if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating registration with id {RegistrationId}", id);
             var registration = await _registrationService.UpdateRegistration(registrationDto, id);
             return Ok(registration);
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating registration");
-            return StatusCode(500, "Error updating registration");
+            return StatusCode(500, new { error = "Error updating registration" });
         }
     }
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -120,12 +124,12 @@ public class RegistrationController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error deleting registration");
-            return StatusCode(500, "Error deleting registration");
+            return StatusCode(500, new { error = "Error deleting registration" });
         }
     }
     

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
@@ -28,7 +29,7 @@ public class ObstacleController : ControllerBase
         }catch(Exception ex)
         {
             _logger.LogError(ex, "Error retrieving all obstacles");
-            return StatusCode(500, "Error retrieving obstacles");
+            return StatusCode(500, new { error = "Error retrieving obstacles" });
         }
     }
     [HttpGet("{obstacleId:int}")]
@@ -44,17 +45,18 @@ public class ObstacleController : ControllerBase
             if (obstacle == null)
             {
                 _logger.LogWarning("Obstacle with id {ObstacleId} not found", obstacleId);
-                return NotFound($"Obstacle with id {obstacleId} not found");
+                return NotFound(new { error = $"Obstacle with id {obstacleId} not found" });
             }
             return Ok(obstacle);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving obstacle with id {ObstacleId}", obstacleId);
-            return StatusCode(500, "Error retrieving obstacle");
+            return StatusCode(500, new { error = "Error retrieving obstacle" });
         }
     }
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -62,19 +64,24 @@ public class ObstacleController : ControllerBase
     {
         try
         {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
             var obstacle = await _obstacleService.CreateObstacle(obstacleDto);
             return CreatedAtAction(nameof(GetObstacle), new { obstacleId = obstacle.Id }, obstacle);
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error creating obstacle");
-            return StatusCode(500, "Error creating obstacle");
+            return StatusCode(500, new { error = "Error creating obstacle" });
         }
     }
     [HttpPut("{obstacleId:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(200, Type = typeof(ObstacleDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -83,22 +90,23 @@ public class ObstacleController : ControllerBase
         try
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating obstacle {obstacleId}", obstacleId);
             var obstacle = await _obstacleService.UpdateObstacle(obstacleDto, obstacleId);
             return Ok(obstacle);
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error updating obstacle");
-            return StatusCode(500, "Error updating obstacle");
+            return StatusCode(500, new { error = "Error updating obstacle" });
         }
     }
     [HttpDelete("{obstacleId:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -107,13 +115,23 @@ public class ObstacleController : ControllerBase
         try
         {
             _logger.LogInformation("Deleting obstacle {idObstacle}", obstacleId);
-            await _obstacleService.DeleteObstacle(obstacleId);
+            var result = await _obstacleService.DeleteObstacle(obstacleId);
+            if (!result)
+            {
+                _logger.LogWarning("Failed to delete obstacle {obstacleId}", obstacleId);
+                return StatusCode(500, new { error = "Failed to delete obstacle" });
+            }
+
             return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error deleting obstacle");
-            return StatusCode(500, "Error deleting obstacle");
+            return StatusCode(500, new { error = "Error deleting obstacle" });
         }
     }
 }

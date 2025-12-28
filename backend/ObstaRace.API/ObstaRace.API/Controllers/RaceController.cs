@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
@@ -32,7 +33,7 @@ public class RaceController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving races");
-            return StatusCode(500, "Error retrieving races");
+            return StatusCode(500, new { error = "Error retrieving races" });
         }
     }
 
@@ -50,7 +51,7 @@ public class RaceController : ControllerBase
             if (race == null)
             {
                 _logger.LogWarning("Race with id {RaceId} not found", raceId);
-                return NotFound($"Race with id {raceId} not found");
+                return NotFound(new { error = $"Race with id {raceId} not found" });
             }
             
             return Ok(race);
@@ -58,11 +59,12 @@ public class RaceController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving race with id {RaceId}", raceId);
-            return StatusCode(500, "Error retrieving race");
+            return StatusCode(500, new { error = "Error retrieving race" });
         }
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -71,23 +73,23 @@ public class RaceController : ControllerBase
         try
         {
             if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating race with name {RaceName}", raceDto.Name);
             var race = await _raceService.CreateRace(raceDto);
             return CreatedAtAction(nameof(GetRace), new {raceId = race.Id}, race);
         }
         catch (ArgumentException ex)
         {
-            _logger.LogWarning(ex, "Validation error creating race");
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating race");
-            return StatusCode(500, "Error creating race");
+            return StatusCode(500, new { error = "Error creating race" });
         }
     }
     [HttpPut("{raceId:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(200, Type = typeof(RaceDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -96,22 +98,23 @@ public class RaceController : ControllerBase
         try
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating race with id {RaceId}", raceId);
             var race = await _raceService.UpdateRace(raceDto, raceId);
             return Ok(race);
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error updating race");
-            return StatusCode(500, "Error updating race");
+            return StatusCode(500, new { error = "Error updating race" });
         }
     }
     [HttpDelete("{raceId:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -125,12 +128,12 @@ public class RaceController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,"Error deleting race");
-            return StatusCode(500, "Error deleting race");
+            return StatusCode(500, new { error = "Error deleting race" });
         }
     }
 }

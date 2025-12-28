@@ -31,7 +31,7 @@ public class UserController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving users");
-            return StatusCode(500, "Error retrieving users");
+            return StatusCode(500, new { error = "Error retrieving users" });
         }
     }
 
@@ -48,14 +48,14 @@ public class UserController : ControllerBase
             if (user == null)
             {
                 _logger.LogWarning("User with id {UserId} not found", userId);
-                return NotFound($"User with id {userId} not found");
+                return NotFound(new { error = $"User with id {userId} not found" });
             }
             return Ok(user);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving user with id {UserId}", userId);
-            return StatusCode(500, "Error retrieving user");
+            return StatusCode(500, new { error = "Error retrieving user" });
         }
     }
 }
