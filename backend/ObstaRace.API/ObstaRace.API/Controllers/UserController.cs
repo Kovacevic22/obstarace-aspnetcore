@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces;
+using ObstaRace.API.Interfaces.Services;
 using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Controllers;
@@ -9,13 +10,11 @@ namespace ObstaRace.API.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private IUserRepository _userRepository;
-    private IMapper _mapper;
-    private ILogger<UserController> _logger;
-    public UserController(IUserRepository userRepository, IMapper mapper, ILogger<UserController> logger)
+    private readonly IUserService _userService;
+    private readonly ILogger<UserController> _logger;
+    public UserController(IUserService userService, ILogger<UserController> logger)
     {
-        _userRepository = userRepository;
-        _mapper = mapper;
+        _userService = userService;
         _logger = logger;
     }
     [HttpGet]
@@ -26,7 +25,7 @@ public class UserController : ControllerBase
         try
         {
             _logger.LogInformation("Getting all users");
-            var users = _mapper.Map<List<UserDto>>(await _userRepository.GetAllUsers());
+            var users = await _userService.GetAllUsers();
             return Ok(users);
         }
         catch (Exception ex)
@@ -45,16 +44,15 @@ public class UserController : ControllerBase
         try
         {
             _logger.LogInformation("Getting user with id {UserId}", userId);
-            var user = _mapper.Map<UserDto>(await _userRepository.GetUser(userId));
+            var user = await _userService.GetUser(userId);
             if (user == null)
             {
                 _logger.LogWarning("User with id {UserId} not found", userId);
                 return NotFound($"User with id {userId} not found");
             }
-
             return Ok(user);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving user with id {UserId}", userId);
             return StatusCode(500, "Error retrieving user");

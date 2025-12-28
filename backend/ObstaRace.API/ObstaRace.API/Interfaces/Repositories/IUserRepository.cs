@@ -8,5 +8,11 @@ public interface IUserRepository
     Task<User?> GetUser(int id);
     Task<bool> UserExists(int id);
     
+    //LOGIN/REGISTER
+    Task<bool> CreateUser(User user);
+    Task<bool> SaveChanges();
     //CRUD
+    Task<bool> UpdateUser(User user);
+    Task<bool> DeleteUser(User user);
+    Task<User?> GetUserByEmail(string email);
 }

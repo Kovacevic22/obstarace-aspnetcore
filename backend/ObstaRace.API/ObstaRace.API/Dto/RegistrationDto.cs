@@ -5,7 +5,6 @@ namespace ObstaRace.API.Dto;
 
 public class RegistrationDto
 {
-    [Required]
     public int Id { get; set; }
 
     [Required]
@@ -22,4 +21,24 @@ public class RegistrationDto
 
     [Required]
     public Status Status { get; set; }
+}
+
+public class CreateRegistrationDto
+{
+    [Required]
+    public int RaceId { get; set; }
+    [Required]
+    public Category Category { get; set; }
+    [Required]
+    public int UserId { get; set; }
+}
+
+public class UpdateRegistrationDto
+{
+    public int RaceId { get; set; }
+    public string BibNumber { get; set; }
+    public Category Category { get; set; }
+    public Status Status { get; set; }
+    public int Count { get; set; }
+    public int UserId { get; set; }
 }

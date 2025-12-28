@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
+using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Controllers;
 
@@ -8,8 +9,8 @@ namespace ObstaRace.API.Controllers;
 [ApiController]
 public class RegistrationController : ControllerBase
 {
-    private IRegistrationService _registrationService;
-    private ILogger<RegistrationController> _logger;
+    private readonly IRegistrationService _registrationService;
+    private readonly ILogger<RegistrationController> _logger;
 
     public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
     {
@@ -61,14 +62,14 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> CreateRegistration([FromBody]RegistrationDto registrationDto, [FromQuery]int raceId, [FromQuery]int userId)
+    public async Task<IActionResult> CreateRegistration([FromBody] CreateRegistrationDto registrationDto)
     {
         try
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
-            _logger.LogInformation("Creating registration for race {RaceId} and user {UserId}", raceId, userId);
-            var registration = await _registrationService.CreateRegistration(raceId, userId, registrationDto.Category);
+            _logger.LogInformation("Creating registration for race {RaceId} and user {UserId}", registrationDto.RaceId, registrationDto.UserId);
+            var registration = await _registrationService.CreateRegistration(registrationDto.RaceId, registrationDto.UserId, registrationDto.Category);
             return CreatedAtAction(nameof(GetRegistration), new {id = registration.Id}, registration);
         }
         catch (ArgumentException ex)
@@ -85,7 +86,7 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> UpdateRegistration([FromBody] RegistrationDto registrationDto, int id)
+    public async Task<IActionResult> UpdateRegistration([FromBody] UpdateRegistrationDto registrationDto, int id)
     {
         try
         {

@@ -7,7 +7,7 @@ namespace ObstaRace.API.Repository;
 
 public class UserRepository : IUserRepository
 {
-    private DataContext _context;
+    private readonly DataContext _context;
     public UserRepository(DataContext context)
     {
         _context = context;
@@ -26,5 +26,31 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users.AnyAsync(u => u.Id == id);
     }
-    
+
+    public async Task<bool> CreateUser(User user)
+    {
+         await _context.Users.AddAsync(user);
+         return await SaveChanges();
+    }
+    public async Task<bool> UpdateUser(User user)
+    {
+        _context.Users.Update(user);
+        return await SaveChanges();
+    }
+
+    public async Task<bool> DeleteUser(User user)
+    {
+        _context.Users.Remove(user);
+        return await SaveChanges();
+    }
+
+    public async Task<bool> SaveChanges()
+    {
+        var saved = await _context.SaveChangesAsync();
+        return saved > 0;
+    }
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+    }
 }

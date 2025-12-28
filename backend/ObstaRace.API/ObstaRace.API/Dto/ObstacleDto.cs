@@ -5,7 +5,6 @@ namespace ObstaRace.API.Dto;
 
 public class ObstacleDto
 {
-    [Required]
     public int Id { get; set; }
 
     [Required]
@@ -16,5 +15,19 @@ public class ObstacleDto
     public string Description { get; set; }
 
     [Required]
+    public Difficulty Difficulty { get; set; }
+}
+
+public class CreateObstacleDto
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public Difficulty Difficulty { get; set; }
+}
+
+public class UpdateObstacleDto
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
     public Difficulty Difficulty { get; set; }
 }

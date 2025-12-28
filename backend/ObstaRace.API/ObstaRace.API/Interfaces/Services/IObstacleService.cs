@@ -8,7 +8,7 @@ public interface IObstacleService
     Task<ObstacleDto?> GetObstacle(int id);
     
     //CRUD
-    Task<ObstacleDto> CreateObstacle(ObstacleDto obstacle);
-    Task<ObstacleDto> UpdateObstacle(ObstacleDto obstacle, int id);
+    Task<ObstacleDto> CreateObstacle(CreateObstacleDto obstacle);
+    Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id);
     Task<bool> DeleteObstacle(int obstacleId);
 }

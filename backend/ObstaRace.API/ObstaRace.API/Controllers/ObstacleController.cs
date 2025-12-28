@@ -7,8 +7,8 @@ namespace ObstaRace.API.Controllers;
 [ApiController]
 public class ObstacleController : ControllerBase
 {
-    private IObstacleService _obstacleService;
-    private ILogger<ObstacleController> _logger;
+    private readonly IObstacleService _obstacleService;
+    private readonly ILogger<ObstacleController> _logger;
     public ObstacleController(IObstacleService obstacleService, ILogger<ObstacleController> logger)
     {
         _obstacleService = obstacleService;
@@ -58,7 +58,7 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> CreateObstacle([FromBody]ObstacleDto obstacleDto)
+    public async Task<IActionResult> CreateObstacle([FromBody]CreateObstacleDto obstacleDto)
     {
         try
         {
@@ -78,15 +78,19 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(200, Type = typeof(ObstacleDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> UpdateObstacle([FromBody]ObstacleDto obstacleDto, int obstacleId)
+    public async Task<IActionResult> UpdateObstacle([FromBody]UpdateObstacleDto obstacleDto, int obstacleId)
     {
         try
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             _logger.LogInformation("Updating obstacle {obstacleId}", obstacleId);
             var obstacle = await _obstacleService.UpdateObstacle(obstacleDto, obstacleId);
             return Ok(obstacle);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {

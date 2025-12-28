@@ -9,11 +9,11 @@ namespace ObstaRace.API.Services;
 
 public class RegistrationService : IRegistrationService
 {
-    private IRegistrationRepository  _registrationRepository;
-    private IUserRepository _userRepository;
-    private IRaceRepository _raceRepository;
-    private IMapper _mapper;
-    private ILogger<RegistrationService> _logger;
+    private readonly IRegistrationRepository  _registrationRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IRaceRepository _raceRepository;
+    private readonly IMapper _mapper;
+    private readonly ILogger<RegistrationService> _logger;
     public RegistrationService(IRegistrationRepository registrationRepository, IMapper mapper, ILogger<RegistrationService> logger, IUserRepository userRepository, IRaceRepository raceRepository)
     {
         _registrationRepository = registrationRepository;
@@ -35,6 +35,8 @@ public class RegistrationService : IRegistrationService
 
     public async Task<RegistrationDto> CreateRegistration(int raceId, int userId, Category category)
     {
+        if (raceId <= 0 || userId <= 0)
+            throw new ArgumentException("Invalid raceId or userId");
         var user = await _userRepository.GetUser(userId);
         if (user == null)
         {
@@ -59,13 +61,13 @@ public class RegistrationService : IRegistrationService
             throw new ArgumentException("Registration deadline has passed");
         }
 
-        var currentRegistration = await _registrationRepository.GetRegistrationsByRaceId(raceId);
-        if (currentRegistration?.Count >= race.MaxParticipants)
+        var count = await _registrationRepository.CountRegistrations(raceId);
+        if (count >= race.MaxParticipants)
         {
             _logger.LogWarning("Race {RaceId} has reached maximum participants", raceId);
             throw new ArgumentException("Race has reached maximum participants");
         }
-        var bibNumber = GenerateBibNumber(raceId, currentRegistration?.Count ?? 0);
+        var bibNumber = GenerateBibNumber(raceId, count);
         var registration = new Registration
         {
             UserId = userId,
@@ -77,7 +79,7 @@ public class RegistrationService : IRegistrationService
         await _registrationRepository.CreateRegistration(registration);
         return _mapper.Map<RegistrationDto>(registration);
     }
-    public async Task<RegistrationDto> UpdateRegistration(RegistrationDto registration, int id)
+    public async Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id)
     {
         _logger.LogInformation("Updating registration {RegistrationId}", id);
         var existingRegistration = await _registrationRepository.GetRegistration(id);

@@ -8,9 +8,9 @@ namespace ObstaRace.API.Services;
 
 public class ObstacleService : IObstacleService
 {
-    private ILogger<ObstacleService> _logger;
-    private IMapper _mapper;
-    private IObstacleRepository _obstacleRepository;
+    private readonly ILogger<ObstacleService> _logger;
+    private readonly IMapper _mapper;
+    private readonly IObstacleRepository _obstacleRepository;
     public ObstacleService(IObstacleRepository obstacleRepository, IMapper mapper, ILogger<ObstacleService> logger)
     {
         _obstacleRepository = obstacleRepository;
@@ -29,7 +29,7 @@ public class ObstacleService : IObstacleService
         var obstacle = await _obstacleRepository.GetObstacle(id);
         return obstacle==null?null:_mapper.Map<ObstacleDto>(obstacle);
     }
-    public async Task<ObstacleDto> CreateObstacle(ObstacleDto obstacleDto)
+    public async Task<ObstacleDto> CreateObstacle(CreateObstacleDto obstacleDto)
     {
         _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
         var obstacle = _mapper.Map<Obstacle>(obstacleDto);
@@ -40,7 +40,7 @@ public class ObstacleService : IObstacleService
         }
         return _mapper.Map<ObstacleDto>(obstacle);
     }
-    public async Task<ObstacleDto> UpdateObstacle(ObstacleDto obstacle, int id)
+    public async Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id)
     {
         _logger.LogInformation("Updating obstacle {ObstacleDto.Name}", obstacle.Name);
         var existingObstacle = await _obstacleRepository.GetObstacle(id);

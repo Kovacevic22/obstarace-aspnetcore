@@ -9,9 +9,9 @@ namespace ObstaRace.API.Services;
 
 public class RaceService : IRaceService
 {
-    private IRaceRepository _raceRepository;
-    private IMapper _mapper;
-    private ILogger<RaceService> _logger;
+    private readonly IRaceRepository _raceRepository;
+    private readonly IMapper _mapper;
+    private readonly ILogger<RaceService> _logger;
     public RaceService(IRaceRepository raceRepository, IMapper mapper, ILogger<RaceService> logger)
     {
         _raceRepository = raceRepository;
@@ -29,7 +29,7 @@ public class RaceService : IRaceService
         return race==null?null:_mapper.Map<RaceDto>(race);
     }
 
-    public async Task<RaceDto> CreateRace(RaceDto raceDto)
+    public async Task<RaceDto> CreateRace(CreateRaceDto raceDto)
     {
         if (raceDto.Date < DateTime.UtcNow)
         {
@@ -52,9 +52,9 @@ public class RaceService : IRaceService
         return _mapper.Map<RaceDto>(race);
     }
 
-    public async Task<RaceDto> UpdateRace(RaceDto raceDto, int id)
+    public async Task<RaceDto> UpdateRace(UpdateRaceDto raceDto, int id)
     {
-        _logger.LogInformation("Updating race {raceDto.Name}", raceDto.Name);
+        _logger.LogInformation("Updating race {raceDto}", raceDto.Name);
         var existingRace = await _raceRepository.GetRace(id);
         if (existingRace == null)
         {
@@ -89,6 +89,12 @@ public class RaceService : IRaceService
     public async Task<bool> DeleteRace(int raceId)
     {
         _logger.LogInformation("Deleting race {raceId}", raceId);
+        if (!await _raceRepository.RaceExists(raceId))
+        {
+            _logger.LogWarning("Race with id {raceId} does not exist", raceId);
+            throw new ArgumentException($"Race with id {raceId} does not exist");
+        }
+
         if (await _raceRepository.RaceHasObstacles(raceId))
         {
             _logger.LogWarning("Race has obstacles");

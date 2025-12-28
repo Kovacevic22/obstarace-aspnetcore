@@ -9,9 +9,9 @@ public interface IRaceService
     Task<RaceDto?> GetRace(int id);
     
     //POST
-    Task<RaceDto> CreateRace(RaceDto race);
+    Task<RaceDto> CreateRace(CreateRaceDto race);
     //UPDATE
-    Task<RaceDto> UpdateRace(RaceDto race, int id);
+    Task<RaceDto> UpdateRace(UpdateRaceDto race, int id);
     //DELETE
     Task<bool> DeleteRace(int raceId);
 }

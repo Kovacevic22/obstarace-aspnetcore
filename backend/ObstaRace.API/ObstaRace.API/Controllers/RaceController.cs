@@ -9,8 +9,8 @@ namespace ObstaRace.API.Controllers;
 [ApiController]
 public class RaceController : ControllerBase
 {
-    private IRaceService _raceService;
-    private ILogger<RaceController> _logger;
+    private readonly IRaceService _raceService;
+    private readonly ILogger<RaceController> _logger;
     
     public RaceController(IRaceService raceService, ILogger<RaceController> logger)
     {
@@ -66,7 +66,7 @@ public class RaceController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> CreateRace([FromBody]RaceDto raceDto)
+    public async Task<IActionResult> CreateRace([FromBody]CreateRaceDto raceDto)
     {
         try
         {
@@ -91,7 +91,7 @@ public class RaceController : ControllerBase
     [ProducesResponseType(200, Type = typeof(RaceDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> UpdateRace([FromBody]RaceDto raceDto,int raceId)
+    public async Task<IActionResult> UpdateRace([FromBody]UpdateRaceDto raceDto,int raceId)
     {
         try
         {
