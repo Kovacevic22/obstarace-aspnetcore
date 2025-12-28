@@ -9,12 +9,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/assets/Logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/common/Footer.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/home/HeroSection.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/AdminNavbar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/OrganizerNavbar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/PublicNavbar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/UserNavbar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/races/RaceCard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/races/RaceFilters.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/context/AuthContext.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/index.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/HomePage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/RaceDetailsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/RacesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/AdminDashboard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageObstaclesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageRacesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageUsersPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/RegisterPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/user/MyRegistrationsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/user/ProfilePage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Helper/MappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Helper/MappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/RaceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/RaceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/RegistrationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/RegistrationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,13 +47,14 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="95" />
+    <option name="cachedIndexableFilesCount" value="99" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/Auth/AuthController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" root0="FORCE_HIGHLIGHTING" />
@@ -56,6 +79,7 @@
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Repository/RegistrationRepository.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Repository/UserRepository.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Seed.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ObstaRace.API/Services/UserService.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -146,6 +170,8 @@
       <workItem from="1766674169892" duration="20791000" />
       <workItem from="1766768860043" duration="1015000" />
       <workItem from="1766769953055" duration="1729000" />
+      <workItem from="1766929814983" duration="16825000" />
+      <workItem from="1766961350766" duration="2125000" />
     </task>
     <task id="LOCAL-00001" summary="Models minor fixes">
       <option name="closed" value="true" />

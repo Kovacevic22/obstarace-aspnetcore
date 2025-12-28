@@ -1,10 +1,12 @@
 
-import './App.css'
+import RacesPage from "./pages/RacesPage.tsx";
 
 function App() {
 
   return (
-    <></>
+    <>
+    <RacesPage />
+    </>
   )
 }
 

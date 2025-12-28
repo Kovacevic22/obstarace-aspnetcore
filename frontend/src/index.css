@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+
+    --color-primary: #5a7c6f;      /* Tamno zelena (pozadina) */
+    --color-secondary: #a67c52;    /* Braon (okvir) */
+    --color-accent: #ffa500;       /* Narandžasta (sunce) */
+    --color-dark: #2d3e36;         /* Tamna (siluete) */
+    --color-light: #f5e6d3;        /* Svetla bež (sunčevi zraci) */
+    --color-mud: #8b6f47;          /* Blatnjava (prepreke) */
+
+    /* Dodatne nijanse */
+    --color-forest: #4a6358;       /* Šumska zelena */
+    --color-mountain: #6b8e7f;     /* Planinska zelena */
+    --color-fire: #ff4500;         /* Vatrena narandžasta */
+
+    /* Gradijenti za dugmad */
+    --color-btn-primary-from: #5a7c6f;
+    --color-btn-primary-to: #4a6358;
+    --color-btn-secondary-from: #a67c52;
+    --color-btn-secondary-to: #8b6f47;
+}
