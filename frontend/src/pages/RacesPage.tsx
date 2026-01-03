@@ -1,11 +1,8 @@
-import PublicNavbar from "../components/navbar/PublicNavbar.tsx";
-import Footer from "../components/common/Footer.tsx";
 import RaceFilters from "../components/races/RaceFilters.tsx";
 function RacesPage() {
     return (
         <>
             <div className="flex flex-col min-h-screen bg-[var(--color-dark)]">
-                <PublicNavbar/>
 
                 <div className="flex-grow pt-32 pb-20 px-6 text-[var(--color-light)]">
                     <div className="max-w-7xl mx-auto">
@@ -25,8 +22,6 @@ function RacesPage() {
                         </div>
                     </div>
                 </div>
-
-                <Footer />
             </div>
         </>
     )

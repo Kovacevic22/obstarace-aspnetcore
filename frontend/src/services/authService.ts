@@ -1,49 +1,48 @@
 import api from "./api.ts";
 export interface LoginData {
-    Email: string;
-    Password: string;
+    email: string;
+    password: string;
 }
 export interface RegisterData {
-    Email: string;
-    Password: string;
-    Name: string;
-    Surname: string;
-    PhoneNumber: string;
-    DateOfBirth: Date;
-    EmergencyContact: string;
+    email: string;
+    password: string;
+    name: string;
+    surname: string;
+    phoneNumber: string;
+    dateOfBirth: Date;
+    emergencyContact: string;
 }
 
 export interface UserDto{
-    Id: number;
-    Name: string;
-    Surname: string;
-    Email: string;
-    Role: string;
-}
-
-export interface LoginResponse {
-    Token: string;
-    Expiration: string;
-    User: UserDto;
+    id: number;
+    name: string;
+    surname: string;
+    email: string;
+    role: number;
 }
 
 export const authService = {
     login: async (loginData: LoginData) => {
-        const response = await api.post("auth/login",loginData);
+        const response = await api.post("api/auth/login",loginData);
         return response.data;
     },
     register: async (registerData: RegisterData) =>{
-        const response = await api.post("auth/register",registerData);
+        const response = await api.post("api/auth/register",registerData);
+        return response.data;
+    },
+    me: async (): Promise<UserDto> =>{
+        const response = await api.get("api/auth/me")
         return response.data;
     },
     logout: async () => {
         try{
-            await api.post("auth/logout");
+            await api.post("api/auth/logout");
         }catch(e){
             console.error(e);
         }finally {
             window.location.href = "/";
         }
     }
+
 }
 export default authService;

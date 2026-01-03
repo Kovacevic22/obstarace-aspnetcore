@@ -1,5 +1,6 @@
 import {Link} from "react-router"
 import LogoImg from "../../assets/Logo.png"
+import authService from "../../services/authService.ts";
 
 export function AdminNavbar(){
     return(
@@ -23,7 +24,7 @@ export function AdminNavbar(){
                     <li><Link to={""} className="hover:text-[var(--color-accent)] transition-all">Manage Users</Link></li>
                     <li><Link to={""} className="hover:text-[var(--color-accent)] transition-all">Registrations</Link></li>
                 </ul>
-                <div className="px-4 py-1.5 border border-red-500/40 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white cursor-pointer transition-all active:scale-95">
+                <div onClick={authService.logout} className="px-4 py-1.5 border border-red-500/40 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white cursor-pointer transition-all active:scale-95">
                     Logout
                 </div>
             </div>

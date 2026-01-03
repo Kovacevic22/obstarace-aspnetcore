@@ -1,5 +1,6 @@
 import LogoImg from "../../assets/Logo.png"
 import {Link} from "react-router";
+import authService from "../../services/authService.ts";
 
 export function UserNavbar(){
     return(
@@ -29,7 +30,7 @@ export function UserNavbar(){
                     <div className="text-[10px] font-black uppercase tracking-widest text-[var(--color-accent)] hover:text-white cursor-pointer transition-all">
                         Profile
                     </div>
-                    <div className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 cursor-pointer transition-all">
+                    <div onClick={authService.logout} className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 cursor-pointer transition-all">
                         Logout
                     </div>
                 </div>

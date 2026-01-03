@@ -1,11 +1,11 @@
 import Login from "../../assets/Login.jpg";
-import {Link, useNavigate} from "react-router";
+import {Link} from "react-router";
 import {useState} from "react";
 import {authService, type LoginData} from "../../services/authService.ts";
 import {AxiosError} from "axios";
+import * as React from "react";
 
 export function LoginPage() {
-    const navigate = useNavigate();
     const [formData, setFormData] = useState<LoginData>({Email:"",Password:""});
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>();
@@ -15,16 +15,19 @@ export function LoginPage() {
         setError("");
         try{
             await authService.login(formData);
-            navigate("/");
+            window.location.href = "/";
         }catch(err){
-            const error = err as AxiosError<{error: string}>
-            setError(error.response?.data?.error || "Login failed");
+            if (err instanceof AxiosError) {
+                setError(err.response?.data?.error || "Login failed");
+            } else {
+                setError("Username or password is incorrect");
+            }
         }finally {
             setLoading(false);
         }
     }
     return (
-        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[var(--color-dark)]">
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark">
             <div
                 className="absolute inset-0 z-0 opacity-40"
                 style={{
@@ -34,12 +37,12 @@ export function LoginPage() {
                 }}
             />
             <div className="relative z-10 w-full max-w-md px-6">
-                <div className="bg-[var(--color-dark)]/80 backdrop-blur-xl border border-white/10 p-8 md:p-10 shadow-2xl">
+                <div className="bg-dark/80 backdrop-blur-xl border border-white/10 p-8 md:p-10 shadow-2xl">
                     <div className="text-center mb-10">
                         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-2">
-                            Athlete <span className="text-[var(--color-accent)]">Login</span>
+                            Athlete <span className="text-accent">Login</span>
                         </div>
-                        <div className="text-[10px] text-[var(--color-light)]/50 uppercase tracking-[0.3em]">
+                        <div className="text-[10px] text-light/50 uppercase tracking-[0.3em]">
                             Enter the arena
                         </div>
                     </div>
@@ -50,12 +53,12 @@ export function LoginPage() {
                     )}
                     <form onSubmit={handleLogin} className="flex flex-col gap-6">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-light)]/60 ml-1">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-light/60 ml-1">
                                 Email Address
                             </label>
                             <input
                                 type="email"
-                                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-[var(--color-accent)] transition-all placeholder:text-white/10"
+                                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-accent transition-all placeholder:text-white/10"
                                 placeholder="name@example.com"
                                 required
                                 value={formData.Email}
@@ -65,14 +68,14 @@ export function LoginPage() {
 
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-between items-center px-1">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-light)]/60">
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-light/60">
                                     Password
                                 </label>
-                                <a href="#" className="text-[9px] uppercase text-[var(--color-accent)] hover:underline">Forgot?</a>
+                                <a href="#" className="text-[9px] uppercase text-accent hover:underline">Forgot?</a>
                             </div>
                             <input
                                 type="password"
-                                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-[var(--color-accent)] transition-all placeholder:text-white/10"
+                                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-accent transition-all placeholder:text-white/10"
                                 placeholder="••••••••"
                                 required
                                 value={formData.Password}
@@ -80,7 +83,7 @@ export function LoginPage() {
                             />
                         </div>
                         <button
-                            className="w-full bg-[var(--color-accent)] text-[var(--color-dark)] font-black uppercase tracking-widest py-4 mt-4 hover:bg-white transition-all shadow-lg active:scale-[0.98] cursor-pointer"
+                            className="w-full bg-accent text-dark font-black uppercase tracking-widest py-4 mt-4 hover:bg-white transition-all shadow-lg active:scale-[0.98] cursor-pointer"
                             type="submit"
                             disabled={loading}
                         >
@@ -88,9 +91,9 @@ export function LoginPage() {
                         </button>
                     </form>
                     <div className="mt-10 text-center">
-                        <div className="text-xs text-[var(--color-light)]/40 uppercase tracking-widest">
+                        <div className="text-xs text-light/40 uppercase tracking-widest">
                             Don't have an account?
-                            <Link to={"/register"} className="ml-2 text-white font-bold hover:text-[var(--color-accent)] transition-colors">Register</Link>
+                            <Link to={"/register"} className="ml-2 text-white font-bold hover:text-accent transition-colors">Register</Link>
                         </div>
                     </div>
 

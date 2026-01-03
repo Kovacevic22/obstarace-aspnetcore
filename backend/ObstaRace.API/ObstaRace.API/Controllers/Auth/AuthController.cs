@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
@@ -78,7 +80,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public  IActionResult Logout()
     {
         Response.Cookies.Append("X-Access-Token", "",new CookieOptions
         {
@@ -88,5 +90,17 @@ public class AuthController : ControllerBase
             Expires = DateTime.UtcNow.AddDays(-1)
         });
         return Ok(new { message = "Logged out successfully" });
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetMe()
+    {
+        var userIdClaim = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim);
+        var user = await _userService.GetUser(userId);
+        if (user == null) return NotFound();
+        return Ok(user);
     }
 }
