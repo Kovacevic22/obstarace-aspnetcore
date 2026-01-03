@@ -1,6 +1,28 @@
 import Login from "../../assets/Login.jpg";
+import {Link, useNavigate} from "react-router";
+import {useState} from "react";
+import {authService, type LoginData} from "../../services/authService.ts";
+import {AxiosError} from "axios";
 
 export function LoginPage() {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState<LoginData>({Email:"",Password:""});
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>();
+    const handleLogin = async (e: React.FormEvent) =>{
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+        try{
+            await authService.login(formData);
+            navigate("/");
+        }catch(err){
+            const error = err as AxiosError<{error: string}>
+            setError(error.response?.data?.error || "Login failed");
+        }finally {
+            setLoading(false);
+        }
+    }
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[var(--color-dark)]">
             <div
@@ -21,7 +43,12 @@ export function LoginPage() {
                             Enter the arena
                         </div>
                     </div>
-                    <div className="flex flex-col gap-6">
+                    {error && (
+                        <div className="mb-6 p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-[10px] uppercase font-black tracking-widest text-center">
+                            {error}
+                        </div>
+                    )}
+                    <form onSubmit={handleLogin} className="flex flex-col gap-6">
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-light)]/60 ml-1">
                                 Email Address
@@ -30,6 +57,9 @@ export function LoginPage() {
                                 type="email"
                                 className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-[var(--color-accent)] transition-all placeholder:text-white/10"
                                 placeholder="name@example.com"
+                                required
+                                value={formData.Email}
+                                onChange={e => setFormData({...formData, Email:e.target.value})}
                             />
                         </div>
 
@@ -44,16 +74,23 @@ export function LoginPage() {
                                 type="password"
                                 className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-[var(--color-accent)] transition-all placeholder:text-white/10"
                                 placeholder="••••••••"
+                                required
+                                value={formData.Password}
+                                onChange={e => setFormData({...formData, Password:e.target.value})}
                             />
                         </div>
-                        <button className="w-full bg-[var(--color-accent)] text-[var(--color-dark)] font-black uppercase tracking-widest py-4 mt-4 hover:bg-white transition-all shadow-lg active:scale-[0.98] cursor-pointer">
-                            Sign In
+                        <button
+                            className="w-full bg-[var(--color-accent)] text-[var(--color-dark)] font-black uppercase tracking-widest py-4 mt-4 hover:bg-white transition-all shadow-lg active:scale-[0.98] cursor-pointer"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? "Verifying..." : "Sign In"}
                         </button>
-                    </div>
+                    </form>
                     <div className="mt-10 text-center">
                         <div className="text-xs text-[var(--color-light)]/40 uppercase tracking-widest">
                             Don't have an account?
-                            <a href="#" className="ml-2 text-white font-bold hover:text-[var(--color-accent)] transition-colors">Register</a>
+                            <Link to={"/register"} className="ml-2 text-white font-bold hover:text-[var(--color-accent)] transition-colors">Register</Link>
                         </div>
                     </div>
 

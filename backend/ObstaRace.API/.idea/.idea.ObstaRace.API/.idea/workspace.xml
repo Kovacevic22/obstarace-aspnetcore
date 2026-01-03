@@ -9,34 +9,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/assets/Logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/common/Footer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/home/HeroSection.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/AdminNavbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/OrganizerNavbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/PublicNavbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/UserNavbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/races/RaceCard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/races/RaceFilters.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/context/AuthContext.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/index.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/HomePage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/RaceDetailsPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/RacesPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/AdminDashboard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageObstaclesPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageRacesPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageUsersPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/RegisterPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/user/MyRegistrationsPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../frontend/src/pages/user/ProfilePage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/services/api.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/data_source_mapping.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/Auth/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/Auth/AuthController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/home/HeroSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/home/HeroSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/navbar/AdminNavbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/AdminNavbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/navbar/OrganizerNavbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/OrganizerNavbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/navbar/PublicNavbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/PublicNavbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/navbar/UserNavbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/UserNavbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/auth/RegisterPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/RegisterPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +35,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="99" />
+    <option name="cachedIndexableFilesCount" value="57" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -94,33 +82,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.ObstaRace.API: http.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;database.data.views&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.ObstaRace.API: http.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;GitIgnore&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "GitIgnore"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.ObstaRace.API: http">
     <configuration name="ObstaRace.API: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" />
@@ -172,6 +160,8 @@
       <workItem from="1766769953055" duration="1729000" />
       <workItem from="1766929814983" duration="16825000" />
       <workItem from="1766961350766" duration="2125000" />
+      <workItem from="1767464877420" duration="670000" />
+      <workItem from="1767468862402" duration="3688000" />
     </task>
     <task id="LOCAL-00001" summary="Models minor fixes">
       <option name="closed" value="true" />

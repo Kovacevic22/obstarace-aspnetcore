@@ -57,7 +57,14 @@ public class AuthController : ControllerBase
                 _logger.LogError("Error logging in user");
                 return Unauthorized(new { error = "Invalid email or password" });
             }
-            return Ok(response);
+            Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+            return Ok(new {user = response.User});
         }
         catch (ArgumentException)
         {
@@ -68,5 +75,18 @@ public class AuthController : ControllerBase
             _logger.LogError(ex,"Error logging in user");
             return StatusCode(500, new { error = "Error logging in user" });
         }
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Append("X-Access-Token", "",new CookieOptions
+        {
+            HttpOnly =  true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(-1)
+        });
+        return Ok(new { message = "Logged out successfully" });
     }
 }

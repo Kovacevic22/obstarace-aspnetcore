@@ -1,4 +1,5 @@
 import HeroImage from "../../assets/Herosection.jpg"
+import {Link} from "react-router";
 
 export function HeroSection() {
     return (
@@ -25,10 +26,11 @@ export function HeroSection() {
                         Your central platform for OCR. Find races, register in seconds, and conquer the trail.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
+                        <Link to={"/races"}>
                         <button className="w-full sm:w-auto group relative px-8 md:px-10 py-4 md:py-5 bg-[var(--color-accent)] text-[var(--color-dark)] font-black uppercase tracking-tighter transition-all hover:-translate-y-1 hover:shadow-[0_8px_0_0_rgba(166,124,82,1)] active:translate-y-0 active:shadow-none cursor-pointer text-center">
                             Browse Races
                         </button>
-
+                        </Link>
                         <button className="w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 bg-white/5 backdrop-blur-md border border-white/20 text-white font-bold uppercase tracking-tighter hover:bg-white/10 transition-all cursor-pointer text-center">
                             For Organizers
                         </button>

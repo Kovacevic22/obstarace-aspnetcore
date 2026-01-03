@@ -1,4 +1,5 @@
 import Register from "../../assets/Register.jpg";
+import {Link} from "react-router";
 
 export function RegisterPage() {
     return (
@@ -74,7 +75,7 @@ export function RegisterPage() {
                     <div className="mt-8 text-center">
                         <div className="text-[10px] text-[var(--color-light)]/40 uppercase tracking-widest">
                             Already a member?
-                            <a href="#" className="ml-2 text-white font-bold hover:text-[var(--color-accent)] transition-colors underline decoration-[var(--color-accent)] underline-offset-4">Sign In</a>
+                            <Link to={"/login"} className="ml-2 text-white font-bold hover:text-[var(--color-accent)] transition-colors underline decoration-[var(--color-accent)] underline-offset-4">Sign In</Link>
                         </div>
                     </div>
                 </div>
