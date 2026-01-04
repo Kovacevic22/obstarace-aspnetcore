@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="ObstaRace@localhost" uuid="43c80061-a471-4903-83e7-1245972f8f4d">
-      <driver-ref>sqlserver.jb</driver-ref>
+    <data-source source="LOCAL" name="ObstaRace" uuid="2f6bc990-b856-44de-8adb-d1ed0f464d8d">
+      <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
-      <configured-by-url>true</configured-by-url>
-      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
-      <jdbc-url>Server=localhost\SQLEXPRESS;Database=ObstaRace;Trusted_Connection=True;TrustServerCertificate=True;</jdbc-url>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/ObstaRace.API/ObstaRace.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

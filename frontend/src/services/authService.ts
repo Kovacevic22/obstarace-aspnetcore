@@ -9,7 +9,7 @@ export interface RegisterData {
     name: string;
     surname: string;
     phoneNumber: string;
-    dateOfBirth: Date;
+    dateOfBirth: string;
     emergencyContact: string;
 }
 

@@ -9,11 +9,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/Auth/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/Auth/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/HomePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/HomePage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/RacesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/RacesPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251222211620_Initial.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251222211620_Initial.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225203806_UpdateRegistrationRelations.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225203806_UpdateRegistrationRelations.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225204817_DeleteCountFromRegistration.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225204817_DeleteCountFromRegistration.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251228181720_UpdateRequiredFields.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251228181720_UpdateRequiredFields.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Seed.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +43,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/78392888e95a4b7c90c6abf02df21723fc0eb7a316153733fd54a524ce2d2f3/DbContext.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e9881a453a581134c1a18331ac1f8f1201a5382a685bf2a40777fa22619/DbContextOptions`.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/Auth/AuthController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" root0="FORCE_HIGHLIGHTING" />
@@ -71,33 +85,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.ObstaRace.API: http.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.C#&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.ObstaRace.API: http.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;GitIgnore&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "GitIgnore"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.ObstaRace.API: http">
     <configuration name="ObstaRace.API: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" />

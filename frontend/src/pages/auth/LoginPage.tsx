@@ -6,7 +6,7 @@ import {AxiosError} from "axios";
 import * as React from "react";
 
 export function LoginPage() {
-    const [formData, setFormData] = useState<LoginData>({Email:"",Password:""});
+    const [formData, setFormData] = useState<LoginData>({email:"",password:""});
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>();
     const handleLogin = async (e: React.FormEvent) =>{
@@ -61,8 +61,8 @@ export function LoginPage() {
                                 className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-accent transition-all placeholder:text-white/10"
                                 placeholder="name@example.com"
                                 required
-                                value={formData.Email}
-                                onChange={e => setFormData({...formData, Email:e.target.value})}
+                                value={formData.email}
+                                onChange={e => setFormData({...formData, email:e.target.value})}
                             />
                         </div>
 
@@ -78,8 +78,8 @@ export function LoginPage() {
                                 className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-accent transition-all placeholder:text-white/10"
                                 placeholder="••••••••"
                                 required
-                                value={formData.Password}
-                                onChange={e => setFormData({...formData, Password:e.target.value})}
+                                value={formData.password}
+                                onChange={e => setFormData({...formData, password:e.target.value})}
                             />
                         </div>
                         <button
