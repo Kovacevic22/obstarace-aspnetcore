@@ -5,7 +5,7 @@ namespace ObstaRace.API.Interfaces;
 public interface IRaceRepository
 {
     //GET
-    Task<ICollection<Race>> GetAllRaces();
+    Task<ICollection<Race>> GetAllRaces(string? difficulty, string? distance, string? search);
     Task<Race?> GetRace(int id);
     Task<bool> RaceExists(int id);
     

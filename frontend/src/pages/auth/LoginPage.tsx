@@ -1,9 +1,10 @@
 import Login from "../../assets/Login.jpg";
 import {Link} from "react-router";
 import {useState} from "react";
-import {authService, type LoginData} from "../../services/authService.ts";
+import {authService} from "../../services/authService.ts";
 import {AxiosError} from "axios";
 import * as React from "react";
+import type {LoginData} from "../../Models/auth.type.ts";
 
 export function LoginPage() {
     const [formData, setFormData] = useState<LoginData>({email:"",password:""});

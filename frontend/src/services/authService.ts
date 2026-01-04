@@ -1,25 +1,5 @@
 import api from "./api.ts";
-export interface LoginData {
-    email: string;
-    password: string;
-}
-export interface RegisterData {
-    email: string;
-    password: string;
-    name: string;
-    surname: string;
-    phoneNumber: string;
-    dateOfBirth: string;
-    emergencyContact: string;
-}
-
-export interface UserDto{
-    id: number;
-    name: string;
-    surname: string;
-    email: string;
-    role: number;
-}
+import type {LoginData, RegisterData, UserDto} from "../Models/auth.type.ts";
 
 export const authService = {
     login: async (loginData: LoginData) => {

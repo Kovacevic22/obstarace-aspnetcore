@@ -6,10 +6,11 @@ import RacesPage from "./pages/RacesPage.tsx";
 import PublicNavbar from "./components/navbar/PublicNavbar.tsx";
 import Footer from "./components/common/Footer.tsx";
 import {useEffect, useState} from "react";
-import {authService, type UserDto} from "./services/authService.ts";
+import {authService} from "./services/authService.ts";
 import AdminNavbar from "./components/navbar/AdminNavbar.tsx";
 import OrganizerNavbar from "./components/navbar/OrganizerNavbar.tsx";
 import UserNavbar from "./components/navbar/UserNavbar.tsx";
+import type {UserDto} from "./Models/auth.type.ts";
 function App() {
     const [user, setUser] = useState<UserDto|null>(null);
     const [loading, setLoading] = useState(true);

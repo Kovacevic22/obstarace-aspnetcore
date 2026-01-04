@@ -18,9 +18,9 @@ public class RaceService : IRaceService
         _mapper = mapper;
         _logger = logger;
     }
-    public async Task<ICollection<RaceDto>> GetAllRaces()
+    public async Task<ICollection<RaceDto>> GetAllRaces(string? difficulty, string? distanceRange, string? search)
     {
-        var races = await _raceRepository.GetAllRaces();
+        var races = await _raceRepository.GetAllRaces(difficulty,distanceRange,search);
         return _mapper.Map<List<RaceDto>>(races);
     }
     public async Task<RaceDto?> GetRace(int id)

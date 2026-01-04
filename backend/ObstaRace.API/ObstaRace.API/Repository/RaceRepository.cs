@@ -13,9 +13,23 @@ public class RaceRepository : IRaceRepository
         _context = context;
     }
     //GET
-    public async Task<ICollection<Race>> GetAllRaces()
+    public async Task<ICollection<Race>> GetAllRaces(string? difficulty, string? distance, string? search)
     {
-        return await _context.Races.OrderBy(r => r.Id).ToListAsync();
+        var query =  _context.Races.AsQueryable();
+        if(!string.IsNullOrWhiteSpace(search))query = query.Where(r => r.Name.ToLower().Contains(search.ToLower()));
+        if (!string.IsNullOrEmpty(difficulty) && difficulty != "all") query = query.Where(r => r.Difficulty == (Difficulty)int.Parse(difficulty));
+        if (!string.IsNullOrEmpty(distance) && distance != "all" && distance != "Any distance")
+        {
+            query = distance switch
+            {
+                "5" => query.Where(r => r.Distance <= 5),
+                "15" => query.Where(r => r.Distance > 5 && r.Distance <= 15),
+                "1000" => query.Where(r => r.Distance > 15),
+                _ => query
+            };
+        }
+
+        return await query.OrderBy(r => r.Id).ToListAsync();
     }
 
     public async Task<Race?> GetRace(int id)

@@ -1,9 +1,10 @@
 import Register from "../../assets/Register.jpg";
 import {Link} from "react-router";
 import {useState} from "react";
-import {authService, type RegisterData} from "../../services/authService.ts";
+import {authService} from "../../services/authService.ts";
 import * as React from "react";
 import {AxiosError} from "axios";
+import type {RegisterData} from "../../Models/auth.type.ts";
 
 export function RegisterPage() {
     const [formData, setFormData] = useState<RegisterData>({email:"",password:"",name:"",surname:"",phoneNumber:"",emergencyContact:"",dateOfBirth:""});

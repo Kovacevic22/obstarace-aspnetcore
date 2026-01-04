@@ -22,12 +22,12 @@ public class RaceController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RaceDto>))]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetAllRaces()
+    public async Task<IActionResult> GetAllRaces([FromQuery]string? difficulty, [FromQuery]string? distanceRange, [FromQuery]string? search)
     {
         try
         {
-            _logger.LogInformation("Getting all races");
-            var races = await _raceService.GetAllRaces();
+            _logger.LogInformation("Getting races");
+            var races = await _raceService.GetAllRaces(difficulty, distanceRange, search);
             return Ok(races);
         }
         catch (Exception ex)

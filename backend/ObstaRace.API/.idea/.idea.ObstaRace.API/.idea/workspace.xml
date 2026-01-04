@@ -9,22 +9,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/Models/auth.type.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/Models/races.type.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/services/raceService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251222211620_Initial.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251222211620_Initial.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225203806_UpdateRegistrationRelations.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225203806_UpdateRegistrationRelations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225204817_DeleteCountFromRegistration.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251225204817_DeleteCountFromRegistration.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251228181720_UpdateRequiredFields.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/20251228181720_UpdateRequiredFields.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.API.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Seed.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IRaceRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IRaceRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IRaceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IRaceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/RaceRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/RaceRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/RaceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/RaceService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/Models/Races.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/RacesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/RacesPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/auth/RegisterPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/auth/RegisterPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
