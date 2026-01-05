@@ -11,11 +11,3 @@ export interface RegisterData {
     dateOfBirth: string;
     emergencyContact: string;
 }
-
-export interface UserDto{
-    id: number;
-    name: string;
-    surname: string;
-    email: string;
-    role: number;
-}

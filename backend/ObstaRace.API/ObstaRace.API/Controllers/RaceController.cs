@@ -63,6 +63,48 @@ public class RaceController : ControllerBase
         }
     }
 
+    [HttpGet("{slug}")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<RaceDto>))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetRaceBySlug([FromRoute]string slug)
+    {
+        try
+        {
+            _logger.LogInformation("Getting race with slug {Slug}", slug);
+            var race = await _raceService.GetRaceBySlug(slug);
+            if (race == null)
+            {
+                _logger.LogWarning("Race with slug {Slug} not found", slug);
+                return NotFound(new { error = $"Race with slug {slug} not found" });
+            }
+            return Ok(race);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving race");
+            return StatusCode(500, new { error = "Error retrieving race" });
+        }
+    }
+
+    [HttpGet("stats")]
+    [ProducesResponseType(200, Type = typeof(RaceStatsDto))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetRaceStats()
+    {
+        try
+        {
+            _logger.LogInformation("Retrieving dashboard statistics");
+            var stats = await _raceService.GetRaceStats();
+            return Ok(stats);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,"Error retrieving race stats");
+            return StatusCode(500, new { error = "Error retrieving race stats" });
+        }
+    }
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(201)]

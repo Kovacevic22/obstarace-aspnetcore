@@ -37,6 +37,12 @@ public class UserService : IUserService
         return user==null?null:_mapper.Map<UserDto>(user);
     }
 
+    public Task<UserStatsDto> GetUserStats()
+    {
+        _logger.LogInformation("Getting users stats");
+        return  _userRepository.GetUserStats();
+    }
+
     public async Task<UserDto?> RegisterUser(RegisterDto registerDto)
     {
         _logger.LogInformation("Creating user account.");

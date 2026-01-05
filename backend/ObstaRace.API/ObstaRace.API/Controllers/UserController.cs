@@ -58,4 +58,23 @@ public class UserController : ControllerBase
             return StatusCode(500, new { error = "Error retrieving user" });
         }
     }
+
+    [HttpGet("stats")]
+    [ProducesResponseType(200, Type = typeof(UserStatsDto))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetUserStats()
+    {
+        try
+        {
+            _logger.LogInformation("Getting all users stats");
+            var users = await _userService.GetUserStats();
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,"Error retrieving users stats");
+            return StatusCode(500, "Error retrieving users stats");
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import type {RaceDto} from "../Models/races.type.ts";
+import type {RaceDto, RaceStatsDto} from "../Models/races.type.ts";
 import api from "./api.ts";
 
 export const raceService = {
@@ -9,6 +9,16 @@ export const raceService = {
         if(filters?.distance && filters.distance!=="Any distance" && filters.distance !== "all") params.append("distanceRange", filters.distance);
         const response = await api.get(`api/races?${params.toString()}`);
         return response.data;
-    }
+    },
+    raceDetails: async(slug:string):Promise<RaceDto> => {
+        const params = new URLSearchParams();
+        params.append("slug", slug);
+        const response = await api.get(`api/races/${slug}`);
+        return response.data;
+    },
+    stats: async (): Promise<RaceStatsDto> => {
+        const response = await api.get("api/races/stats");
+        return response.data;
+    },
 }
 export default raceService;

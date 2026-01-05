@@ -25,3 +25,8 @@ export interface RaceDto {
     elevationGain: number;
     maxParticipants: number;
 }
+export interface RaceStatsDto {
+    totalRaces: number;
+    totalKilometers: number;
+    archivedCount: number;
+}

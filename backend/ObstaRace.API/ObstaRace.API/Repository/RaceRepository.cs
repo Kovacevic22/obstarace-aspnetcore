@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ObstaRace.API.Data;
+using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces;
 using ObstaRace.API.Models;
 
@@ -37,6 +38,20 @@ public class RaceRepository : IRaceRepository
         return await _context.Races.FindAsync(id);
     }
 
+    public async Task<Race?> GetRaceBySlug(string slug)
+    {
+        return await _context.Races.FirstOrDefaultAsync(r => r.Slug == slug);
+    }
+
+    public async Task<RaceStatsDto> GetRaceStats()
+    {
+        return new RaceStatsDto()
+        {
+            TotalRaces =  await _context.Races.CountAsync(),
+            ArchivedCount = await _context.Races.CountAsync(r => r.Status == Status.Completed),
+            TotalKilometers = await _context.Races.SumAsync(r => r.Distance)
+        };
+    }
     public async Task<bool> RaceExists(int id)
     {
         return await _context.Races.AnyAsync(r => r.Id == id);

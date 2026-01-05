@@ -1,5 +1,6 @@
 
 import {Difficulty, type RaceDto, Status} from "../../Models/races.type.ts";
+import {Link} from "react-router";
 
 interface RaceCardProps {
     race: RaceDto
@@ -59,13 +60,14 @@ export function RaceCard({race}: RaceCardProps) {
                             {new Date(race.registrationDeadLine).toLocaleDateString('sr-RS')}
                         </span>
                     </div>
-
-                    <div className="relative group/btn cursor-pointer">
-                        <div className="absolute -inset-2 bg-accent opacity-0 group-hover/btn:opacity-10 blur-xl transition-all"></div>
-                        <div className="relative bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-white px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all duration-300">
-                            View Details
+                    <Link to={`/races/${race.slug}`}>
+                        <div className="relative group/btn cursor-pointer">
+                            <div className="absolute -inset-2 bg-accent opacity-0 group-hover/btn:opacity-10 blur-xl transition-all"></div>
+                            <div className="relative bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-white px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all duration-300">
+                                View Details
+                            </div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

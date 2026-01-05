@@ -3,6 +3,8 @@ using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Dto;
 
+
+
 public class UserDto
 {
     public int Id { get; set; }
@@ -13,6 +15,7 @@ public class UserDto
     public DateTime DateOfBirth { get; set; }
     public string EmergencyContact { get; set; }
     public Role Role { get; set; }
+    public bool Banned { get; set; }
 }
 
 public class RegisterDto
@@ -48,4 +51,10 @@ public class LoginResponseDto
     public string Token { get; set; }
     public DateTime Expiration { get; set; }
     public UserDto User { get; set; }
+}
+
+public class UserStatsDto
+{
+    public int TotalUsers { get; set; }
+    public int BannedUsers { get; set; }
 }

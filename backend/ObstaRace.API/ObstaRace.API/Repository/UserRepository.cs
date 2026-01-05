@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ObstaRace.API.Data;
+using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces;
 using ObstaRace.API.Models;
 
@@ -27,6 +28,14 @@ public class UserRepository : IUserRepository
         return await _context.Users.AnyAsync(u => u.Id == id);
     }
 
+    public async Task<UserStatsDto> GetUserStats()
+    {
+        return new UserStatsDto()
+        {
+            BannedUsers = await _context.Users.CountAsync(u => u.Banned),
+            TotalUsers = await _context.Users.CountAsync()
+        };
+    }
     public async Task<bool> CreateUser(User user)
     {
          await _context.Users.AddAsync(user);

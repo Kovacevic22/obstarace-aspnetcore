@@ -1,3 +1,4 @@
+using ObstaRace.API.Dto;
 using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Interfaces;
@@ -7,6 +8,8 @@ public interface IRaceRepository
     //GET
     Task<ICollection<Race>> GetAllRaces(string? difficulty, string? distance, string? search);
     Task<Race?> GetRace(int id);
+    Task<Race?> GetRaceBySlug(string slug);
+    Task<RaceStatsDto> GetRaceStats();
     Task<bool> RaceExists(int id);
     
     //POST

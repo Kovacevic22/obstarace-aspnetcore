@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BrowserRouter as Router, Routes, Route } from 'react-router';
 import HomePage from "./pages/HomePage.tsx";
 import LoginPage from "./pages/auth/LoginPage.tsx";
@@ -10,7 +11,9 @@ import {authService} from "./services/authService.ts";
 import AdminNavbar from "./components/navbar/AdminNavbar.tsx";
 import OrganizerNavbar from "./components/navbar/OrganizerNavbar.tsx";
 import UserNavbar from "./components/navbar/UserNavbar.tsx";
-import type {UserDto} from "./Models/auth.type.ts";
+import type {UserDto} from "./Models/users.type.ts";
+import RaceDetailsPage from "./pages/RaceDetailsPage.tsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 function App() {
     const [user, setUser] = useState<UserDto|null>(null);
     const [loading, setLoading] = useState(true);
@@ -62,10 +65,17 @@ function App() {
     <Router>
         {renderNavbar()}
       <Routes>
-        <Route path="/" element={<HomePage/>} />
+          <Route
+              path="/"
+              element={(user as any)?.role === 1 ? <AdminDashboard /> : <HomePage />}
+          />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/register" element={<RegisterPage/>} />
         <Route path="/races" element={<RacesPage/>}/>
+          <Route path="/races/:slug" element={<RaceDetailsPage />} />
+          {(user as any)?.role === 1 && (
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          )}
       </Routes>
         <Footer/>
     </Router>

@@ -29,6 +29,12 @@ public class RaceService : IRaceService
         return race==null?null:_mapper.Map<RaceDto>(race);
     }
 
+    public async Task<RaceDto?> GetRaceBySlug(string slug)
+    {
+        var race = await _raceRepository.GetRaceBySlug(slug);
+        return race == null ? null : _mapper.Map<RaceDto>(race);
+    }
+
     public async Task<RaceDto> CreateRace(CreateRaceDto raceDto)
     {
         if (raceDto.Date.Date < DateTime.UtcNow.Date)
@@ -52,6 +58,11 @@ public class RaceService : IRaceService
         return _mapper.Map<RaceDto>(race);
     }
 
+    public async Task<RaceStatsDto> GetRaceStats()
+    {
+        _logger.LogInformation("Calculating race statistics from repository");
+        return await _raceRepository.GetRaceStats();
+    }
     public async Task<RaceDto> UpdateRace(UpdateRaceDto raceDto, int id)
     {
         _logger.LogInformation("Updating race {raceDto}", raceDto.Name);

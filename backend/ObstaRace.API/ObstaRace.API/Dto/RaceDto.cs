@@ -80,3 +80,10 @@ public class UpdateRaceDto
     public int ElevationGain { get; set; }
     public int MaxParticipants { get; set; }
 }
+
+public class RaceStatsDto
+{
+    public int TotalRaces { get; set; }
+    public double TotalKilometers { get; set; }
+    public int ArchivedCount { get; set; }
+}

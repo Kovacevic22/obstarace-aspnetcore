@@ -16,5 +16,6 @@ public class User
     public DateTime DateOfBirth { get; set; }
     public string EmergencyContact { get; set; }
     public Role Role {get; set; }
+    public bool Banned {get; set; }
     public IList<Registration> Registrations {get; set;}
 }
