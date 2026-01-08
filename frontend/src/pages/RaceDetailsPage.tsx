@@ -2,12 +2,20 @@ import {Link, useParams} from "react-router";
 import {useEffect, useState} from "react";
 import raceService from "../services/raceService.ts";
 import {Difficulty, type RaceDto, Status} from "../Models/races.type.ts";
+import ConfirmModal from "../components/common/ConfirmModal.tsx";
+import type {UserDto} from "../Models/users.type.ts";
+import {registrationService} from "../services/registrationService.ts";
+interface Props {
+    user: UserDto | null;
+}
 
-
-export function RaceDetailsPage() {
+export function RaceDetailsPage({user}:Props) {
     const {slug} = useParams<{slug:string}>();
     const [race, setRace] = useState<RaceDto|null>();
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isRegistering, setIsRegistering] = useState(false);
     useEffect(() => {
         const fetchRace = async () =>{
             if(slug){
@@ -16,6 +24,7 @@ export function RaceDetailsPage() {
                     setRace(data);
                 }catch (e){
                     console.error(e);
+                    setError(parseApiError(e));
                 }finally {
                     setLoading(false);
                 }
@@ -25,6 +34,16 @@ export function RaceDetailsPage() {
     }, [slug]);
     if(loading)return <div className="min-h-screen bg-dark flex items-center justify-center text-accent font-black uppercase tracking-[0.5em] animate-pulse">Loading Arena...</div>
     if(!race)return <div className="min-h-screen bg-dark flex items-center justify-center text-secondary font-black uppercase italic">Mission not found.</div>
+    //--------------------------------------------------------------------------//
+    const parseApiError = (error : any): string => {
+        const data = error?.response?.data;
+
+        if (data?.errors) {
+            return Object.values(data.errors).flat().join(" | ");
+        }
+
+        return data?.title || data?.error || "Error";
+    };
     const getDaysRemaining = (deadline:string)=>
     {
         const today = new Date();
@@ -37,6 +56,26 @@ export function RaceDetailsPage() {
         return `${diffInDays} days left`;
     }
     const isClosed = new Date(race.registrationDeadLine).getTime() < new Date().getTime();
+    //-------------------------------------------------------------------------//
+    const registerToRace = async ()=>{
+        if (!user) {
+            setError("AUTHENTICATION_REQUIRED: YOU MUST BE LOGGED IN TO REGISTRATION.");
+            setIsConfirmModalOpen(true);
+            return;
+        }
+
+        if (!race) return;
+        try{
+            setIsRegistering(true);
+            setError(null);
+            await registrationService.createRegistration(user.id,race.id);
+            setIsConfirmModalOpen(false);
+            window.location.href = "/registrations";
+        }catch (e){
+            console.error(e);
+            setError(parseApiError(e));
+        }
+    }
     return (
         <div className="relative min-h-screen bg-dark text-light overflow-x-hidden selection:bg-accent selection:text-dark">
             <div
@@ -140,13 +179,14 @@ export function RaceDetailsPage() {
                                 </div>
                             </div>
                             <button
-                                disabled={isClosed}
+                                disabled={isClosed || isRegistering}
+                                onClick={() => setIsConfirmModalOpen(true)}
                                 className={`w-full group relative px-8 py-5 font-black uppercase tracking-tighter transition-all text-center text-sm italic
                                 ${isClosed
                                     ? "bg-white/10 text-white/30 cursor-not-allowed border border-white/5"
                                     : "bg-accent text-dark hover:-translate-y-1 hover:shadow-[0_8px_0_0_rgba(166,124,82,1)] active:translate-y-0 active:shadow-none cursor-pointer"}
                                 `}>
-                                {isClosed ? "Registration Closed" : "Initialize Registration"}
+                                {isRegistering ? "SYCHRONIZING..." : isClosed ? "Registration Closed" : "Initialize Registration"}
                             </button>
 
                             <div className="mt-8 pt-8 border-t border-white/5 flex flex-col gap-2 opacity-20">
@@ -157,6 +197,71 @@ export function RaceDetailsPage() {
 
                 </div>
             </div>
+            <div className="mt-12 mb-20 border-t border-white/5 pt-8 relative z-30 max-w-5xl mx-auto w-full">
+                <div className="flex flex-col gap-2 mb-8 px-4">
+                    <h2 className="text-2xl md:text-3xl font-black italic uppercase tracking-tight text-white leading-none">
+                        Obstacle <span className="text-accent">List</span>
+                    </h2>
+                    <p className="text-[11px] tracking-[0.5em] text-white/30 uppercase italic font-black">
+                        Sector_Recon // {race.obstacles?.length || 0} Identified_Obstacles
+                    </p>
+                </div>
+
+                {race.obstacles && race.obstacles.length > 0 ? (
+                    <div className="overflow-hidden bg-white/2 border border-white/5 shadow-2xl backdrop-blur-sm rounded-sm mx-4">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                            <tr className="border-b border-white/10 bg-white/5 text-[10px] uppercase tracking-widest text-accent font-black">
+                                <th className="py-4 px-6 italic">Obstacle name</th>
+                                <th className="py-4 px-6 italic font-black">Description</th>
+                                <th className="py-4 px-6 italic font-black text-center">Difficulty</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5 italic font-black">
+                            {race.obstacles.map((obstacle) => (
+                                <tr key={obstacle.id} className="group hover:bg-white/4 transition-all">
+                                    <td className="py-5 px-6">
+                                        <span className="text-[9px] font-mono text-white/10 mb-1 block uppercase tracking-tighter not-italic font-bold">#0{obstacle.id}</span>
+                                        <p className="text-lg uppercase text-white group-hover:text-accent transition-colors tracking-tighter">
+                                            {obstacle.name}
+                                        </p>
+                                    </td>
+                                    <td className="py-5 px-6">
+                                        <p className="text-xs text-white/50 max-w-sm not-italic font-bold leading-relaxed lowercase first-letter:uppercase">
+                                            {obstacle.description}
+                                        </p>
+                                    </td>
+                                    <td className="py-5 px-6 text-center">
+                                        <div className={`inline-block px-4 py-1 text-[9px] tracking-widest border font-black ${
+                                            obstacle.difficulty === 2 ? 'border-red-500/40 text-red-500 bg-red-500/5' :
+                                                obstacle.difficulty === 1 ? 'border-orange-500/40 text-orange-500 bg-orange-500/5' :
+                                                    'border-green-500/40 text-green-500 bg-green-500/5'
+                                        }`}>
+                                            {Difficulty[obstacle.difficulty]}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <div className="py-12 text-center border border-dashed border-white/5 bg-white/1 mx-4">
+                        <p className="text-white/10 text-[9px] tracking-[0.5em] font-black uppercase italic">
+                            NO_OBSTACLES_DETECTED
+                        </p>
+                    </div>
+                )}
+            </div>
+            <ConfirmModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                onConfirm={registerToRace}
+                title="CONFIRM REGISTRATION"
+                message={`ARE YOU SURE YOU WANT TO REGISTER FOR ${race.name.toUpperCase()}? THIS ACTION WILL ASSIGN YOU A TACTICAL BIB NUMBER.`}
+                error={error}
+                variant="success"
+            />
         </div>
     );
 }

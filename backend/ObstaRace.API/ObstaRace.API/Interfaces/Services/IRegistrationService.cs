@@ -11,6 +11,6 @@ public interface IRegistrationService
     //CRUD
     Task<RegistrationDto> CreateRegistration(int raceId, int userId);
     Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id);
-    Task<bool> DeleteRegistration(int registrationId);
+    Task<bool> DeleteRegistration(int registrationId,int currentUserId);
     
 }

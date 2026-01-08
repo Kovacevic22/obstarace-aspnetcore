@@ -92,7 +92,7 @@ public class RegistrationService : IRegistrationService
         return _mapper.Map<RegistrationDto>(existingRegistration);
     }
 
-    public async Task<bool> DeleteRegistration(int registrationId)
+    public async Task<bool> DeleteRegistration(int registrationId, int currentUserId)
     {
         _logger.LogInformation("Deleting registration {RegistrationId}", registrationId);
         var registration = await _registrationRepository.GetRegistration(registrationId);
@@ -100,6 +100,10 @@ public class RegistrationService : IRegistrationService
         {
             _logger.LogWarning("Registration with id {RegistrationId} not found", registrationId);
             throw new ArgumentException("Registration not found");
+        }
+        if (registration.UserId != currentUserId)
+        {
+            throw new UnauthorizedAccessException("You can only delete your own registrations.");
         }
         if (registration.Status != RegistrationStatus.Pending) 
         {

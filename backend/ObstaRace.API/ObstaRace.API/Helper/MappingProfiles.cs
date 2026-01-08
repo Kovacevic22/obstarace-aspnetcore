@@ -11,7 +11,7 @@ public class MappingProfiles: Profile
         CreateMap<User,UserDto>();
         CreateMap<UserDto,User>();
         
-        CreateMap<Race,RaceDto>();
+        CreateMap<Race,RaceDto>().ForMember(dest => dest.Obstacles, opt => opt.MapFrom(src => src.RaceObstacles.Select(ro => ro.Obstacle))).ForMember(dest => dest.ObstacleIds, opt => opt.MapFrom(src => src.RaceObstacles.Select(ro => ro.ObstacleId)));;
         CreateMap<RaceDto,Race>();
         CreateMap<CreateRaceDto, Race>();  
         CreateMap<UpdateRaceDto, Race>().ForMember(o => o.RaceObstacles, opt => opt.Ignore());;

@@ -11,5 +11,11 @@ export const registrationService = {
     },
     deleteRegistration: async (registrationId: number)  => {
         await api.delete(`api/registrations/${registrationId}`);
+    },
+    createRegistration: async (userId:number, raceId:number)  => {
+         await api.post<RegistrationDto>("api/registrations", {
+            raceId,
+            userId
+        });
     }
 }

@@ -84,7 +84,7 @@ public class RegistrationController : ControllerBase
         }
     }
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Organizer")]
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -109,7 +109,7 @@ public class RegistrationController : ControllerBase
         }
     }
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -117,8 +117,11 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Deleting registration with id {RegistrationId}", id);
-            await _registrationService.DeleteRegistration(id);
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if(userIdClaim == null)return Unauthorized(new {message = "You are not authorized to delete this registration"});
+            int currentUserId = int.Parse(userIdClaim.Value);
+            _logger.LogInformation("User {UserId} attempting to delete registration {RegistrationId}", currentUserId, id);
+            await _registrationService.DeleteRegistration(id,currentUserId);
             return NoContent();
         }
         catch (ArgumentException ex)

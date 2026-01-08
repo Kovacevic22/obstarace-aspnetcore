@@ -402,6 +402,7 @@ export function CreateRace({ isOpen, onClose }: { isOpen: boolean, onClose: () =
                 error={error}
                 title="WARNING"
                 message="YOU WILL PERMANENTLY DELETE THIS OBSTACLE FROM THE SYSTEM ARCHIVE. THIS ACTION CANNOT BE REVERTED."
+                variant={"danger"}
             />
         </div>
     );

@@ -37,13 +37,16 @@ public class RaceRepository : IRaceRepository
     {
         return await _context.Races
             .Include(r => r.RaceObstacles)
+            .ThenInclude(ro => ro.Obstacle)
             .Include(r => r.Registrations)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 
     public async Task<Race?> GetRaceBySlug(string slug)
     {
-        return await _context.Races.FirstOrDefaultAsync(r => r.Slug == slug);
+        return await _context.Races
+            .Include(r=>r.RaceObstacles)
+            .ThenInclude(ro => ro.Obstacle).FirstOrDefaultAsync(r => r.Slug == slug);
     }
 
     public async Task<RaceStatsDto> GetRaceStats()

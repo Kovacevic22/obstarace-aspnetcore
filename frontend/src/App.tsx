@@ -15,6 +15,7 @@ import type {UserDto} from "./Models/users.type.ts";
 import RaceDetailsPage from "./pages/RaceDetailsPage.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import MyRegistrationsPage from "./pages/user/MyRegistrationsPage.tsx";
+import ScrollToTop from "./components/common/ScrollToTop.tsx";
 function App() {
     const [user, setUser] = useState<UserDto|null>(null);
     const [loading, setLoading] = useState(true);
@@ -64,6 +65,7 @@ function App() {
         );
   return (
     <Router>
+        <ScrollToTop/>
         {renderNavbar()}
       <Routes>
           <Route
@@ -73,7 +75,7 @@ function App() {
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/register" element={<RegisterPage/>} />
         <Route path="/races" element={<RacesPage/>}/>
-          <Route path="/races/:slug" element={<RaceDetailsPage />} />
+          <Route path="/races/:slug" element={<RaceDetailsPage user={user} />} />
           {(user as any)?.role === 1 && (
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
           )}

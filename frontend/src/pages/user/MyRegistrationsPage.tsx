@@ -11,7 +11,7 @@ interface Props {
 
 const MyRegistrations = ({ user }: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>("");
+    const [error, setError] = useState<string | null>(null);
     const [registrations, setRegistrations] = useState<RegistrationDto[]>([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
     const [itemToDelete, setItemToDelete] = useState<number | null>(null);
@@ -140,7 +140,7 @@ const MyRegistrations = ({ user }: Props) => {
                                             onClick={() => { setItemToDelete(reg.id); setIsDeleteModalOpen(true); }}
                                             className="text-[11px] text-white/20 hover:text-red-500 transition-all cursor-pointer font-black border-b border-transparent hover:border-red-500 pb-1 uppercase italic tracking-tighter"
                                         >
-                                            [ DELETE_REG ]
+                                            [ CANCEL ]
                                         </button>
                                     ) : (
                                         <span className="text-[10px] text-white/5 italic uppercase tracking-widest select-none">[ RECORD_LOCKED ]</span>

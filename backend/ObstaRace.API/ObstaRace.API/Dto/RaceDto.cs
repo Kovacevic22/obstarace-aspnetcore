@@ -47,7 +47,8 @@ public class RaceDto
     [Required]
     [Range(1, 10000)]
     public int MaxParticipants { get; set; }
-    public List<int> ObstacleIds { get; set; }
+    public List<ObstacleDto> Obstacles { get; set; } = new List<ObstacleDto>();
+    public List<int> ObstacleIds { get; set; } = new List<int>();
 }
 
 public class CreateRaceDto
@@ -116,6 +117,7 @@ public class UpdateRaceDto
     [Range(1, 10000, ErrorMessage = "Max participants must be between 1 and 1000.")]
     public int MaxParticipants { get; set; }
     public List<int> ObstacleIds { get; set; } = new List<int>();
+    
 }
 
 public class RaceStatsDto

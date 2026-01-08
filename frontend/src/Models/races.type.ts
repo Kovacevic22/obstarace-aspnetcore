@@ -1,3 +1,5 @@
+import type {ObstacleDto} from "./obstacles.type.ts";
+
 export enum Difficulty {
     Easy = 0,
     Medium = 1,
@@ -25,6 +27,7 @@ export interface RaceDto {
     elevationGain: number;
     maxParticipants: number;
     obstacleIds: number[];
+    obstacles: ObstacleDto[];
 }
 export interface RaceStatsDto {
     totalRaces: number;

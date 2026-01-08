@@ -383,6 +383,7 @@ export function EditRace({ isOpen, onClose, id }: { isOpen: boolean, onClose: ()
                 title="TERMINATE ARCHIVE"
                 message="ARE YOU SURE? THIS WILL PERMANENTLY DELETE THIS RACE AND ALL ASSOCIATED REGISTRATIONS. THIS ACTION CANNOT BE REVERTED."
                 error={error}
+                variant={"danger"}
             />
 
             <ConfirmModal
@@ -392,6 +393,7 @@ export function EditRace({ isOpen, onClose, id }: { isOpen: boolean, onClose: ()
                 title="DELETE OBSTACLE"
                 message="YOU ARE ABOUT TO PERMANENTLY DELETE THIS OBSTACLE FROM THE SYSTEM ARCHIVE. IT WILL BE REMOVED FROM ALL RACES."
                 error={error}
+                variant={"danger"}
             />
         </div>
     );
