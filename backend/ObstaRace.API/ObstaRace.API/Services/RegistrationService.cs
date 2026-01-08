@@ -22,9 +22,9 @@ public class RegistrationService : IRegistrationService
         _userRepository = userRepository;
         _raceRepository = raceRepository;
     }
-    public async Task<ICollection<RegistrationDto>> GetAllRegistrations()
+    public async Task<ICollection<RegistrationDto>> GetAllRegistrations(int? userId)
     {
-        var registrations = await _registrationRepository.GetAllRegistrations();
+        var registrations = await _registrationRepository.GetAllRegistrations(userId);
         return _mapper.Map<List<RegistrationDto>>(registrations);
     }
     public async Task<RegistrationDto?> GetRegistration(int id)

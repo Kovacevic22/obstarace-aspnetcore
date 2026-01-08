@@ -21,12 +21,12 @@ public class RegistrationController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RegistrationDto>))]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetAllRegistrations()
+    public async Task<IActionResult> GetAllRegistrations([FromQuery]int? userId)
     {
         try
         {
             _logger.LogInformation("Getting all registrations");
-            var registrations = await _registrationService.GetAllRegistrations();
+            var registrations = await _registrationService.GetAllRegistrations(userId);
             return Ok(registrations);
         }
         catch (Exception ex)

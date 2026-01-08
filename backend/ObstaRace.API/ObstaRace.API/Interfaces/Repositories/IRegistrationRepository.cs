@@ -4,7 +4,7 @@ namespace ObstaRace.API.Interfaces;
 
 public interface IRegistrationRepository
 {
-    Task<ICollection<Registration>> GetAllRegistrations();
+    Task<ICollection<Registration>> GetAllRegistrations(int? userId);
     Task<Registration?> GetRegistration(int id);
     Task<bool> RegistrationExists(int id);
     

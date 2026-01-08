@@ -13,9 +13,10 @@ public class RegistrationRepository : IRegistrationRepository
         _context = context;
     }
 
-    public async Task<ICollection<Registration>> GetAllRegistrations()
+    public async Task<ICollection<Registration>> GetAllRegistrations(int? userId)
     {
-        return await _context.Registrations.OrderBy(r => r.Id).ToListAsync();
+        if(userId != null)return await _context.Registrations.Include(r=>r.Race).Where(r => r.UserId == userId).OrderBy(r => r.Id).ToListAsync();
+        return await _context.Registrations.Include(r => r.Race).OrderBy(r => r.Id).ToListAsync();
     }
 
     public async Task<Registration?> GetRegistration(int id)

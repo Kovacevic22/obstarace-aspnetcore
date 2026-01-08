@@ -1,0 +1,19 @@
+export enum RegistrationStatus {
+    Pending = 0,
+    Confirmed = 1,
+    Cancelled = 2
+}
+
+export interface RaceDto {
+    name: string;
+    location?: string;
+}
+
+export interface RegistrationDto {
+    id: number;
+    userId: number;
+    raceId: number;
+    bibNumber: string;
+    status: RegistrationStatus;
+    race: RaceDto;
+}

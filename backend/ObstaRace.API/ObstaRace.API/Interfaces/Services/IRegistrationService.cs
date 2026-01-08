@@ -5,7 +5,7 @@ namespace ObstaRace.API.Interfaces.Services;
 
 public interface IRegistrationService
 {
-    Task<ICollection<RegistrationDto>> GetAllRegistrations();
+    Task<ICollection<RegistrationDto>> GetAllRegistrations(int? userId);
     Task<RegistrationDto?> GetRegistration(int id);
     
     //CRUD
