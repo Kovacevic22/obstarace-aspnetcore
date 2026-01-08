@@ -3,6 +3,8 @@ import {type RaceDto, type RaceStatsDto, Status} from "../../Models/races.type.t
 import raceService from "../../services/raceService.ts";
 import userService from "../../services/userService.ts";
 import {Role, type UserDto, type UserStatsDto} from "../../Models/users.type.ts";
+import CreateRace from "../../components/races/CreateRace.tsx";
+import EditRace from "../../components/races/EditRace.tsx";
 
 export function AdminDashboard() {
     const [races, setRaces] = useState<RaceDto[]>([]);
@@ -11,8 +13,13 @@ export function AdminDashboard() {
     const [userStats, setUserStats] = useState<UserStatsDto>();
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'races' | 'users'>('races');
-
-
+    const [isCreateRaceOpen, setIsCreateRaceOpen] = useState<boolean>(false);
+    const [isEditRaceOpen, setIsEditRaceOpen] = useState<boolean>(false);
+    const [selectedRaceId, setSelectedRaceId] = useState<number | null>(null);
+    const openEditModal = (id: number) => {
+        setSelectedRaceId(id);
+        setIsEditRaceOpen(true);
+    };
     useEffect(() => {
        const fetchDashboardData = async () =>{
            try{
@@ -52,7 +59,7 @@ export function AdminDashboard() {
                     </div>
                 </div>
                 {activeTab === 'races' && (
-                    <button className="w-full md:w-auto bg-accent text-dark px-8 py-3 font-black uppercase italic text-xs hover:scale-105 transition-all shadow-[0_0_25px_rgba(166,124,82,0.4)] cursor-pointer active:scale-95">
+                    <button onClick={()=>setIsCreateRaceOpen(true)} className="w-full md:w-auto bg-accent text-dark px-8 py-3 font-black uppercase italic text-xs hover:scale-105 transition-all shadow-[0_0_25px_rgba(166,124,82,0.4)] cursor-pointer active:scale-95">
                         + Create New Race
                     </button>
                 )}
@@ -126,7 +133,9 @@ export function AdminDashboard() {
                                     <span className="text-[10px] md:text-[12px] bg-accent/10 text-white px-3 py-1 border border-accent/20">{Status[race.status]}</span>
                                 </td>
                                 <td className="p-4 md:p-6 text-right">
-                                    <button className="text-accent text-[10px] tracking-[0.2em] hover:brightness-125 cursor-pointer">[ EDIT ]</button>
+                                    <button
+                                        onClick={()=>openEditModal(race.id)}
+                                        className="text-accent text-[10px] tracking-[0.2em] hover:brightness-125 cursor-pointer">[ EDIT ]</button>
                                 </td>
                             </tr>
                         ))
@@ -160,6 +169,18 @@ export function AdminDashboard() {
                     </tbody>
                 </table>
             </div>
+            <CreateRace
+                isOpen={isCreateRaceOpen}
+                onClose={() => setIsCreateRaceOpen(false)}
+            />
+            <EditRace
+                isOpen={isEditRaceOpen}
+                onClose={() => {
+                    setIsEditRaceOpen(false);
+                    setSelectedRaceId(null);
+                }}
+                id={selectedRaceId || -1}
+            />
         </div>
     );
 }

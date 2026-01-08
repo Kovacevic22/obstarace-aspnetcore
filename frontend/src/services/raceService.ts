@@ -1,4 +1,4 @@
-import type {RaceDto, RaceStatsDto} from "../Models/races.type.ts";
+import type {CreateRaceDto, RaceDto, RaceStatsDto, UpdateRaceDto} from "../Models/races.type.ts";
 import api from "./api.ts";
 
 export const raceService = {
@@ -20,5 +20,20 @@ export const raceService = {
         const response = await api.get("api/races/stats");
         return response.data;
     },
+    createRace: async(raceData:CreateRaceDto): Promise<RaceDto> => {
+        const response = await api.post("api/races", raceData);
+        return response.data;
+    },
+    getRaceById: async (id:number): Promise<RaceDto> => {
+      const response = await api.get(`api/races/${id}`);
+      return response.data;
+    },
+    deleteRace: async(id:number) => {
+        await api.delete(`api/races/${id}`);
+    },
+    updateRace: async(id:number, data:UpdateRaceDto):Promise<RaceDto> => {
+        const response = await api.put(`api/races/${id}`, data);
+        return response.data;
+    }
 }
 export default raceService;

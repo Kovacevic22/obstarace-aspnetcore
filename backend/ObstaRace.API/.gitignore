@@ -11,6 +11,7 @@ appsettings.Development.json
 *.userosscache
 *.sln.docstates
 *.env
+ObstaRace.API/ObstaRace.db
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

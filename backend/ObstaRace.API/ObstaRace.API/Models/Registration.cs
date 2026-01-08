@@ -1,17 +1,10 @@
 ﻿namespace ObstaRace.API.Models;
-public enum Category
+public enum RegistrationStatus
 {
-    Amateur = 0,
-    Advanced = 1,
-    Elite = 2
-}
-
-public enum Status
-{
-    UpComing =0,
-    OnGoing = 1,
-    Completed = 2,
-    Cancelled = 3,
+    Pending = 0,    
+    Confirmed = 1,  
+    Cancelled = 2,  
+    Finished = 3    
 }
 public class Registration
 {
@@ -22,6 +15,5 @@ public class Registration
     public Race Race { get; set; }
     public string BibNumber { get; set; }
     public int Count { get; set; } = 0;
-    public Category  Category { get; set; }
-    public Status Status { get; set; }
+    public RegistrationStatus Status { get; set; }
 }

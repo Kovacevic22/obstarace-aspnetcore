@@ -20,8 +20,13 @@ public class ObstacleDto
 
 public class CreateObstacleDto
 {
+    [Required]
+    [MaxLength(100, ErrorMessage = "Name is too long")]
     public string Name { get; set; }
+    [Required]
+    [MaxLength(500, ErrorMessage =  "Description is too long")]
     public string Description { get; set; }
+    [Required]
     public Difficulty Difficulty { get; set; }
 }
 

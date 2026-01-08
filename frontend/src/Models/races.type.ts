@@ -24,9 +24,41 @@ export interface RaceDto {
     imageUrl?: string;
     elevationGain: number;
     maxParticipants: number;
+    obstacleIds: number[];
 }
 export interface RaceStatsDto {
     totalRaces: number;
     totalKilometers: number;
     archivedCount: number;
+}
+
+export interface CreateRaceDto {
+    name: string;
+    slug: string;
+    date: string;
+    description: string;
+    location: string;
+    distance: number;
+    difficulty: number;
+    registrationDeadLine: string;
+    status: number;
+    imageUrl: string;
+    elevationGain: number;
+    maxParticipants: number;
+    obstacleIds: number[];
+}
+export interface UpdateRaceDto {
+    name: string;
+    slug: string;
+    date: string;
+    description: string;
+    location: string;
+    distance: number;
+    difficulty: number;
+    registrationDeadLine: string;
+    status: number;
+    imageUrl: string;
+    elevationGain: number;
+    maxParticipants: number;
+    obstacleIds: number[];
 }

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
-using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Controllers;
 
@@ -71,7 +70,7 @@ public class RegistrationController : ControllerBase
             if(!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating registration for race {RaceId} and user {UserId}", registrationDto.RaceId, registrationDto.UserId);
-            var registration = await _registrationService.CreateRegistration(registrationDto.RaceId, registrationDto.UserId, registrationDto.Category);
+            var registration = await _registrationService.CreateRegistration(registrationDto.RaceId, registrationDto.UserId);
             return CreatedAtAction(nameof(GetRegistration), new {id = registration.Id}, registration);
         }
         catch (ArgumentException ex)

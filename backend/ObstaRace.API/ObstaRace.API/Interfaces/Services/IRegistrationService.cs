@@ -9,7 +9,7 @@ public interface IRegistrationService
     Task<RegistrationDto?> GetRegistration(int id);
     
     //CRUD
-    Task<RegistrationDto> CreateRegistration(int raceId, int userId, Category category);
+    Task<RegistrationDto> CreateRegistration(int raceId, int userId);
     Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id);
     Task<bool> DeleteRegistration(int registrationId);
     

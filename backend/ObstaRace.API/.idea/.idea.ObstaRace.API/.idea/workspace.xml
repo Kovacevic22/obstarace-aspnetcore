@@ -9,37 +9,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c91d4d-6fd3-4d3d-9bdb-639ae92b4f1e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/dataSources/43c80061-a471-4903-83e7-1245972f8f4d.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/common/ConfirmModal.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/races/CreateRace.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/components/races/EditRace.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/src/services/obstacleService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/data_source_mapping.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObstaRace.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/RaceController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/ObstacleController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Controllers/RegistrationController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Data/DataContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Dto/ObstacleDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Dto/ObstacleDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObstaRace.API/Dto/RaceDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Dto/RaceDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Dto/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Dto/UserDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IRaceRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IRaceRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IUserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IRaceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IRaceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IUserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IUserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Dto/RegistrationDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Dto/RegistrationDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Helper/MappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Helper/MappingProfiles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IObstacleRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Repositories/IObstacleRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IObstacleService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IObstacleService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IRegistrationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Interfaces/Services/IRegistrationService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObstaRace.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Models/Obstacle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Models/Obstacle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Models/Race.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Models/Race.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Models/Registration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Models/Registration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.db" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.db-shm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/ObstaRace.db-wal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/ObstacleRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/ObstacleRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/RaceRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/RaceRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Repository/UserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Repository/UserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/ObstacleService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/ObstacleService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/RaceService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/RaceService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/UserService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/Models/auth.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/Models/auth.type.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObstaRace.API/Services/RegistrationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObstaRace.API/Services/RegistrationService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/Models/races.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/Models/races.type.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/home/HeroSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/home/HeroSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/navbar/AdminNavbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/navbar/AdminNavbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/races/RaceCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/races/RaceCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/RaceDetailsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/RaceDetailsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/context/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/Models/obstacles.type.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/admin/AdminDashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/admin/AdminDashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageObstaclesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/Models/users.type.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageRacesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/userService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/admin/ManageUsersPage.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/authService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/services/raceService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/services/raceService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -182,6 +181,9 @@
       <workItem from="1767468862402" duration="3688000" />
       <workItem from="1767473362747" duration="4294000" />
       <workItem from="1767639626472" duration="10592000" />
+      <workItem from="1767654262451" duration="648000" />
+      <workItem from="1767717393495" duration="28663000" />
+      <workItem from="1767892776814" duration="9868000" />
     </task>
     <task id="LOCAL-00001" summary="Models minor fixes">
       <option name="closed" value="true" />

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ObstaRace.API.Data;
 
@@ -10,9 +11,11 @@ using ObstaRace.API.Data;
 namespace ObstaRace.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260106193306_AddedSomeAttributes")]
+    partial class AddedSomeAttributes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
@@ -28,7 +31,6 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Difficulty")
@@ -36,7 +38,6 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -57,7 +58,6 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Difficulty")
@@ -75,7 +75,6 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaxParticipants")
@@ -83,7 +82,6 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("RegistrationDeadLine")
@@ -91,16 +89,12 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Slug")
-                        .IsUnique();
 
                     b.ToTable("Races");
                 });
@@ -129,6 +123,9 @@ namespace ObstaRace.API.Migrations
                     b.Property<string>("BibNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Count")
                         .HasColumnType("INTEGER");

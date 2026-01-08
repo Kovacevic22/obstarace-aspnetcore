@@ -12,9 +12,10 @@ public class ObstacleRepository : IObstacleRepository
     {
         _context = context;
     }
-    public async Task<ICollection<Obstacle>> GetAllObstacles()
+    public async Task<ICollection<Obstacle>> GetAllObstacles(string? search)
     {
-        return await _context.Obstacles.OrderBy(o => o.Id).ToListAsync();
+        if (string.IsNullOrEmpty(search)) return await _context.Obstacles.OrderBy(o => o.Id).ToListAsync();
+        return await _context.Obstacles.Where(o => o.Name.ToLower().Contains(search.ToLower())).OrderBy(o=>o.Id).ToListAsync();
     }
 
     public async Task<Obstacle?> GetObstacle(int id)
@@ -24,6 +25,12 @@ public class ObstacleRepository : IObstacleRepository
     public async Task<bool> ObstacleExists(int id)
     {
         return  await _context.Obstacles.AnyAsync(o => o.Id == id);
+    }
+
+    public async Task<ICollection<Obstacle>> GetObstaclesFromCreator(int userId, string? search)
+    {
+        if(string.IsNullOrEmpty(search))return await _context.Obstacles.Where(o => o.CreatedById==userId).OrderBy(o => o.Id).ToListAsync();
+        return await _context.Obstacles.Where(o => o.CreatedById == userId && o.Name.ToLower().Contains(search.ToLower())).OrderBy(o => o.Id).ToListAsync();
     }
     //CRUD
     public async Task<bool> CreateObstacle(Obstacle obstacle)

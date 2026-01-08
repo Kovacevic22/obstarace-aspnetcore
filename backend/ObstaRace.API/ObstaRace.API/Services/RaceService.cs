@@ -1,9 +1,9 @@
+using System.Text.RegularExpressions;
 using AutoMapper;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces;
 using ObstaRace.API.Interfaces.Services;
 using ObstaRace.API.Models;
-using ObstaRace.API.Repository;
 
 namespace ObstaRace.API.Services;
 
@@ -26,7 +26,13 @@ public class RaceService : IRaceService
     public async Task<RaceDto?> GetRace(int id)
     {
         var race = await _raceRepository.GetRace(id);
-        return race==null?null:_mapper.Map<RaceDto>(race);
+        if (race == null) return null;
+        var raceDto = _mapper.Map<RaceDto>(race);
+        raceDto.ObstacleIds = race.RaceObstacles
+            .Select(ro => ro.ObstacleId)
+            .ToList();
+
+        return raceDto;
     }
 
     public async Task<RaceDto?> GetRaceBySlug(string slug)
@@ -37,18 +43,42 @@ public class RaceService : IRaceService
 
     public async Task<RaceDto> CreateRace(CreateRaceDto raceDto)
     {
+        var slug = raceDto.Slug.ToLower().Trim();
+        slug = Regex.Replace(slug,@"[^a-z0-9]+", "-");
+        slug = slug.Trim('-');
+        raceDto.Slug = slug;
+        if (await _raceRepository.GetRaceBySlug(raceDto.Slug) != null)
+        {
+            _logger.LogError("Cannot create race with that slug");
+            throw new ArgumentException("Race with that slug already exist");
+        }
         if (raceDto.Date.Date < DateTime.UtcNow.Date)
         {
             _logger.LogWarning("Cannot create race in the past");
             throw new ArgumentException("Cannot create race in the past");
+        }
+
+        if (raceDto.Date.Date > raceDto.RegistrationDeadLine.Date)
+        {
+            _logger.LogWarning("Cannot create race! Deadline must be rather then date!");
+            throw new ArgumentException("Cannot create race! Deadline must be rather then date!");
         }
         if (await _raceRepository.RaceNameExists(raceDto.Name))
         {
             _logger.LogWarning("Race with the same name already exists");
             throw new ArgumentException("Race with the same name already exists");
         }
-
+        
         var race = _mapper.Map<Race>(raceDto);
+
+        if (raceDto.ObstacleIds.Any())
+        {
+            race.RaceObstacles = raceDto.ObstacleIds.Select(id => new RaceObstacle()
+            {
+                Race = race,
+                ObstacleId = id,
+            }).ToList();
+        }
         if (!await _raceRepository.CreateRace(race))
         {
             _logger.LogWarning("Failed to create race in database");
@@ -77,18 +107,29 @@ public class RaceService : IRaceService
             _logger.LogWarning("Race date cannot be in the past");
             throw new ArgumentException("Race date cannot be in the past");
         }
-        existingRace.Name = raceDto.Name;
-        existingRace.Slug = raceDto.Slug;
-        existingRace.Date = raceDto.Date;
-        existingRace.Description = raceDto.Description;
-        existingRace.Location = raceDto.Location;
-        existingRace.Distance = raceDto.Distance;
-        existingRace.Difficulty = raceDto.Difficulty;
-        existingRace.RegistrationDeadLine = raceDto.RegistrationDeadLine;
-        existingRace.Status = raceDto.Status;
-        existingRace.ImageUrl = raceDto.ImageUrl;
-        existingRace.ElevationGain = raceDto.ElevationGain;
-        existingRace.MaxParticipants = raceDto.MaxParticipants;
+        if (raceDto.RegistrationDeadLine.Date > raceDto.Date.Date)
+        {
+            _logger.LogWarning("Registration deadline cannot be after the race date");
+            throw new ArgumentException("Registration deadline cannot be after the race date");
+        }
+        var raceWithSameSlug = await _raceRepository.GetRaceBySlug(raceDto.Slug);
+        if (raceWithSameSlug != null && raceWithSameSlug.Id != id)
+        {
+            throw new ArgumentException("Race with this URL identifier already exists!");
+        }
+        var currentObstacleIds = existingRace.RaceObstacles
+            .Select(ro => ro.ObstacleId)
+            .ToList();
+        var toRemove = existingRace.RaceObstacles
+            .Where(ro => !raceDto.ObstacleIds.Contains(ro.ObstacleId))
+            .ToList();
+        var toAdd = raceDto.ObstacleIds
+            .Where(idC => !currentObstacleIds.Contains(idC))
+            .Select(idN => new RaceObstacle { RaceId = existingRace.Id, ObstacleId = idN })
+            .ToList();
+        foreach (var ro in toRemove) existingRace.RaceObstacles.Remove(ro);
+        foreach (var ro in toAdd) existingRace.RaceObstacles.Add(ro);
+        _mapper.Map(raceDto, existingRace);
         if (!await _raceRepository.UpdateRace(existingRace))
         {
             _logger.LogError("Failed to update race in database");
@@ -100,23 +141,17 @@ public class RaceService : IRaceService
     public async Task<bool> DeleteRace(int raceId)
     {
         _logger.LogInformation("Deleting race {raceId}", raceId);
-        if (!await _raceRepository.RaceExists(raceId))
+        var race = await _raceRepository.GetRace(raceId);
+        if (race == null) return false;
+        if (race.RaceObstacles.Any())
         {
-            _logger.LogWarning("Race with id {raceId} does not exist", raceId);
-            throw new ArgumentException($"Race with id {raceId} does not exist");
+            race.RaceObstacles.Clear();
         }
-
-        if (await _raceRepository.RaceHasObstacles(raceId))
+        if (race.Registrations.Any())
         {
-            _logger.LogWarning("Race has obstacles");
-            throw new ArgumentException("Race has obstacles");
+            race.Registrations.Clear();
         }
-
-        if (await _raceRepository.RaceHasRegistrations(raceId))
-        {
-            _logger.LogWarning("Race has registrations");
-            throw new ArgumentException("Race has registrations");
-        }
+        await _raceRepository.UpdateRace(race);
         return await _raceRepository.DeleteRace(raceId);
     }
 }

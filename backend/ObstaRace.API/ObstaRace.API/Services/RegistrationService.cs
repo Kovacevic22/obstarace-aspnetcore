@@ -33,7 +33,7 @@ public class RegistrationService : IRegistrationService
         return registration==null?null:_mapper.Map<RegistrationDto>(registration);
     }
 
-    public async Task<RegistrationDto> CreateRegistration(int raceId, int userId, Category category)
+    public async Task<RegistrationDto> CreateRegistration(int raceId, int userId)
     {
         if (raceId <= 0 || userId <= 0)
             throw new ArgumentException("Invalid raceId or userId");
@@ -73,8 +73,7 @@ public class RegistrationService : IRegistrationService
             UserId = userId,
             RaceId = raceId,
             BibNumber = bibNumber.ToString(),
-            Category = category,
-            Status = Status.UpComing
+            Status = RegistrationStatus.Pending
         };
         await _registrationRepository.CreateRegistration(registration);
         return _mapper.Map<RegistrationDto>(registration);
@@ -88,7 +87,6 @@ public class RegistrationService : IRegistrationService
             _logger.LogWarning("Registration with id {RegistrationId} not found", id);
             throw new ArgumentException("Registration not found");
         }
-        existingRegistration.Category= registration.Category;
         existingRegistration.Status = registration.Status;
         await _registrationRepository.UpdateRegistration(existingRegistration);
         return _mapper.Map<RegistrationDto>(existingRegistration);
@@ -103,13 +101,12 @@ public class RegistrationService : IRegistrationService
             _logger.LogWarning("Registration with id {RegistrationId} not found", registrationId);
             throw new ArgumentException("Registration not found");
         }
-
-        if (registration.Status != Status.UpComing)
+        if (registration.Status != RegistrationStatus.Pending) 
         {
-            _logger.LogWarning("Registration with id {RegistrationId} cannot be deleted", registrationId);
-            throw new ArgumentException("Registration cannot be deleted");
+            _logger.LogWarning("Registration {RegistrationId} cannot be deleted because it is already confirmed/finished", registrationId);
+            throw new ArgumentException("Only pending registrations can be deleted.");
         }
-
+        
         return await _registrationRepository.DeleteRegistration(registrationId);
     }
     //ADDITIONAL METHODS

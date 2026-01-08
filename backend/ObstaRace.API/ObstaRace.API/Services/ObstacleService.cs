@@ -18,9 +18,17 @@ public class ObstacleService : IObstacleService
         _logger = logger;
     }
 
-    public async Task<ICollection<ObstacleDto>> GetAllObstacles()
+    public async Task<ICollection<ObstacleDto>> GetAllObstacles(int userId, Role role, string? search)
     {
-        var obstacles = await _obstacleRepository.GetAllObstacles();
+        ICollection<Obstacle> obstacles;
+        if (role == Role.Admin)
+        {
+             obstacles = await _obstacleRepository.GetAllObstacles(search);
+        }
+        else
+        {
+            obstacles = await _obstacleRepository.GetObstaclesFromCreator(userId,search);
+        }
         return _mapper.Map<List<ObstacleDto>>(obstacles);
     }
 
@@ -29,10 +37,11 @@ public class ObstacleService : IObstacleService
         var obstacle = await _obstacleRepository.GetObstacle(id);
         return obstacle==null?null:_mapper.Map<ObstacleDto>(obstacle);
     }
-    public async Task<ObstacleDto> CreateObstacle(CreateObstacleDto obstacleDto)
+    public async Task<ObstacleDto> CreateObstacle(CreateObstacleDto obstacleDto, int userId)
     {
         _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
         var obstacle = _mapper.Map<Obstacle>(obstacleDto);
+        obstacle.CreatedById = userId;
         if (!await _obstacleRepository.CreateObstacle(obstacle))
         {
             _logger.LogError("Failed to create obstacle in database");
@@ -61,9 +70,15 @@ public class ObstacleService : IObstacleService
         return _mapper.Map<ObstacleDto>(existingObstacle);
     }
 
-    public async Task<bool> DeleteObstacle(int obstacleId)
+    public async Task<bool> DeleteObstacle(int obstacleId, int userId, Role role)
     {
+        var obstacle = await _obstacleRepository.GetObstacle(obstacleId);
         _logger.LogInformation("Delete obstacle {obstacleId}",obstacleId);
+        if (role != Role.Admin && obstacle?.CreatedById != userId)
+        {
+            _logger.LogError("Unauthorized deleting obstacle");
+            throw new UnauthorizedAccessException("You can only delete your own obstacles.");
+        }
         if (await _obstacleRepository.ObstacleHasRaces(obstacleId))
         {
             _logger.LogInformation("Obstacle has race");

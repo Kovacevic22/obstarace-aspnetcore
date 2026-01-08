@@ -29,7 +29,8 @@ public class DataContext : DbContext
         
         modelBuilder.Entity<Race>().Property(r => r.Date).HasColumnType("date");
         modelBuilder.Entity<Race>().Property(r => r.RegistrationDeadLine).HasColumnType("date");
-    
+        modelBuilder.Entity<Race>().HasIndex(r => r.Slug).IsUnique();
+        
         modelBuilder.Entity<User>().Property(u => u.DateOfBirth).HasColumnType("date");
         
     }

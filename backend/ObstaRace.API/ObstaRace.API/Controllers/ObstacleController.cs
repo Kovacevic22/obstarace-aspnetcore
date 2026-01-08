@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
+using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Controllers;
 [Route("api/obstacles")]
@@ -17,14 +18,17 @@ public class ObstacleController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Organizer")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<ObstacleDto>))]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetAllObstacles()
+    public async Task<IActionResult> GetAllObstacle(string? search)
     {
         try
         {
-            _logger.LogInformation("Getting all obstacles");
-            var obstacles = await _obstacleService.GetAllObstacles();
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            Role userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            _logger.LogInformation("User {UserId} with role {Role} requesting obstacles", userId, userRole);
+            var obstacles = await _obstacleService.GetAllObstacles(userId,userRole,search);
             return Ok(obstacles);   
         }catch(Exception ex)
         {
@@ -56,7 +60,7 @@ public class ObstacleController : ControllerBase
         }
     }
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Organizer")]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -66,8 +70,9 @@ public class ObstacleController : ControllerBase
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
-            var obstacle = await _obstacleService.CreateObstacle(obstacleDto);
+            var obstacle = await _obstacleService.CreateObstacle(obstacleDto,userId);
             return CreatedAtAction(nameof(GetObstacle), new { obstacleId = obstacle.Id }, obstacle);
         }
         catch (ArgumentException ex)
@@ -106,7 +111,7 @@ public class ObstacleController : ControllerBase
         }
     }
     [HttpDelete("{obstacleId:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Organizer")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -114,8 +119,12 @@ public class ObstacleController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Deleting obstacle {idObstacle}", obstacleId);
-            var result = await _obstacleService.DeleteObstacle(obstacleId);
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userRole =
+                (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            _logger.LogInformation("User with id {userId} and role {userRole} deleting obstacle {idObstacle}", userId,
+                userRole, obstacleId);
+            var result = await _obstacleService.DeleteObstacle(obstacleId, userId, userRole);
             if (!result)
             {
                 _logger.LogWarning("Failed to delete obstacle {obstacleId}", obstacleId);
@@ -123,6 +132,10 @@ public class ObstacleController : ControllerBase
             }
 
             return NoContent();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return  Unauthorized(new { error = ex.Message });
         }
         catch (ArgumentException ex)
         {

@@ -35,7 +35,10 @@ public class RaceRepository : IRaceRepository
 
     public async Task<Race?> GetRace(int id)
     {
-        return await _context.Races.FindAsync(id);
+        return await _context.Races
+            .Include(r => r.RaceObstacles)
+            .Include(r => r.Registrations)
+            .FirstOrDefaultAsync(r => r.Id == id);
     }
 
     public async Task<Race?> GetRaceBySlug(string slug)

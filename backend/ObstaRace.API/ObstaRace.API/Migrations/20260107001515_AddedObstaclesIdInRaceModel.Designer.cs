@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ObstaRace.API.Data;
 
@@ -10,9 +11,11 @@ using ObstaRace.API.Data;
 namespace ObstaRace.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260107001515_AddedObstaclesIdInRaceModel")]
+    partial class AddedObstaclesIdInRaceModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
@@ -86,6 +89,10 @@ namespace ObstaRace.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.PrimitiveCollection<string>("ObstacleIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("RegistrationDeadLine")
                         .HasColumnType("date");
 
@@ -98,9 +105,6 @@ namespace ObstaRace.API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Slug")
-                        .IsUnique();
 
                     b.ToTable("Races");
                 });
