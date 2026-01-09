@@ -58,9 +58,7 @@ public class ObstacleService : IObstacleService
             _logger.LogWarning("Obstacle with id {id} does not exist", id);
             throw new ArgumentException($"Obstacle with id {id} does not exist");
         }
-        existingObstacle.Name = obstacle.Name;
-        existingObstacle.Description = obstacle.Description;
-        existingObstacle.Difficulty = obstacle.Difficulty;
+        _mapper.Map(obstacle, existingObstacle);
         if (!await _obstacleRepository.UpdateObstacle(existingObstacle))
         {
             _logger.LogError("Failed to update obstacle in database");

@@ -26,9 +26,11 @@ export function UserNavbar(){
                     <li><Link to={"/registrations"} className="hover:text-accent transition-all">My Registrations</Link></li>
                 </ul>
                 <div className="flex items-center gap-6">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-accent hover:text-white cursor-pointer transition-all">
-                        Profile
-                    </div>
+                    <Link to={"/profile"}>
+                        <div className="text-[10px] font-black uppercase tracking-widest text-accent hover:text-white cursor-pointer transition-all">
+                            Profile
+                        </div>
+                    </Link>
                     <div onClick={authService.logout} className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 cursor-pointer transition-all">
                         Logout
                     </div>

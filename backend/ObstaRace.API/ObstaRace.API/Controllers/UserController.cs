@@ -1,9 +1,7 @@
-﻿using AutoMapper;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
-using ObstaRace.API.Interfaces;
 using ObstaRace.API.Interfaces.Services;
-using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Controllers;
 [Route("api/users")]
@@ -75,6 +73,39 @@ public class UserController : ControllerBase
         {
             _logger.LogError(ex,"Error retrieving users stats");
             return StatusCode(500, "Error retrieving users stats");
+        }
+    }
+
+    [HttpPut("{userId:int}")]
+    [Authorize]
+    [ProducesResponseType(200, Type = typeof(UserDto))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto updateUserDto)
+    {
+        try
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized(new { error = "You are not authorized to update this user" });
+            int currentUserId = int.Parse(userIdClaim);
+            bool isAdmin = User.IsInRole("Admin");
+            if (currentUserId != userId && !isAdmin)
+            {
+                return Unauthorized(new {message = "You are not authorized to update this user"}); 
+            }
+
+            var result = await _userService.UpdateUser(updateUserDto, userId);
+            if(result==null)return NotFound(new { message = "User not found" });
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,"Error updating user");
+            return StatusCode(500, new { error = "Error updating user" });
         }
     }
 }

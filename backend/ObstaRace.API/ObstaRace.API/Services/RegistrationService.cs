@@ -108,7 +108,7 @@ public class RegistrationService : IRegistrationService
         if (registration.Status != RegistrationStatus.Pending) 
         {
             _logger.LogWarning("Registration {RegistrationId} cannot be deleted because it is already confirmed/finished", registrationId);
-            throw new ArgumentException("Only pending registrations can be deleted.");
+            throw new ArgumentException("Only pending registrations can be canceled.");
         }
         
         return await _registrationRepository.DeleteRegistration(registrationId);

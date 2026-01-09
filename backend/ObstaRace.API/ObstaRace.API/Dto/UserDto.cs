@@ -16,6 +16,7 @@ public class UserDto
     public string EmergencyContact { get; set; }
     public Role Role { get; set; }
     public bool Banned { get; set; }
+    public UserActivityDto Activity { get; set; }
 }
 
 public class RegisterDto
@@ -43,7 +44,9 @@ public class RegisterDto
 
 public class LoginDto
 {
+    [Required]
     public string Email { get; set; }
+    [Required]
     public string Password { get; set; }
 }
 public class LoginResponseDto
@@ -57,4 +60,22 @@ public class UserStatsDto
 {
     public int TotalUsers { get; set; }
     public int BannedUsers { get; set; }
+}
+
+public class UpdateUserDto
+{
+    [Required]
+    [Phone]
+    public string PhoneNumber {get; set; }
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime DateOfBirth { get; set; }
+    [Required]
+    [Phone]
+    public string EmergencyContact { get; set; }
+}
+public class UserActivityDto
+{
+    public int TotalRaces { get; set; }
+    public int FinishedRaces { get; set; }
 }

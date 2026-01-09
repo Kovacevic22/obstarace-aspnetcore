@@ -8,8 +8,15 @@ public class MappingProfiles: Profile
 {
     public MappingProfiles()
     {
-        CreateMap<User,UserDto>();
+        CreateMap<User,UserDto>()
+            .ForMember(ac => ac.Activity, 
+                opt => opt.MapFrom(src => new UserActivityDto()
+                {
+                    TotalRaces = src.Registrations.Count,
+                    FinishedRaces = src.Registrations.Count(r => r.Status == RegistrationStatus.Finished)
+                }));
         CreateMap<UserDto,User>();
+        CreateMap<UpdateUserDto, User>();
         
         CreateMap<Race,RaceDto>().ForMember(dest => dest.Obstacles, opt => opt.MapFrom(src => src.RaceObstacles.Select(ro => ro.Obstacle))).ForMember(dest => dest.ObstacleIds, opt => opt.MapFrom(src => src.RaceObstacles.Select(ro => ro.ObstacleId)));;
         CreateMap<RaceDto,Race>();

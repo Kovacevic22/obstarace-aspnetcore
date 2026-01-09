@@ -11,5 +11,6 @@ public interface IUserService
     //LOGIN/REGISTER
     Task<UserDto?> RegisterUser(RegisterDto registerDto);
     Task<LoginResponseDto?> LoginUser(LoginDto loginDto);
+    Task<UserDto?> UpdateUser(UpdateUserDto updateUserDto, int userId);
     
 }

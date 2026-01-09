@@ -16,6 +16,7 @@ import RaceDetailsPage from "./pages/RaceDetailsPage.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import MyRegistrationsPage from "./pages/user/MyRegistrationsPage.tsx";
 import ScrollToTop from "./components/common/ScrollToTop.tsx";
+import ProfilePage from "./pages/user/ProfilePage.tsx";
 function App() {
     const [user, setUser] = useState<UserDto|null>(null);
     const [loading, setLoading] = useState(true);
@@ -80,6 +81,7 @@ function App() {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
           )}
           <Route path="/registrations" element={<MyRegistrationsPage user={user}/>}/>
+          <Route path="/profile" element={<ProfilePage user={user}/>}/>
       </Routes>
         <Footer/>
     </Router>

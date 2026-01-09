@@ -93,6 +93,20 @@ public class UserService : IUserService
         };
     }
 
+    public async Task<UserDto?> UpdateUser(UpdateUserDto updateUserDto, int userId)
+    {
+        _logger.LogInformation("Updating user with id {userId}",userId);
+        var user = await _userRepository.GetUser(userId);
+        if(user==null)throw new  ArgumentException($"User with id {userId} does not exist");
+        _mapper.Map(updateUserDto, user);
+        if (!await _userRepository.UpdateUser(user))
+        {
+            _logger.LogInformation("Failed to update user");
+            throw new Exception("Failed to update user");
+        } 
+        return _mapper.Map<UserDto>(user);
+    }
+    //--------------------------------------------------------//
     private string CreateToken(User user)
     {
         if(user==null) throw new ArgumentNullException(nameof(user));
