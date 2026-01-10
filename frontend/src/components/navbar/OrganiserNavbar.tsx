@@ -2,7 +2,7 @@ import LogoImg from "../../assets/Logo.png"
 import {Link} from "react-router";
 import authService from "../../services/authService.ts";
 
-export function OrganizerNavbar(){
+export function OrganiserNavbar(){
     return(
         <div className="fixed top-0 left-0 right-0 z-50 bg-[var(--color-dark)]/95 backdrop-blur-md border-b border-[var(--color-secondary)]/30">
             <div className="max-w-7xl mx-auto px-6 h-18 flex justify-between items-center">
@@ -13,7 +13,7 @@ export function OrganizerNavbar(){
                             <img src={LogoImg} alt="Logo" className="relative z-10 w-full h-full object-contain" />
                         </div>
                         <div className="ml-3 text-white font-black text-base uppercase tracking-tighter">
-                            Organizer<span className="text-[var(--color-secondary)]">Hub</span>
+                            Organiser<span className="text-[var(--color-secondary)]">Hub</span>
                         </div>
                     </div>
                 </Link>
@@ -36,4 +36,4 @@ export function OrganizerNavbar(){
         </div>
     )
 }
-export default OrganizerNavbar;
+export default OrganiserNavbar;

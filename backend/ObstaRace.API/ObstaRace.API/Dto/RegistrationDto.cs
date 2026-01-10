@@ -18,6 +18,7 @@ public class RegistrationDto
 
     [Required]
     public RegistrationStatus Status { get; set; }
+    public RaceDto Race { get; set; }
 }
 
 public class CreateRegistrationDto

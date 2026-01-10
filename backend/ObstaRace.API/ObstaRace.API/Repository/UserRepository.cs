@@ -23,6 +23,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .Include(u=>u.Registrations)
+            .Include(u => u.Organiser)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
     public async Task<bool> UserExists(int id)
@@ -49,10 +50,12 @@ public class UserRepository : IUserRepository
         return await SaveChanges();
     }
 
-    public async Task<bool> DeleteUser(User user)
+    public async Task<bool> DeleteUser(int userId)
     {
-        _context.Users.Remove(user);
-        return await SaveChanges();
+        var deletedRows = await _context.Users
+            .Where(u => u.Id == userId)
+            .ExecuteDeleteAsync();
+        return deletedRows > 0;
     }
 
     public async Task<bool> SaveChanges()
@@ -62,6 +65,8 @@ public class UserRepository : IUserRepository
     }
     public async Task<User?> GetUserByEmail(string email)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        return await _context.Users
+            .Include(u => u.Organiser)
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
     }
 }

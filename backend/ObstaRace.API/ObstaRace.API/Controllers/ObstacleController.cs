@@ -18,7 +18,7 @@ public class ObstacleController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Organizer")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<ObstacleDto>))]
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetAllObstacle(string? search)
@@ -37,6 +37,7 @@ public class ObstacleController : ControllerBase
         }
     }
     [HttpGet("{obstacleId:int}")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(200, Type = typeof(ObstacleDto))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
@@ -60,7 +61,7 @@ public class ObstacleController : ControllerBase
         }
     }
     [HttpPost]
-    [Authorize(Roles = "Admin,Organizer")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -86,7 +87,7 @@ public class ObstacleController : ControllerBase
         }
     }
     [HttpPut("{obstacleId:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(200, Type = typeof(ObstacleDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -111,7 +112,7 @@ public class ObstacleController : ControllerBase
         }
     }
     [HttpDelete("{obstacleId:int}")]
-    [Authorize(Roles = "Admin,Organizer")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]

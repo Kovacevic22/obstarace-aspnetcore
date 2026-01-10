@@ -58,18 +58,14 @@ public class UserService : IUserService
             _logger.LogError("Password must contain uppercase, lowercase, number");
             throw new ArgumentException("Password must contain uppercase, lowercase, number");
         }
-        string hashPassword = PasswordHash(registerDto.Password);
-        var user = new User()
+
+        var user = _mapper.Map<User>(registerDto);
+        user.PasswordHash = PasswordHash(registerDto.Password);
+        user.Role = registerDto.Organiser != null ? Role.Organiser : Role.User;
+        if (user.Organiser != null)
         {
-            Name = registerDto.Name,
-            Surname = registerDto.Surname,
-            Email = registerDto.Email,
-            PhoneNumber = registerDto.PhoneNumber,
-            PasswordHash = hashPassword,
-            DateOfBirth = registerDto.DateOfBirth,
-            EmergencyContact = registerDto.EmergencyContact,
-            Role = Role.User
-        };
+            user.Organiser.Status = OrganiserStatus.Pending;
+        }
         _logger.LogInformation("User account created successfully");
         await _userRepository.CreateUser(user);
         return _mapper.Map<UserDto>(user);
@@ -83,6 +79,20 @@ public class UserService : IUserService
         {
             _logger.LogWarning("Login failed for {Email}", loginDto.Email);
             throw new ArgumentException($"Login failed for {loginDto.Email}");
+        }
+
+        if (user.Role == Role.Organiser && user.Organiser != null)
+        {
+            if (user.Organiser.Status == OrganiserStatus.Rejected)
+            {
+                await _userRepository.DeleteUser(user.Id); 
+                _logger.LogWarning("Rejected organiser {Email} deleted. They can now re-register.", user.Email);
+                throw new ArgumentException("Your previous application was rejected. Your account has been reset, and you can now register again with a better description.");
+            }
+            if (user.Organiser.Status == OrganiserStatus.Pending)
+            {
+                throw new ArgumentException("Your account is still pending administrator approval.");
+            }
         }
         string token = CreateToken(user);
         return new LoginResponseDto

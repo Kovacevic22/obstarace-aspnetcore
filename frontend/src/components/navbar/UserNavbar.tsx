@@ -23,7 +23,7 @@ export function UserNavbar(){
                 <ul className="hidden lg:flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
                     <li><Link to={"/"} className="hover:text-accent transition-all">Home</Link></li>
                     <li><Link to={"/races"} className="hover:text-accent transition-all">Races</Link></li>
-                    <li><Link to={"/registrations"} className="hover:text-accent transition-all">My Registrations</Link></li>
+                    <li><Link to={"/my-registrations"} className="hover:text-accent transition-all">My Registrations</Link></li>
                 </ul>
                 <div className="flex items-center gap-6">
                     <Link to={"/profile"}>

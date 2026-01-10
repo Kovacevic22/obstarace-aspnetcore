@@ -68,9 +68,9 @@ public class AuthController : ControllerBase
             });
             return Ok(new {user = response.User});
         }
-        catch (ArgumentException)
+        catch (ArgumentException ax)
         {
-            return Unauthorized(new { error = "Invalid email or password" });
+            return Unauthorized(new { error = ax.Message });
         }
         catch (Exception ex)
         {

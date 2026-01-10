@@ -3,7 +3,7 @@ public enum Role
 {
     User = 0,
     Admin = 1,
-    Organizer = 2
+    Organiser = 2
 }
 public class User
 {
@@ -17,5 +17,6 @@ public class User
     public string EmergencyContact { get; set; }
     public Role Role {get; set; }
     public bool Banned {get; set; }
+    public Organiser? Organiser {get; set; }
     public IList<Registration> Registrations {get; set;}
 }

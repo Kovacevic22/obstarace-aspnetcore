@@ -1,5 +1,5 @@
 import Register from "../../assets/Register.jpg";
-import {Link} from "react-router";
+import {Link, useSearchParams} from "react-router";
 import {useState} from "react";
 import {authService} from "../../services/authService.ts";
 import * as React from "react";
@@ -7,7 +7,22 @@ import {AxiosError} from "axios";
 import type {RegisterData} from "../../Models/auth.type.ts";
 
 export function RegisterPage() {
-    const [formData, setFormData] = useState<RegisterData>({email:"",password:"",name:"",surname:"",phoneNumber:"",emergencyContact:"",dateOfBirth:""});
+    const [searchParams] = useSearchParams();
+    const isOrganiser = searchParams.get("role") === "organiser";
+    const [formData, setFormData] = useState<RegisterData>(
+        {
+            email:"",
+            password:"",
+            name:"",
+            surname:"",
+            phoneNumber:"",
+            emergencyContact:"",
+            dateOfBirth:"",
+            organiser: isOrganiser?{
+                organizationName:"",
+                description:""
+            }:undefined
+        });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>();
     const maxDate = new Date();
@@ -19,7 +34,8 @@ export function RegisterPage() {
         setError("");
         try{
             await authService.register(formData);
-            window.location.href = "/login";
+            if(isOrganiser)window.location.href = "/login?role=organiser";
+            else window.location.href = "/login";
         }catch(err){
             console.log(err);
             if(err instanceof AxiosError){
@@ -61,7 +77,44 @@ export function RegisterPage() {
                         </div>
                     )}
                     <form onSubmit={handleRegister} className="flex flex-col gap-5">
+                        {isOrganiser && (
+                            <div className="flex flex-col gap-5 p-5 bg-accent/5 border border-accent/20 mb-4 shadow-inner">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent ml-1">
+                                        Organization / Unit Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="bg-white/5 border border-white/10 px-4 py-2.5 text-white focus:outline-none focus:border-accent transition-all font-bold"
+                                        placeholder="e.g. TACTICAL OCR SQUAD"
+                                        required={isOrganiser}
+                                        value={formData.organiser?.organizationName || ""}
+                                        onChange={(e) => setFormData({...formData, organiser:{
+                                            ...formData.organiser!, organizationName: e.target.value
+                                            }})}
+                                    />
+                                </div>
 
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent ml-1">
+                                        Mission Statement / Organization Description
+                                    </label>
+                                    <textarea
+                                        rows={4}
+                                        className="bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-accent transition-all font-medium text-sm resize-none"
+                                        placeholder="Describe your experience in organizing races and your mission objective..."
+                                        required={isOrganiser}
+                                        value={formData.organiser?.description||""}
+                                        onChange={(e) => setFormData({...formData, organiser:{
+                                            ...formData.organiser!, description: e.target.value
+                                            }})}
+                                    />
+                                    <p className="text-[9px] text-white/20 italic mt-1 ml-1">
+                                        * Internal review required for account activation.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-light/60 ml-1">First Name</label>
@@ -158,7 +211,7 @@ export function RegisterPage() {
                     <div className="mt-8 text-center">
                         <div className="text-[10px] text-light/40 uppercase tracking-widest">
                             Already a member?
-                            <Link to={"/login"} className="ml-2 text-white font-bold hover:text-accent transition-colors underline decoration-accent underline-offset-4">Sign In</Link>
+                            <Link to={isOrganiser?"/login?role=organiser":"/login"} className="ml-2 text-white font-bold hover:text-accent transition-colors underline decoration-accent underline-offset-4">Sign In</Link>
                         </div>
                     </div>
                 </div>

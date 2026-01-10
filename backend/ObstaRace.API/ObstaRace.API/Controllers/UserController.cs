@@ -77,7 +77,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{userId:int}")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(200, Type = typeof(UserDto))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]

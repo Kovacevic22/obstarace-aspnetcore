@@ -14,6 +14,6 @@ public interface IUserRepository
     Task<bool> SaveChanges();
     //CRUD
     Task<bool> UpdateUser(User user);
-    Task<bool> DeleteUser(User user);
+    Task<bool> DeleteUser(int userId);
     Task<User?> GetUserByEmail(string email);
 }

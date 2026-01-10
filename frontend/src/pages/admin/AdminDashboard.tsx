@@ -5,14 +5,17 @@ import userService from "../../services/userService.ts";
 import {Role, type UserDto, type UserStatsDto} from "../../Models/users.type.ts";
 import CreateRace from "../../components/races/CreateRace.tsx";
 import EditRace from "../../components/races/EditRace.tsx";
+import type {OrganiserPendingDto} from "../../Models/organiser.type.ts";
+import organiserService from "../../services/organiserService.ts";
 
 export function AdminDashboard() {
     const [races, setRaces] = useState<RaceDto[]>([]);
     const [users, setUsers] = useState<UserDto[]>([]);
     const [raceStats, setRaceStats] = useState<RaceStatsDto>();
     const [userStats, setUserStats] = useState<UserStatsDto>();
+    const [pendingOrganisers, setPendingOrganisers] = useState<OrganiserPendingDto[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'races' | 'users'>('races');
+    const [activeTab, setActiveTab] = useState<'races' | 'users' | 'applications'>('races');
     const [isCreateRaceOpen, setIsCreateRaceOpen] = useState<boolean>(false);
     const [isEditRaceOpen, setIsEditRaceOpen] = useState<boolean>(false);
     const [selectedRaceId, setSelectedRaceId] = useState<number | null>(null);
@@ -24,16 +27,18 @@ export function AdminDashboard() {
        const fetchDashboardData = async () =>{
            try{
                setLoading(true);
-               const [racesData,usersData,raceStats,userStats] = await Promise.all([
+               const [racesData,usersData,raceStats,userStats, organisersData] = await Promise.all([
                   raceService.races(),
                    userService.users(),
                    raceService.stats(),
-                   userService.stats()
+                   userService.stats(),
+                   organiserService.getPending()
                ]);
                setRaces(racesData);
                setUsers(usersData);
                setRaceStats(raceStats);
                setUserStats(userStats);
+               setPendingOrganisers(organisersData);
            }catch (e){
                console.error(e);
            }finally {
@@ -77,7 +82,14 @@ export function AdminDashboard() {
                 >
                     User Directory
                 </button>
+                <button
+                    onClick={() => setActiveTab('applications')}
+                    className={`pb-4 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer whitespace-nowrap ${activeTab === 'applications' ? 'text-accent border-b-2 border-accent' : 'text-white/20 hover:text-white/60'}`}
+                >
+                    Pending Applications
+                </button>
             </div>
+            {activeTab !== 'applications' && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12 font-black italic">
                 {activeTab === 'races' ? (
                     <>
@@ -106,7 +118,8 @@ export function AdminDashboard() {
                         </div>
                     </>
                 )}
-            </div>
+            </div>)}
+            {activeTab !== 'applications' && (
             <div className="bg-white/2 border border-white/10 overflow-x-auto shadow-2xl no-scrollbar">
                 <table className="w-full text-left border-collapse min-w-150 md:min-w-full">
                     <thead className="text-[10px] uppercase tracking-[0.2em] text-white/20 border-b border-white/10 bg-white/1">
@@ -168,7 +181,44 @@ export function AdminDashboard() {
                     )}
                     </tbody>
                 </table>
-            </div>
+            </div>)}
+            {activeTab === 'applications' && (
+                <div className="space-y-6 animate-in fade-in duration-500">
+                    {pendingOrganisers.length > 0 ? (
+                        pendingOrganisers.map((org) => (
+                            <div key={org.userId} className="bg-white/3 border border-white/10 p-8 flex flex-col md:flex-row justify-between items-center gap-6 group hover:border-accent/30 transition-all">
+                                <div className="space-y-4 flex-1">
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-accent text-[10px] font-black uppercase tracking-widest italic bg-accent/5 px-3 py-1 border border-accent/20">
+                                            Unit_Application // {org.organisationName}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-white italic tracking-tighter">{org.userName} {org.userSurname}</h3>
+                                        <p className="text-[10px] text-white/20 font-bold tracking-widest uppercase">{org.userEmail}</p>
+                                    </div>
+                                    <p className="text-xs text-white/40 leading-relaxed italic border-l-2 border-white/10 pl-6 max-w-2xl">
+                                        "{org.description}"
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-3 min-w-50">
+                                    <button className="bg-green-600/20 text-green-500 border border-green-500/30 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-green-600 hover:text-white transition-all cursor-pointer">
+                                        [ Approve_Access ]
+                                    </button>
+                                    <button className="bg-red-600/20 text-red-500 border border-red-500/30 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all cursor-pointer">
+                                        [ Deny_Request ]
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="py-24 border-2 border-dashed border-white/5 bg-white/1 flex flex-col items-center justify-center space-y-4">
+                            <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">No Pending Operations</p>
+                            <p className="text-[8px] text-white/10 uppercase tracking-widest italic font-bold">System Status: All Units Verified</p>
+                        </div>
+                    )}
+                </div>
+            )}
             <CreateRace
                 isOpen={isCreateRaceOpen}
                 onClose={() => setIsCreateRaceOpen(false)}
@@ -179,7 +229,7 @@ export function AdminDashboard() {
                     setIsEditRaceOpen(false);
                     setSelectedRaceId(null);
                 }}
-                id={selectedRaceId || -1}
+                id={selectedRaceId || 0}
             />
         </div>
     );

@@ -9,6 +9,7 @@ public class MappingProfiles: Profile
     public MappingProfiles()
     {
         CreateMap<User,UserDto>()
+            .ForMember(dest => dest.Organiser, opt => opt.MapFrom(src => src.Organiser))
             .ForMember(ac => ac.Activity, 
                 opt => opt.MapFrom(src => new UserActivityDto()
                 {
@@ -23,13 +24,22 @@ public class MappingProfiles: Profile
         CreateMap<CreateRaceDto, Race>();  
         CreateMap<UpdateRaceDto, Race>().ForMember(o => o.RaceObstacles, opt => opt.Ignore());;
         
-        CreateMap<Registration,RegistrationDto>();
+        CreateMap<Registration,RegistrationDto>().ForMember(dest => dest.Race, opt => opt.MapFrom(src => src.Race));
         CreateMap<RegistrationDto,Registration>();
         CreateMap<UpdateRegistrationDto, Registration>();
         
         CreateMap<Obstacle,ObstacleDto>();
         CreateMap<ObstacleDto,Obstacle>();
+        
         CreateMap<CreateObstacleDto, Obstacle>();  
         CreateMap<UpdateObstacleDto, Obstacle>();
+
+        CreateMap<Organiser, OrganiserDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name))
+            .ForMember(dest => dest.UserSurname, opt => opt.MapFrom(src => src.User.Surname))
+            .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email));
+        CreateMap<OrganiserDto, Organiser>();
+        CreateMap<RegisterDto, User>()
+            .ForMember(dest => dest.Organiser, opt => opt.MapFrom(src => src.Organiser));
     }
 }

@@ -11,8 +11,8 @@ using ObstaRace.API.Data;
 namespace ObstaRace.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260106220919_AddedObstaclesUpdateRace")]
-    partial class AddedObstaclesUpdateRace
+    [Migration("20260110183218_ChangeOrganizerToOrganiser")]
+    partial class ChangeOrganizerToOrganiser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,27 @@ namespace ObstaRace.API.Migrations
                     b.HasIndex("CreatedById");
 
                     b.ToTable("Obstacles");
+                });
+
+            modelBuilder.Entity("ObstaRace.API.Models.Organiser", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OrganisationName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Organisers");
                 });
 
             modelBuilder.Entity("ObstaRace.API.Models.Race", b =>
@@ -101,6 +122,9 @@ namespace ObstaRace.API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Races");
                 });
@@ -210,6 +234,17 @@ namespace ObstaRace.API.Migrations
                     b.Navigation("CreatedBy");
                 });
 
+            modelBuilder.Entity("ObstaRace.API.Models.Organiser", b =>
+                {
+                    b.HasOne("ObstaRace.API.Models.User", "User")
+                        .WithOne("Organiser")
+                        .HasForeignKey("ObstaRace.API.Models.Organiser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ObstaRace.API.Models.RaceObstacle", b =>
                 {
                     b.HasOne("ObstaRace.API.Models.Obstacle", "Obstacle")
@@ -262,6 +297,8 @@ namespace ObstaRace.API.Migrations
 
             modelBuilder.Entity("ObstaRace.API.Models.User", b =>
                 {
+                    b.Navigation("Organiser");
+
                     b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618

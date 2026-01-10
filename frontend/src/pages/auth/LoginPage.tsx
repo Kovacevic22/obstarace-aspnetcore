@@ -1,12 +1,16 @@
 import Login from "../../assets/Login.jpg";
-import {Link} from "react-router";
+import {Link, useSearchParams} from "react-router";
 import {useState} from "react";
 import {authService} from "../../services/authService.ts";
 import {AxiosError} from "axios";
 import * as React from "react";
 import type {LoginData} from "../../Models/auth.type.ts";
+import ConfirmModal from "../../components/common/ConfirmModal.tsx";
 
 export function LoginPage() {
+    const [searchParams] = useSearchParams();
+    const isOrganiser = searchParams.get("role") === "organiser";
+    const [isUnauthorized, setIsUnauthorized] = useState(false);
     const [formData, setFormData] = useState<LoginData>({email:"",password:""});
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>();
@@ -15,7 +19,12 @@ export function LoginPage() {
         setLoading(true);
         setError("");
         try{
-            await authService.login(formData);
+            const user = await authService.login(formData);
+            if (isOrganiser && user.role !== 2) {
+                setError("ACCESS_DENIED: UNAUTHORIZED_PERSONNEL");
+                setIsUnauthorized(true);
+                return;
+            }
             window.location.href = "/";
         }catch(err){
             if (err instanceof AxiosError) {
@@ -37,14 +46,15 @@ export function LoginPage() {
                     backgroundPosition: 'center',
                 }}
             />
+            {isOrganiser && <div className="absolute inset-0 z-5 bg-accent/5 pointer-events-none" />}
             <div className="relative z-10 w-full max-w-md px-6">
                 <div className="bg-dark/80 backdrop-blur-xl border border-white/10 p-8 md:p-10 shadow-2xl">
                     <div className="text-center mb-10">
                         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-2">
-                            Athlete <span className="text-accent">Login</span>
+                            {isOrganiser ? "Command" : "Athlete"} <span className="text-accent">Login</span>
                         </div>
                         <div className="text-[10px] text-light/50 uppercase tracking-[0.3em]">
-                            Enter the arena
+                            {isOrganiser ? "Secure access to mission control" : "Enter the arena"}
                         </div>
                     </div>
                     {error && (
@@ -105,6 +115,18 @@ export function LoginPage() {
                     <div className="cursor-pointer hover:opacity-100">Support</div>
                 </div>
             </div>
+            <ConfirmModal
+                isOpen={isUnauthorized}
+                onClose={() => setIsUnauthorized(false)}
+                onConfirm={async () => {
+                    setIsUnauthorized(false);
+                    await authService.logout();
+                }}
+                title="ACCESS VIOLATION"
+                message="UNAUTHORIZED PERSONNEL DETECTED. YOUR ACCOUNT LACKS THE REQUIRED CLEARANCE FOR THE COMMAND PORTAL. RETURN TO BASE IMMEDIATELY."
+                error={error}
+                variant={"danger"}
+            />
         </div>
     );
 }

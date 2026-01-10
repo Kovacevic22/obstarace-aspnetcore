@@ -548,7 +548,7 @@
     </routine>
     <schema id="208" parent="1" name="main">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2026-01-04.10:51:13</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2026-01-10.16:54:31</LastIntrospectionLocalTimestamp>
     </schema>
     <argument id="209" parent="16">
       <ArgumentDirection>R</ArgumentDirection>
@@ -1748,322 +1748,371 @@
       <Position>1</Position>
     </argument>
     <table id="608" parent="208" name="Obstacles"/>
-    <table id="609" parent="208" name="RaceObstacles"/>
-    <table id="610" parent="208" name="Races"/>
-    <table id="611" parent="208" name="Registrations"/>
-    <table id="612" parent="208" name="Users"/>
-    <table id="613" parent="208" name="__EFMigrationsHistory"/>
-    <table id="614" parent="208" name="__EFMigrationsLock"/>
-    <table id="615" parent="208" name="sqlite_master">
+    <table id="609" parent="208" name="Organisers"/>
+    <table id="610" parent="208" name="RaceObstacles"/>
+    <table id="611" parent="208" name="Races"/>
+    <table id="612" parent="208" name="Registrations"/>
+    <table id="613" parent="208" name="Users"/>
+    <table id="614" parent="208" name="__EFMigrationsHistory"/>
+    <table id="615" parent="208" name="__EFMigrationsLock"/>
+    <table id="616" parent="208" name="sqlite_master">
       <System>1</System>
     </table>
-    <table id="616" parent="208" name="sqlite_sequence">
+    <table id="617" parent="208" name="sqlite_sequence">
       <System>1</System>
     </table>
-    <column id="617" parent="608" name="Id">
+    <column id="618" parent="608" name="Id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="618" parent="608" name="Name">
+    <column id="619" parent="608" name="Name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="619" parent="608" name="Description">
+    <column id="620" parent="608" name="Description">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="620" parent="608" name="Difficulty">
+    <column id="621" parent="608" name="Difficulty">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <key id="621" parent="608" name="PK_Obstacles">
+    <column id="622" parent="608" name="CreatedById">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>INTEGER|0s</StoredType>
+    </column>
+    <foreign-key id="623" parent="608" name="FK_Obstacles_Users_CreatedById">
+      <ColNames>CreatedById</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <RefColNames>Id</RefColNames>
+      <RefTableName>Users</RefTableName>
+    </foreign-key>
+    <index id="624" parent="608" name="IX_Obstacles_CreatedById">
+      <ColNames>CreatedById</ColNames>
+    </index>
+    <key id="625" parent="608" name="PK_Obstacles">
       <ColNames>Id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="622" parent="609" name="RaceId">
+    <column id="626" parent="609" name="UserId">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="623" parent="609" name="ObstacleId">
+    <column id="627" parent="609" name="OrganizationName">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>TEXT|0s</StoredType>
+    </column>
+    <column id="628" parent="609" name="Description">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>TEXT|0s</StoredType>
+    </column>
+    <column id="629" parent="609" name="Status">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>INTEGER|0s</StoredType>
+    </column>
+    <foreign-key id="630" parent="609" name="FK_Organisers_Users_UserId">
+      <ColNames>UserId</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <RefColNames>Id</RefColNames>
+      <RefTableName>Users</RefTableName>
+    </foreign-key>
+    <key id="631" parent="609" name="PK_Organisers">
+      <ColNames>UserId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="632" parent="610" name="RaceId">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>INTEGER|0s</StoredType>
+    </column>
+    <column id="633" parent="610" name="ObstacleId">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <foreign-key id="624" parent="609" name="FK_RaceObstacles_Races_RaceId">
+    <foreign-key id="634" parent="610" name="FK_RaceObstacles_Races_RaceId">
       <ColNames>RaceId</ColNames>
       <OnDelete>restrict</OnDelete>
       <RefColNames>Id</RefColNames>
       <RefTableName>Races</RefTableName>
     </foreign-key>
-    <foreign-key id="625" parent="609" name="FK_RaceObstacles_Obstacles_ObstacleId">
+    <foreign-key id="635" parent="610" name="FK_RaceObstacles_Obstacles_ObstacleId">
       <ColNames>ObstacleId</ColNames>
       <OnDelete>restrict</OnDelete>
       <RefColNames>Id</RefColNames>
       <RefTableName>Obstacles</RefTableName>
     </foreign-key>
-    <index id="626" parent="609" name="sqlite_autoindex_RaceObstacles_1">
+    <index id="636" parent="610" name="sqlite_autoindex_RaceObstacles_1">
       <ColNames>RaceId
 ObstacleId</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <Unique>1</Unique>
     </index>
-    <index id="627" parent="609" name="IX_RaceObstacles_ObstacleId">
+    <index id="637" parent="610" name="IX_RaceObstacles_ObstacleId">
       <ColNames>ObstacleId</ColNames>
     </index>
-    <key id="628" parent="609" name="PK_RaceObstacles">
+    <key id="638" parent="610" name="PK_RaceObstacles">
       <ColNames>RaceId
 ObstacleId</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>sqlite_autoindex_RaceObstacles_1</UnderlyingIndexName>
     </key>
-    <column id="629" parent="610" name="Id">
+    <column id="639" parent="611" name="Id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="630" parent="610" name="Name">
+    <column id="640" parent="611" name="Name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="631" parent="610" name="Slug">
+    <column id="641" parent="611" name="Slug">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="632" parent="610" name="Date">
+    <column id="642" parent="611" name="Date">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="633" parent="610" name="Description">
+    <column id="643" parent="611" name="Description">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="634" parent="610" name="Location">
+    <column id="644" parent="611" name="Location">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="635" parent="610" name="Distance">
+    <column id="645" parent="611" name="Distance">
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>REAL|0s</StoredType>
     </column>
-    <column id="636" parent="610" name="Difficulty">
+    <column id="646" parent="611" name="Difficulty">
       <NotNull>1</NotNull>
       <Position>8</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="637" parent="610" name="RegistrationDeadLine">
+    <column id="647" parent="611" name="RegistrationDeadLine">
       <NotNull>1</NotNull>
       <Position>9</Position>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="638" parent="610" name="Status">
+    <column id="648" parent="611" name="Status">
       <NotNull>1</NotNull>
       <Position>10</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="639" parent="610" name="ImageUrl">
+    <column id="649" parent="611" name="ImageUrl">
       <NotNull>1</NotNull>
       <Position>11</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="640" parent="610" name="ElevationGain">
+    <column id="650" parent="611" name="ElevationGain">
       <NotNull>1</NotNull>
       <Position>12</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="641" parent="610" name="MaxParticipants">
+    <column id="651" parent="611" name="MaxParticipants">
       <NotNull>1</NotNull>
       <Position>13</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <key id="642" parent="610" name="PK_Races">
+    <index id="652" parent="611" name="IX_Races_Slug">
+      <ColNames>Slug</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="653" parent="611" name="PK_Races">
       <ColNames>Id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="643" parent="611" name="Id">
+    <column id="654" parent="612" name="Id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="644" parent="611" name="UserId">
+    <column id="655" parent="612" name="UserId">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="645" parent="611" name="RaceId">
+    <column id="656" parent="612" name="RaceId">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="646" parent="611" name="BibNumber">
+    <column id="657" parent="612" name="BibNumber">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="647" parent="611" name="Count">
+    <column id="658" parent="612" name="Count">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="648" parent="611" name="Category">
+    <column id="659" parent="612" name="Status">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="649" parent="611" name="Status">
-      <NotNull>1</NotNull>
-      <Position>7</Position>
-      <StoredType>INTEGER|0s</StoredType>
-    </column>
-    <foreign-key id="650" parent="611" name="FK_Registrations_Users_UserId">
+    <foreign-key id="660" parent="612" name="FK_Registrations_Users_UserId">
       <ColNames>UserId</ColNames>
       <OnDelete>restrict</OnDelete>
       <RefColNames>Id</RefColNames>
       <RefTableName>Users</RefTableName>
     </foreign-key>
-    <foreign-key id="651" parent="611" name="FK_Registrations_Races_RaceId">
+    <foreign-key id="661" parent="612" name="FK_Registrations_Races_RaceId">
       <ColNames>RaceId</ColNames>
       <OnDelete>restrict</OnDelete>
       <RefColNames>Id</RefColNames>
       <RefTableName>Races</RefTableName>
     </foreign-key>
-    <index id="652" parent="611" name="IX_Registrations_UserId_RaceId">
+    <index id="662" parent="612" name="IX_Registrations_UserId_RaceId">
       <ColNames>UserId
 RaceId</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="653" parent="611" name="IX_Registrations_BibNumber">
+    <index id="663" parent="612" name="IX_Registrations_BibNumber">
       <ColNames>BibNumber</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="654" parent="611" name="IX_Registrations_RaceId">
+    <index id="664" parent="612" name="IX_Registrations_RaceId">
       <ColNames>RaceId</ColNames>
     </index>
-    <key id="655" parent="611" name="PK_Registrations">
+    <key id="665" parent="612" name="PK_Registrations">
       <ColNames>Id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="656" parent="612" name="Id">
+    <column id="666" parent="613" name="Id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="657" parent="612" name="Name">
+    <column id="667" parent="613" name="Name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="658" parent="612" name="Surname">
+    <column id="668" parent="613" name="Surname">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="659" parent="612" name="Email">
+    <column id="669" parent="613" name="Email">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="660" parent="612" name="PasswordHash">
+    <column id="670" parent="613" name="PasswordHash">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="661" parent="612" name="PhoneNumber">
+    <column id="671" parent="613" name="PhoneNumber">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="662" parent="612" name="DateOfBirth">
+    <column id="672" parent="613" name="DateOfBirth">
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="663" parent="612" name="EmergencyContact">
+    <column id="673" parent="613" name="EmergencyContact">
       <NotNull>1</NotNull>
       <Position>8</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="664" parent="612" name="Role">
+    <column id="674" parent="613" name="Role">
       <NotNull>1</NotNull>
       <Position>9</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <key id="665" parent="612" name="PK_Users">
+    <column id="675" parent="613" name="Banned">
+      <NotNull>1</NotNull>
+      <Position>10</Position>
+      <StoredType>INTEGER|0s</StoredType>
+    </column>
+    <key id="676" parent="613" name="PK_Users">
       <ColNames>Id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="666" parent="613" name="MigrationId">
+    <column id="677" parent="614" name="MigrationId">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="667" parent="613" name="ProductVersion">
+    <column id="678" parent="614" name="ProductVersion">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <index id="668" parent="613" name="sqlite_autoindex___EFMigrationsHistory_1">
+    <index id="679" parent="614" name="sqlite_autoindex___EFMigrationsHistory_1">
       <ColNames>MigrationId</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <Unique>1</Unique>
     </index>
-    <key id="669" parent="613" name="PK___EFMigrationsHistory">
+    <key id="680" parent="614" name="PK___EFMigrationsHistory">
       <ColNames>MigrationId</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>sqlite_autoindex___EFMigrationsHistory_1</UnderlyingIndexName>
     </key>
-    <column id="670" parent="614" name="Id">
+    <column id="681" parent="615" name="Id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>INTEGER|0s</StoredType>
     </column>
-    <column id="671" parent="614" name="Timestamp">
+    <column id="682" parent="615" name="Timestamp">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <key id="672" parent="614" name="PK___EFMigrationsLock">
+    <key id="683" parent="615" name="PK___EFMigrationsLock">
       <ColNames>Id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="673" parent="615" name="type">
+    <column id="684" parent="616" name="type">
       <Position>1</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="674" parent="615" name="name">
+    <column id="685" parent="616" name="name">
       <Position>2</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="675" parent="615" name="tbl_name">
+    <column id="686" parent="616" name="tbl_name">
       <Position>3</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="676" parent="615" name="rootpage">
+    <column id="687" parent="616" name="rootpage">
       <Position>4</Position>
       <StoredType>INT|0s</StoredType>
     </column>
-    <column id="677" parent="615" name="sql">
+    <column id="688" parent="616" name="sql">
       <Position>5</Position>
       <StoredType>TEXT|0s</StoredType>
     </column>
-    <column id="678" parent="616" name="name">
+    <column id="689" parent="617" name="name">
       <Position>1</Position>
     </column>
-    <column id="679" parent="616" name="seq">
+    <column id="690" parent="617" name="seq">
       <Position>2</Position>
     </column>
   </database-model>

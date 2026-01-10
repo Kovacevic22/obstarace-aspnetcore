@@ -66,6 +66,8 @@ builder.Services.AddScoped<IObstacleService, ObstacleService>();
 builder.Services.AddScoped<IRaceService, RaceService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
+builder.Services.AddScoped<IOrganiserService, OrganiserService>();
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("AdditionalConnection"));

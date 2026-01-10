@@ -9,7 +9,7 @@ import Footer from "./components/common/Footer.tsx";
 import {useEffect, useState} from "react";
 import {authService} from "./services/authService.ts";
 import AdminNavbar from "./components/navbar/AdminNavbar.tsx";
-import OrganizerNavbar from "./components/navbar/OrganizerNavbar.tsx";
+import OrganiserNavbar from "./components/navbar/OrganiserNavbar.tsx";
 import UserNavbar from "./components/navbar/UserNavbar.tsx";
 import type {UserDto} from "./Models/users.type.ts";
 import RaceDetailsPage from "./pages/RaceDetailsPage.tsx";
@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import MyRegistrationsPage from "./pages/user/MyRegistrationsPage.tsx";
 import ScrollToTop from "./components/common/ScrollToTop.tsx";
 import ProfilePage from "./pages/user/ProfilePage.tsx";
+import OrganiserPortal from "./pages/organiser/OrganiserPortal.tsx";
 function App() {
     const [user, setUser] = useState<UserDto|null>(null);
     const [loading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ function App() {
             case 1:
                 return <AdminNavbar />;
             case 2:
-                return <OrganizerNavbar />;
+                return <OrganiserNavbar />;
             default:
                 return <UserNavbar />;
         }
@@ -71,7 +72,7 @@ function App() {
       <Routes>
           <Route
               path="/"
-              element={(user as any)?.role === 1 ? <AdminDashboard /> : <HomePage />}
+              element={(user as any)?.role === 1 ? <AdminDashboard /> : <HomePage user={user}/>}
           />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/register" element={<RegisterPage/>} />
@@ -80,8 +81,9 @@ function App() {
           {(user as any)?.role === 1 && (
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
           )}
-          <Route path="/registrations" element={<MyRegistrationsPage user={user}/>}/>
+          <Route path="/my-registrations" element={<MyRegistrationsPage user={user}/>}/>
           <Route path="/profile" element={<ProfilePage user={user}/>}/>
+          <Route path="/organiser-portal" element={<OrganiserPortal/>}/>
       </Routes>
         <Footer/>
     </Router>

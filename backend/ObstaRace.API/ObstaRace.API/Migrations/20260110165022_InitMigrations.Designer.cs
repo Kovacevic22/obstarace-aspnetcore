@@ -11,8 +11,8 @@ using ObstaRace.API.Data;
 namespace ObstaRace.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260104105038_InitialSQLite")]
-    partial class InitialSQLite
+    [Migration("20260110165022_InitMigrations")]
+    partial class InitMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,8 +26,12 @@ namespace ObstaRace.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Difficulty")
@@ -35,11 +39,35 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.ToTable("Obstacles");
+                });
+
+            modelBuilder.Entity("ObstaRace.API.Models.Organiser", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Organisers");
                 });
 
             modelBuilder.Entity("ObstaRace.API.Models.Race", b =>
@@ -53,6 +81,7 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Difficulty")
@@ -70,6 +99,7 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaxParticipants")
@@ -77,6 +107,7 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("RegistrationDeadLine")
@@ -84,12 +115,16 @@ namespace ObstaRace.API.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Races");
                 });
@@ -118,9 +153,6 @@ namespace ObstaRace.API.Migrations
                     b.Property<string>("BibNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Category")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Count")
                         .HasColumnType("INTEGER");
@@ -151,6 +183,9 @@ namespace ObstaRace.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Banned")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -186,6 +221,28 @@ namespace ObstaRace.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ObstaRace.API.Models.Obstacle", b =>
+                {
+                    b.HasOne("ObstaRace.API.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("ObstaRace.API.Models.Organiser", b =>
+                {
+                    b.HasOne("ObstaRace.API.Models.User", "User")
+                        .WithOne("Organizer")
+                        .HasForeignKey("ObstaRace.API.Models.Organiser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ObstaRace.API.Models.RaceObstacle", b =>
@@ -240,6 +297,8 @@ namespace ObstaRace.API.Migrations
 
             modelBuilder.Entity("ObstaRace.API.Models.User", b =>
                 {
+                    b.Navigation("Organizer");
+
                     b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618

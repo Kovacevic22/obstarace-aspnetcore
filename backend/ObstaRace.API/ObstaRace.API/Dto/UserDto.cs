@@ -16,6 +16,7 @@ public class UserDto
     public string EmergencyContact { get; set; }
     public Role Role { get; set; }
     public bool Banned { get; set; }
+    public OrganiserDto? Organiser { get; set; }
     public UserActivityDto Activity { get; set; }
 }
 
@@ -40,6 +41,7 @@ public class RegisterDto
     [Required]
     [Phone]
     public string EmergencyContact { get; set; }
+    public OrganiserDto? Organiser { get; set; }
 }
 
 public class LoginDto

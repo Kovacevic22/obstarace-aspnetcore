@@ -14,6 +14,7 @@ public class DataContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Registration> Registrations { get; set; }
     public DbSet<RaceObstacle> RaceObstacles { get; set; }
+    public DbSet<Organiser> Organisers { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<RaceObstacle>().HasKey(pc => new { pc.RaceId, pc.ObstacleId });
@@ -33,5 +34,10 @@ public class DataContext : DbContext
         
         modelBuilder.Entity<User>().Property(u => u.DateOfBirth).HasColumnType("date");
         
+        modelBuilder.Entity<Organiser>().HasKey(o => o.UserId);
+        modelBuilder.Entity<User>().HasOne(u=>u.Organiser)
+            .WithOne(u=>u.User)
+            .HasForeignKey<Organiser>(o=>o.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

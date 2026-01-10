@@ -19,6 +19,7 @@ public class RegistrationController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RegistrationDto>))]
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetAllRegistrations([FromQuery]int? userId)
@@ -36,6 +37,7 @@ public class RegistrationController : ControllerBase
         }
     }
     [HttpGet("{id:int}")]
+    [Authorize]
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
@@ -84,7 +86,7 @@ public class RegistrationController : ControllerBase
         }
     }
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Organizer")]
+    [Authorize(Roles = "Organiser")]
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -109,7 +111,7 @@ public class RegistrationController : ControllerBase
         }
     }
     [HttpDelete("{id:int}")]
-    [Authorize]
+    [Authorize(Roles = "User,Organiser")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]

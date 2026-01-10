@@ -106,7 +106,7 @@ public class RaceController : ControllerBase
         }
     }
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -131,7 +131,7 @@ public class RaceController : ControllerBase
         }
     }
     [HttpPut("{raceId:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(200, Type = typeof(RaceDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -156,7 +156,7 @@ public class RaceController : ControllerBase
         }
     }
     [HttpDelete("{raceId:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
