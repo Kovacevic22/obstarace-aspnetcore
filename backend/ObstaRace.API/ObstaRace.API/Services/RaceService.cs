@@ -138,10 +138,8 @@ public class RaceService : IRaceService
             .Where(idC => !currentObstacleIds.Contains(idC))
             .Select(idN => new RaceObstacle { RaceId = existingRace.Id, ObstacleId = idN })
             .ToList();
-        foreach (var ro in toRemove) existingRace.RaceObstacles.Remove(ro);
-        foreach (var ro in toAdd) existingRace.RaceObstacles.Add(ro);
         _mapper.Map(raceDto, existingRace);
-        if (!await _raceRepository.UpdateRace(existingRace))
+        if (!await _raceRepository.UpdateRace(existingRace,toAdd, toRemove))
         {
             _logger.LogError("Failed to update race in database");
             throw new Exception("Failed to update race in database");
@@ -158,7 +156,6 @@ public class RaceService : IRaceService
         {
             throw new UnauthorizedAccessException("You can only delete your own races");
         }
-        await _raceRepository.UpdateRace(race);
         return await _raceRepository.DeleteRace(raceId);
     }
 }

@@ -79,10 +79,25 @@ public class RaceRepository : IRaceRepository
         return await SaveChanges();
     }
 
-    public async Task<bool> UpdateRace(Race race)
+    public async Task<bool> UpdateRace(Race race,List<RaceObstacle> toAdd, List<RaceObstacle> toRemove)
     {
-        _context.Races.Update(race);
-        return await SaveChanges();
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            foreach (var ro in toRemove) race.RaceObstacles.Remove(ro);
+            foreach (var ro in toAdd) race.RaceObstacles.Add(ro);
+        
+            _context.Races.Update(race);
+            await SaveChanges();
+        
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<bool> DeleteRace(int raceId)

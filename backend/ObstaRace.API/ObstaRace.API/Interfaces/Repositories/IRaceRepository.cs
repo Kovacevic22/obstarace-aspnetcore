@@ -15,7 +15,7 @@ public interface IRaceRepository
     //POST
     Task<bool> CreateRace(Race race);
     //UPDATE
-    Task<bool> UpdateRace(Race race);
+    Task<bool> UpdateRace(Race race,List<RaceObstacle> toAdd, List<RaceObstacle> toRemove);
     //DELETE
     Task<bool> DeleteRace(int raceId);
     //ADDITIONAL METHODS

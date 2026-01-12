@@ -53,7 +53,11 @@ public class RegistrationRepository : IRegistrationRepository
     }
     public async Task<bool> DeleteRegistration(int registrationId)
     {
-        return await _context.Registrations.Where(r => r.Id == registrationId).ExecuteDeleteAsync() > 0;
+        var registration = await _context.Registrations.FindAsync(registrationId);
+        if (registration == null) return false;
+    
+        _context.Registrations.Remove(registration);
+        return await SaveChanges();
     }
     //ADDITIONAL METHODS
     public async Task<bool> SaveChanges()

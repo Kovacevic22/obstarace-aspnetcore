@@ -85,10 +85,11 @@ public class UserService : IUserService
     {
         _logger.LogInformation("Logging in user with email {Email}", loginDto.Email);
         var user = await _userRepository.GetUserByEmail(loginDto.Email);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+        var isPasswordValid = user != null && BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
+        if (!isPasswordValid)
         {
             _logger.LogWarning("Login failed for {Email}", loginDto.Email);
-            throw new ArgumentException($"Login failed for {loginDto.Email} (Incorrect password or email)");
+            throw new ArgumentException("Invalid email or password");
         }
 
         if (user.Banned)
