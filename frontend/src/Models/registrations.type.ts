@@ -16,6 +16,7 @@ export interface RegistrationDto {
     userId: number;
     raceId: number;
     bibNumber: string;
+    count: number;
     status: RegistrationStatus;
     race: RaceDto;
     user: UserDto;

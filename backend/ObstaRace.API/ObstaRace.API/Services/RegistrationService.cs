@@ -42,6 +42,40 @@ public class RegistrationService : IRegistrationService
         return _mapper.Map<List<RegistrationDto>>(registrations);
     }
 
+    public async Task<bool> ConfirmUserRegistration(int registrationId, int organiserId)
+    {
+        var registration = await _registrationRepository.GetRegistration(registrationId);
+        if (registration == null) return false;
+        var race = await _raceRepository.GetRace(registration.RaceId);
+        if (race == null) return false;
+        if (race.CreatedById != organiserId)
+        {
+            throw new UnauthorizedAccessException("You can only manage participants for your own races");
+        }
+        registration.Status = RegistrationStatus.Confirmed;
+        await  _registrationRepository.UpdateRegistration(registration);
+        return true;
+    }
+
+    public async Task<bool> CancelUserRegistration(int registrationId, int organiserId)
+    {
+        var registration = await _registrationRepository.GetRegistration(registrationId);
+        if (registration == null) return false;
+        var race = await _raceRepository.GetRace(registration.RaceId);
+        if (race == null) return false;
+        if (race.CreatedById != organiserId)
+        {
+            throw new UnauthorizedAccessException("You can only manage participants for your own races");
+        }
+        registration.Status = RegistrationStatus.Cancelled;
+        await  _registrationRepository.UpdateRegistration(registration);
+        return true;
+    }
+
+    public async Task<int> CountRegistrations(int raceId)
+    {
+        return await _registrationRepository.CountRegistrations(raceId);
+    }
     public async Task<RegistrationDto> CreateRegistration(int raceId, int userId)
     {
         if (raceId <= 0 || userId <= 0)

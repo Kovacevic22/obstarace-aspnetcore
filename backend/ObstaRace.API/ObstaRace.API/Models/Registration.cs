@@ -14,6 +14,5 @@ public class Registration
     public User User { get; set; }
     public Race Race { get; set; }
     public string BibNumber { get; set; }
-    public int Count { get; set; } = 0;
     public RegistrationStatus Status { get; set; }
 }

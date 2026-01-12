@@ -38,6 +38,23 @@ public class RegistrationController : ControllerBase
             return StatusCode(500, new { error = "Error retrieving registrations" });
         }
     }
+    [HttpGet("count/{raceId}")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<RegistrationDto>))]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> CountRegistrations(int raceId)
+    {
+        try
+        {
+            _logger.LogInformation("Getting count participants on race {race}",raceId);
+            var registrations = await _registrationService.CountRegistrations(raceId);
+            return Ok(registrations);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving count participants on race");
+            return StatusCode(500, new { error = "Error retrieving count participants on race" });
+        }
+    }
     [HttpGet("{id:int}")]
     [Authorize]
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
@@ -165,6 +182,51 @@ public class RegistrationController : ControllerBase
             _logger.LogError(ex,"Error deleting registration");
             return StatusCode(500, new { error = "Error deleting registration" });
         }
+        
     }
-    
+    [HttpPut("confirm/{registrationId:int}")]
+    [Authorize(Roles = "Organiser")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> ConfirmUserRegistration(int registrationId)
+    {
+        try
+        {
+            var organiserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var result = await _registrationService.ConfirmUserRegistration(registrationId, organiserId);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { error = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPut("cancel/{registrationId:int}")]
+    [Authorize(Roles = "Organiser")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> CancelUserRegistration(int registrationId)
+    {
+        try
+        {
+            var organiserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var result = await _registrationService.CancelUserRegistration(registrationId, organiserId);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { error = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }

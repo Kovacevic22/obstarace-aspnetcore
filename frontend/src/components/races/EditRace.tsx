@@ -88,22 +88,28 @@ export function EditRace({ isOpen, onClose, id, onSuccess }: { isOpen: boolean, 
 
     const deleteRace = async () => {
         try{
+            setIsLoading(true);
             await raceService.deleteRace(id);
             onClose();
+            onSuccess();
         }catch(e){
             console.error(e);
             setError(parseApiError(e));
+        }finally {
+            setIsLoading(false);
         }
     }
     const updateRace = async ()=>{
         try{
+            setIsLoading(true)
             await raceService.updateRace(id,raceForm);
             onClose();
             onSuccess();
-            window.location.reload();
         }catch(e){
             console.error(e);
             setError(parseApiError(e));
+        }finally {
+            setIsLoading(false)
         }
     }
     useEffect(() => {

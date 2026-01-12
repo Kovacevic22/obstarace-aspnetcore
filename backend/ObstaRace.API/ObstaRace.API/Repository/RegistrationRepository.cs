@@ -32,6 +32,7 @@ public class RegistrationRepository : IRegistrationRepository
 
         return await registrations.OrderByDescending(r => r.Id).ToListAsync();
     }
+
     public async Task<Registration?> GetRegistration(int id)
     {
         return await _context.Registrations.FindAsync(id);
@@ -83,6 +84,7 @@ public class RegistrationRepository : IRegistrationRepository
 
     public async Task<int> CountRegistrations(int raceId)
     {
-        return await _context.Registrations.CountAsync(r => r.RaceId == raceId);
+        return await _context.Registrations
+            .CountAsync(r => r.RaceId == raceId && r.Status != RegistrationStatus.Cancelled && r.Status != RegistrationStatus.Pending);
     }
 }

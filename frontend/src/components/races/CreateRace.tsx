@@ -107,6 +107,7 @@ export function CreateRace({ isOpen, onClose,onSuccess }: { isOpen: boolean, onC
     const deleteObstacle = async () => {
         if (itemToDelete) {
             try {
+                setIsLoading(true);
                 await obstacleService.removeObstacle(itemToDelete);
                 setOldObstacle(prev => prev.filter(o => o.id !== itemToDelete));
                 setRaceForm(prev => ({...prev, obstacleIds: prev.obstacleIds.filter(oid => oid !== itemToDelete)}));
@@ -116,6 +117,8 @@ export function CreateRace({ isOpen, onClose,onSuccess }: { isOpen: boolean, onC
             } catch (error) {
                 console.error(error);
                 setError(parseApiError(error));
+            }finally {
+                setIsLoading(false);
             }
         }
     };

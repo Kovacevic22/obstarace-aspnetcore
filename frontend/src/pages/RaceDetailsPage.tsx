@@ -5,6 +5,7 @@ import {Difficulty, type RaceDto, Status} from "../Models/races.type.ts";
 import ConfirmModal from "../components/common/ConfirmModal.tsx";
 import type {UserDto} from "../Models/users.type.ts";
 import {registrationService} from "../services/registrationService.ts";
+import CountRegistrations from "../components/common/CountRegistrations.tsx";
 interface Props {
     user: UserDto | null;
 }
@@ -66,14 +67,16 @@ export function RaceDetailsPage({user}:Props) {
 
         if (!race) return;
         try{
+            setLoading(true)
             setIsRegistering(true);
             setError(null);
             await registrationService.createRegistration(race.id);
             setIsConfirmModalOpen(false);
-            window.location.href = "/registrations";
         }catch (e){
             console.error(e);
             setError(parseApiError(e));
+        }finally {
+            setLoading(false);
         }
     }
     return (
@@ -127,7 +130,7 @@ export function RaceDetailsPage({user}:Props) {
                                 </div>
                                 <div className="group sm:border-l border-white/10 sm:pl-8">
                                     <span className="block text-[10px] uppercase tracking-[0.4em] text-white/30 mb-2 group-hover:text-accent transition-colors">Capacity</span>
-                                    <p className="text-4xl font-black italic">{race.maxParticipants} <span className="text-sm opacity-30">MAX</span></p>
+                                    <p className="text-4xl font-black italic"><CountRegistrations raceId={race.id}/>/{race.maxParticipants} <span className="text-sm opacity-30">MAX</span></p>
                                 </div>
                             </div>
                         </div>

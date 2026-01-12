@@ -19,5 +19,15 @@ export const registrationService = {
             params: {raceId}
         });
         return response.data
+    },
+    confirmUserRegistration: async (registrationId:number)  => {
+        await api.put(`api/registrations/confirm/${registrationId}`)
+    },
+    cancelUserRegistration: async (registrationId:number)  => {
+        await api.put(`api/registrations/cancel/${registrationId}`);
+    },
+    countRegistrations: async (registrationId:number): Promise<number>  => {
+        const response = await api.get(`api/registrations/count/${registrationId}`);
+        return response.data;
     }
 }
