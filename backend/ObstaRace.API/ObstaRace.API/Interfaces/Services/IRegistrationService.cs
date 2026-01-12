@@ -5,12 +5,12 @@ namespace ObstaRace.API.Interfaces.Services;
 
 public interface IRegistrationService
 {
-    Task<ICollection<RegistrationDto>> GetAllRegistrations(int? userId);
+    Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId);
     Task<RegistrationDto?> GetRegistration(int id);
-    
+    Task<ICollection<RegistrationDto>> GetParticipantsForRace(int organiserId, int? raceId);
     //CRUD
     Task<RegistrationDto> CreateRegistration(int raceId, int userId);
-    Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id);
+    Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id,int userId, Role role);
     Task<bool> DeleteRegistration(int registrationId,int currentUserId);
     
 }

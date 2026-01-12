@@ -60,6 +60,7 @@ public class ObstacleController : ControllerBase
             return StatusCode(500, new { error = "Error retrieving obstacle" });
         }
     }
+    
     [HttpPost]
     [Authorize(Roles = "Admin,Organiser")]
     [ProducesResponseType(201)]
@@ -95,10 +96,12 @@ public class ObstacleController : ControllerBase
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating obstacle {obstacleId}", obstacleId);
-            var obstacle = await _obstacleService.UpdateObstacle(obstacleDto, obstacleId);
+            var obstacle = await _obstacleService.UpdateObstacle(obstacleDto, obstacleId,userId, userRole);
             return Ok(obstacle);
         }
         catch (ArgumentException ex)

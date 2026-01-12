@@ -41,7 +41,7 @@ public class RegisterDto
     [Required]
     [Phone]
     public string EmergencyContact { get; set; }
-    public OrganiserDto? Organiser { get; set; }
+    public RegisterOrganiserDto? Organiser { get; set; }
 }
 
 public class LoginDto

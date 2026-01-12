@@ -39,6 +39,8 @@ public class MappingProfiles: Profile
             .ForMember(dest => dest.UserSurname, opt => opt.MapFrom(src => src.User.Surname))
             .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email));
         CreateMap<OrganiserDto, Organiser>();
+        CreateMap<RegisterOrganiserDto, Organiser>();
+        
         CreateMap<RegisterDto, User>()
             .ForMember(dest => dest.Organiser, opt => opt.MapFrom(src => src.Organiser));
     }

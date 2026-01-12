@@ -6,7 +6,7 @@ import * as React from "react";
 import raceService from "../../services/raceService.ts";
 import ConfirmModal from "../common/ConfirmModal.tsx";
 
-export function CreateRace({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export function CreateRace({ isOpen, onClose,onSuccess }: { isOpen: boolean, onClose: () => void, onSuccess: () => void }) {
     const [raceForm, setRaceForm] = useState<CreateRaceDto>({
         name: '',
         slug: '',
@@ -77,6 +77,7 @@ export function CreateRace({ isOpen, onClose }: { isOpen: boolean, onClose: () =
             setIsLoading(true);
             await raceService.createRace(raceForm);
             onClose();
+            onSuccess();
         }catch(error){
             console.error(error);
             setError(parseApiError(error));

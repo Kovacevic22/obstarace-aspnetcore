@@ -11,6 +11,13 @@ const api = axios.create({
 api.interceptors.response.use(
     (response)=>response,
     (error) => {
+        if (!error.response) {
+            console.error("BACKEND_OFFLINE");
+            if (window.location.pathname !== "/offline") {
+                window.location.href = "/offline";
+            }
+            return Promise.reject(error);
+        }
         if(error.response?.status === 401) {
             console.error("Unauthorized");
         }

@@ -42,7 +42,7 @@ const MyRegistrations = ({ user }: Props) => {
             if (!user?.id) return;
             try {
                 setLoading(true);
-                const data = await registrationService.registrations(user.id);
+                const data = await registrationService.registrations();
                 setRegistrations(data);
             } catch (err) {
                 console.error(err);

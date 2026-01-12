@@ -39,6 +39,21 @@ public class UserRepository : IUserRepository
             TotalUsers = await _context.Users.CountAsync()
         };
     }
+
+    public async Task<bool> BanUser(int userId)
+    {
+        var user =  await _context.Users.FindAsync(userId);
+        if (user == null) return false;
+        user.Banned = true;
+        return await SaveChanges();
+    }
+    public async Task<bool> UnbanUser(int userId)
+    {
+        var user =  await _context.Users.FindAsync(userId);
+        if (user == null) return false;
+        user.Banned = false;
+        return await SaveChanges();
+    }
     public async Task<bool> CreateUser(User user)
     {
          await _context.Users.AddAsync(user);

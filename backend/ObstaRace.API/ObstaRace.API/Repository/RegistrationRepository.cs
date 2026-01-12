@@ -18,7 +18,20 @@ public class RegistrationRepository : IRegistrationRepository
         if(userId != null)return await _context.Registrations.Include(r=>r.Race).Where(r => r.UserId == userId).OrderBy(r => r.Id).ToListAsync();
         return await _context.Registrations.Include(r => r.Race).OrderBy(r => r.Id).ToListAsync();
     }
+    public async Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId)
+    {
+        var registrations = _context.Registrations
+            .Include(r => r.Race)
+            .Include(r => r.User)
+            .Where(r => r.Race.CreatedById == organiserId && r.Status == RegistrationStatus.Pending); 
+        
+        if (raceId.HasValue && raceId > 0)
+        {
+            registrations = registrations.Where(r => r.RaceId == raceId.Value);
+        }
 
+        return await registrations.OrderByDescending(r => r.Id).ToListAsync();
+    }
     public async Task<Registration?> GetRegistration(int id)
     {
         return await _context.Registrations.FindAsync(id);

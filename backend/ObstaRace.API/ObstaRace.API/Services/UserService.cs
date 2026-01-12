@@ -43,6 +43,16 @@ public class UserService : IUserService
         return  _userRepository.GetUserStats();
     }
 
+    public Task<bool> BanUser(int userId)
+    {
+        _logger.LogInformation("Banning user with id {UserId}", userId);
+        return _userRepository.BanUser(userId);
+    }
+    public Task<bool> UnbanUser(int userId)
+    {
+        _logger.LogInformation("Unbanning user with id {UserId}", userId);
+        return _userRepository.UnbanUser(userId);
+    }
     public async Task<UserDto?> RegisterUser(RegisterDto registerDto)
     {
         _logger.LogInformation("Creating user account.");
@@ -78,9 +88,14 @@ public class UserService : IUserService
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
             _logger.LogWarning("Login failed for {Email}", loginDto.Email);
-            throw new ArgumentException($"Login failed for {loginDto.Email}");
+            throw new ArgumentException($"Login failed for {loginDto.Email} (Incorrect password or email)");
         }
 
+        if (user.Banned)
+        {
+            _logger.LogWarning("Login failed for {Email}", loginDto.Email);
+            throw new ArgumentException($"{user.Name} {user.Surname} are banned!");
+        }
         if (user.Role == Role.Organiser && user.Organiser != null)
         {
             if (user.Organiser.Status == OrganiserStatus.Rejected)

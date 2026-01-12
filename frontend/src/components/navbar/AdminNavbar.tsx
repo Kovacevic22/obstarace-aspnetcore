@@ -6,7 +6,7 @@ export function AdminNavbar(){
     return(
         <div className="fixed top-0 left-0 right-0 z-50 bg-dark/95 backdrop-blur-md border-b border-white/5">
             <div className="max-w-7xl mx-auto px-6 h-18 flex justify-between items-center">
-                <Link to="/admin/dashboard">
+                <Link to="/">
                     <div className="flex items-center group cursor-pointer">
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-20 blur-lg transition-all duration-500 rounded-full"></div>

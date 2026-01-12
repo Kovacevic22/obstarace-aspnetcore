@@ -18,23 +18,35 @@ import MyRegistrationsPage from "./pages/user/MyRegistrationsPage.tsx";
 import ScrollToTop from "./components/common/ScrollToTop.tsx";
 import ProfilePage from "./pages/user/ProfilePage.tsx";
 import OrganiserPortal from "./pages/organiser/OrganiserPortal.tsx";
+import OfflinePage from "./pages/OfflinePage.tsx";
+import OrganiserDashboard from "./pages/organiser/OrganiserDashboard.tsx";
 function App() {
     const [user, setUser] = useState<UserDto|null>(null);
     const [loading, setLoading] = useState(true);
+    const [isServerDown, setIsServerDown] = useState(false);
     useEffect(() => {
        const checkAuth= async () => {
-           try{
-               const response = await authService.me();
-               setUser(response);
-           }catch (err){
-               console.log(err);
-               setUser(null);
-           }finally {
-               setLoading(false);
-           }
+           const handleOffline = () => setIsServerDown(true);
+           window.addEventListener("offline-detected", handleOffline);
+           const checkAuth = async () => {
+               try {
+                   const response = await authService.me();
+                   setUser(response);
+               } catch (err: any) {
+                   console.log(err);
+                   setUser(null);
+               } finally {
+                   setLoading(false);
+               }
+           };
+           void checkAuth();
+           return () => window.removeEventListener("offline-detected", handleOffline);
        };
        void checkAuth();
     },[]);
+    if (isServerDown || window.location.pathname === "/offline") {
+        return <OfflinePage />;
+    }
     const renderNavbar = () => {
         if(user==null)return <PublicNavbar/>;
         const userRole = (user as any).role;
@@ -72,18 +84,16 @@ function App() {
       <Routes>
           <Route
               path="/"
-              element={(user as any)?.role === 1 ? <AdminDashboard /> : <HomePage user={user}/>}
+              element={(user as any)?.role === 1 ? <AdminDashboard /> :(user as any)?.role === 2?<OrganiserDashboard/> : <HomePage user={user}/>}
           />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/register" element={<RegisterPage/>} />
         <Route path="/races" element={<RacesPage/>}/>
           <Route path="/races/:slug" element={<RaceDetailsPage user={user} />} />
-          {(user as any)?.role === 1 && (
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          )}
           <Route path="/my-registrations" element={<MyRegistrationsPage user={user}/>}/>
           <Route path="/profile" element={<ProfilePage user={user}/>}/>
           <Route path="/organiser-portal" element={<OrganiserPortal/>}/>
+          <Route path="/offline" element={<OfflinePage />} />
       </Routes>
         <Footer/>
     </Router>

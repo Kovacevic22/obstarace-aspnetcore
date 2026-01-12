@@ -62,6 +62,16 @@ public class RaceRepository : IRaceRepository
     {
         return await _context.Races.AnyAsync(r => r.Id == id);
     }
+
+    public async Task<ICollection<Race>> GetMyRaces(int userId)
+    {
+        return await _context.Races.Where(r => r.CreatedById == userId)
+            .Include(r=>r.RaceObstacles)
+            .ThenInclude(ro => ro.Obstacle)
+            .OrderByDescending(r => r.Date)
+            .ToListAsync();
+    }
+
     //CRUD
     public async Task<bool> CreateRace(Race race)
     {

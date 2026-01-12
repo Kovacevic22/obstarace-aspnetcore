@@ -19,7 +19,7 @@ export function RegisterPage() {
             emergencyContact:"",
             dateOfBirth:"",
             organiser: isOrganiser?{
-                organizationName:"",
+                organisationName:"",
                 description:""
             }:undefined
         });
@@ -88,9 +88,9 @@ export function RegisterPage() {
                                         className="bg-white/5 border border-white/10 px-4 py-2.5 text-white focus:outline-none focus:border-accent transition-all font-bold"
                                         placeholder="e.g. TACTICAL OCR SQUAD"
                                         required={isOrganiser}
-                                        value={formData.organiser?.organizationName || ""}
+                                        value={formData.organiser?.organisationName || ""}
                                         onChange={(e) => setFormData({...formData, organiser:{
-                                            ...formData.organiser!, organizationName: e.target.value
+                                            ...formData.organiser!, organisationName: e.target.value
                                             }})}
                                     />
                                 </div>

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {type RaceDto, type RaceStatsDto, Status} from "../../Models/races.type.ts";
 import raceService from "../../services/raceService.ts";
 import userService from "../../services/userService.ts";
@@ -7,6 +7,7 @@ import CreateRace from "../../components/races/CreateRace.tsx";
 import EditRace from "../../components/races/EditRace.tsx";
 import type {OrganiserPendingDto} from "../../Models/organiser.type.ts";
 import organiserService from "../../services/organiserService.ts";
+import ConfirmModal from "../../components/common/ConfirmModal.tsx";
 
 export function AdminDashboard() {
     const [races, setRaces] = useState<RaceDto[]>([]);
@@ -19,34 +20,87 @@ export function AdminDashboard() {
     const [isCreateRaceOpen, setIsCreateRaceOpen] = useState<boolean>(false);
     const [isEditRaceOpen, setIsEditRaceOpen] = useState<boolean>(false);
     const [selectedRaceId, setSelectedRaceId] = useState<number | null>(null);
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        type: 'approve' | 'reject' | 'ban' | 'unban' |null;
+        userId: number | null;
+        userName: string;
+    }>({ isOpen: false, type: null, userId: null, userName: "" });
+
+    const [error, setError] = useState<string|null>(null);
+    /////////////////////////////////////////////////////////////////////////
     const openEditModal = (id: number) => {
         setSelectedRaceId(id);
         setIsEditRaceOpen(true);
     };
-    useEffect(() => {
-       const fetchDashboardData = async () =>{
-           try{
-               setLoading(true);
-               const [racesData,usersData,raceStats,userStats, organisersData] = await Promise.all([
-                  raceService.races(),
-                   userService.users(),
-                   raceService.stats(),
-                   userService.stats(),
-                   organiserService.getPending()
-               ]);
-               setRaces(racesData);
-               setUsers(usersData);
-               setRaceStats(raceStats);
-               setUserStats(userStats);
-               setPendingOrganisers(organisersData);
-           }catch (e){
-               console.error(e);
-           }finally {
-               setLoading(false);
-           }
+    const parseApiError = (error : any): string => {
+        const data = error?.response?.data;
+
+        if (data?.errors) {
+            return Object.values(data.errors).flat().join(" | ");
         }
-        void fetchDashboardData();
+
+        return data?.title || data?.error || "Error";
+    };
+    const handleAction = async () => {
+        if(!confirmConfig.userId || !confirmConfig.type)return;
+        try{
+            setLoading(true);
+            setError(null);
+            if(confirmConfig.type === "approve") {
+                await organiserService.verifyOrganiser(confirmConfig.userId);
+                const updatePendingOrganisers = await organiserService.getPending();
+                setPendingOrganisers(updatePendingOrganisers);
+            }
+            if(confirmConfig.type === "reject") {
+                await organiserService.rejectOrganiser(confirmConfig.userId);
+                const updatePendingOrganisers = await organiserService.getPending();
+                setPendingOrganisers(updatePendingOrganisers);
+            }
+            if(confirmConfig.type === "ban") {
+                await userService.banUser(confirmConfig.userId);
+                const updateUsers = await userService.users();
+                setUsers(updateUsers);
+            }
+            if(confirmConfig.type === "unban") {
+                await userService.unbanUser(confirmConfig.userId);
+                const updateUsers = await userService.users();
+                setUsers(updateUsers);
+            }
+            setConfirmConfig(prev=>({...prev, isOpen:false}));
+        }catch(e){
+            console.error(e);
+            setError(parseApiError(e));
+        }finally{
+            setLoading(false);
+        }
+    }
+    const fetchDashboardData = useCallback(async () =>{
+        try{
+            setLoading(true);
+            const [racesData,usersData,raceStats,userStats, organisersData] = await Promise.all([
+                raceService.races(),
+                userService.users(),
+                raceService.stats(),
+                userService.stats(),
+                organiserService.getPending()
+            ]);
+            setRaces(racesData);
+            setUsers(usersData);
+            setRaceStats(raceStats);
+            setUserStats(userStats);
+            setPendingOrganisers(organisersData);
+        }catch (e){
+            console.error(e);
+            setError(parseApiError(e));
+        }finally {
+            setLoading(false);
+        }
     },[]);
+
+    useEffect(() => {
+        void fetchDashboardData();
+    },[fetchDashboardData]);
 
     return (
         <div className="min-h-screen bg-dark text-light p-4 md:p-6 lg:p-12">
@@ -165,15 +219,20 @@ export function AdminDashboard() {
                                 <td className="p-4 md:p-6 text-right">
                                     <button
                                         disabled={user.role === 1}
+                                        onClick={()=>setConfirmConfig({ isOpen: true, type: user.banned ? 'unban' : 'ban', userId: user.id, userName: `${user.name} ${user.surname}` })}
                                         className={`text-[8px] md:text-[9px] tracking-[0.2em] border px-3 md:px-5 py-2 transition-all font-black uppercase italic
-                                    ${user.role === 1
+                                         ${user.role === 1
                                             ? "opacity-50 border-white/10 text-white cursor-not-allowed bg-white/5"
-                                            : "text-secondary/60 border-secondary/20 hover:bg-secondary hover:text-white cursor-pointer active:scale-95 shadow-sm"
-                                        }`}>
+                                            : user.banned
+                                                ? "text-green-500 border-green-500/20 hover:bg-green-500 hover:text-white cursor-pointer" 
+                                                : "text-secondary/60 border-secondary/20 hover:bg-secondary hover:text-white cursor-pointer active:scale-95 shadow-sm" 
+                                        }`}
+                                    >
                                         {user.role === 1 ? (
                                             <span className="flex items-center gap-2 justify-end">
-                                        <span className="w-1 h-1 bg-white/40 rounded-full animate-pulse"></span>Protected</span>
-                                        ) : "Terminate"}
+                                                <span className="w-1 h-1 bg-white/40 rounded-full animate-pulse"></span>Protected
+                                            </span>
+                                        ) : user.banned ? "[ RESTORE_ACCESS ]" : "Terminate"}
                                     </button>
                                 </td>
                             </tr>
@@ -202,10 +261,14 @@ export function AdminDashboard() {
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-3 min-w-50">
-                                    <button className="bg-green-600/20 text-green-500 border border-green-500/30 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-green-600 hover:text-white transition-all cursor-pointer">
+                                    <button
+                                        onClick={()=>setConfirmConfig({ isOpen: true, type: 'approve', userId: org.userId, userName: org.organisationName })}
+                                        className="bg-green-600/20 text-green-500 border border-green-500/30 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-green-600 hover:text-white transition-all cursor-pointer">
                                         [ Approve_Access ]
                                     </button>
-                                    <button className="bg-red-600/20 text-red-500 border border-red-500/30 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all cursor-pointer">
+                                    <button
+                                        onClick={()=>setConfirmConfig({ isOpen: true, type: 'reject', userId: org.userId, userName: org.organisationName })}
+                                        className="bg-red-600/20 text-red-500 border border-red-500/30 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all cursor-pointer">
                                         [ Deny_Request ]
                                     </button>
                                 </div>
@@ -222,6 +285,7 @@ export function AdminDashboard() {
             <CreateRace
                 isOpen={isCreateRaceOpen}
                 onClose={() => setIsCreateRaceOpen(false)}
+                onSuccess={fetchDashboardData}
             />
             <EditRace
                 isOpen={isEditRaceOpen}
@@ -230,6 +294,16 @@ export function AdminDashboard() {
                     setSelectedRaceId(null);
                 }}
                 id={selectedRaceId || 0}
+                onSuccess={fetchDashboardData}
+            />
+            <ConfirmModal
+                isOpen={confirmConfig.isOpen}
+                onClose={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={handleAction}
+                title={confirmConfig.type === 'approve' ? "AUTHORIZATION" : "WARNING"}
+                variant={confirmConfig.type === 'approve' ? "success" : "danger"}
+                message={`ARE YOU SURE YOU WANT TO ${confirmConfig.type?.toUpperCase()} : ${confirmConfig.userName.toUpperCase()}?`}
+                error={error}
             />
         </div>
     );

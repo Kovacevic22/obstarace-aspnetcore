@@ -5,7 +5,7 @@ export enum OrganiserStatus {
 }
 
 export interface OrganiserDto {
-    organizationName: string;
+    organisationName: string;
     description: string;
     status?: OrganiserStatus;
 }

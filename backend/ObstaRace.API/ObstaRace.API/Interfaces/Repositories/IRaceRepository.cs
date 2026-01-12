@@ -11,7 +11,7 @@ public interface IRaceRepository
     Task<Race?> GetRaceBySlug(string slug);
     Task<RaceStatsDto> GetRaceStats();
     Task<bool> RaceExists(int id);
-    
+    Task<ICollection<Race>> GetMyRaces(int userId);
     //POST
     Task<bool> CreateRace(Race race);
     //UPDATE

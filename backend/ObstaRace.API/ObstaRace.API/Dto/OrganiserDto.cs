@@ -12,3 +12,8 @@ public class OrganiserDto
     public string Description { get; set; } 
     public OrganiserStatus Status { get; set; }
 }
+public class RegisterOrganiserDto
+{
+    public string OrganisationName { get; set; }
+    public string Description { get; set; }
+}

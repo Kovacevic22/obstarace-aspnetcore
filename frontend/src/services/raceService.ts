@@ -36,6 +36,10 @@ export const raceService = {
     updateRace: async(id:number, data:UpdateRaceDto):Promise<RaceDto> => {
         const response = await api.put(`api/races/${id}`, data);
         return response.data;
+    },
+    getMyRaces: async():Promise<RaceDto[]> => {
+        const response = await api.get(`api/races/my-races`);
+        return response.data;
     }
 }
 export default raceService;

@@ -13,6 +13,12 @@ export const userService = {
     updateUser: async (userId:number, data:UpdateUserDto): Promise<UserDto> => {
         const response = await api.put(`api/users/${userId}`, data);
         return response.data;
+    },
+    banUser: async (userId:number) => {
+        await api.put(`api/users/ban/${userId}`);
+    },
+    unbanUser: async (userId:number) => {
+        await api.put(`api/users/unban/${userId}`);
     }
 };
 export default userService

@@ -36,4 +36,16 @@ public class OrganiserService : IOrganiserService
         }
         return await _organiserRepository.VerifyOrganiser(userId);
     }
+
+    public async Task<bool> RejectOrganiser(int userId)
+    {
+        _logger.LogInformation("Rejecting organiser with userId {id}", userId);
+        if (!await _userRepository.UserExists(userId))
+        {
+            _logger.LogError("User with id {id} don't exist", userId);
+            throw new ArgumentException("User does not exist");
+        }
+
+        return await _organiserRepository.RejectOrganiser(userId);
+    }
 }

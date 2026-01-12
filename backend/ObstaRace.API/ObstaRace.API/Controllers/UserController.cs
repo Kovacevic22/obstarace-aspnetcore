@@ -57,6 +57,54 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPut("ban/{userId}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(200, Type = typeof(bool))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> BanUser(int userId)
+    {
+        try
+        {
+            _logger.LogInformation("Banning user with id {UserId}", userId);
+            var result = await _userService.BanUser(userId);
+            if (!result)
+            {
+                _logger.LogError("User does not exist");
+                return NotFound(new { message = "User not found" });
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error banning user with id {UserId}", userId);
+            return StatusCode(500, new { error = "Error banning user" });
+        }
+    }
+    [HttpPut("unban/{userId}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(200, Type = typeof(bool))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> UnbanUser(int userId)
+    {
+        try
+        {
+            _logger.LogInformation("Unbanning user with id {UserId}", userId);
+            var result = await _userService.UnbanUser(userId);
+            if (!result)
+            {
+                _logger.LogError("User does not exist");
+                return NotFound(new { message = "User not found" });
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error unbanning user with id {UserId}", userId);
+            return StatusCode(500, new { error = "Error unbanning user" });
+        }
+    }
     [HttpGet("stats")]
     [ProducesResponseType(200, Type = typeof(UserStatsDto))]
     [ProducesResponseType(404)]

@@ -46,6 +46,8 @@ public class Race
     [Required]
     [Range(1, 10000, ErrorMessage = "Max participants must be between 1 and 1000.")]
     public int MaxParticipants { get; set; }
+    public int CreatedById { get; set; } 
+    public User CreatedBy { get; set; }
     public IList<Registration> Registrations { get; set; }
     public IList<RaceObstacle> RaceObstacles { get; set; }
 }

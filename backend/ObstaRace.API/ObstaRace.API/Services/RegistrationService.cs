@@ -22,7 +22,7 @@ public class RegistrationService : IRegistrationService
         _userRepository = userRepository;
         _raceRepository = raceRepository;
     }
-    public async Task<ICollection<RegistrationDto>> GetAllRegistrations(int? userId)
+    public async Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId)
     {
         var registrations = await _registrationRepository.GetAllRegistrations(userId);
         return _mapper.Map<List<RegistrationDto>>(registrations);
@@ -31,6 +31,15 @@ public class RegistrationService : IRegistrationService
     {
         var registration = await _registrationRepository.GetRegistration(id);
         return registration==null?null:_mapper.Map<RegistrationDto>(registration);
+    }
+
+    public async Task<ICollection<RegistrationDto>> GetParticipantsForRace(int organiserId, int? raceId)
+    {
+        _logger.LogInformation("Fetching registrations for organiser {Id}, Filter: {RaceId}", organiserId, raceId ?? 0);
+    
+        var registrations = await _registrationRepository.GetParticipantsForRace(organiserId, raceId);
+    
+        return _mapper.Map<List<RegistrationDto>>(registrations);
     }
 
     public async Task<RegistrationDto> CreateRegistration(int raceId, int userId)
@@ -78,7 +87,7 @@ public class RegistrationService : IRegistrationService
         await _registrationRepository.CreateRegistration(registration);
         return _mapper.Map<RegistrationDto>(registration);
     }
-    public async Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id)
+    public async Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id, int userId, Role role)
     {
         _logger.LogInformation("Updating registration {RegistrationId}", id);
         var existingRegistration = await _registrationRepository.GetRegistration(id);
@@ -86,6 +95,11 @@ public class RegistrationService : IRegistrationService
         {
             _logger.LogWarning("Registration with id {RegistrationId} not found", id);
             throw new ArgumentException("Registration not found");
+        }
+        var race = await _raceRepository.GetRace(existingRegistration.RaceId);
+        if (role != Role.Admin && race.CreatedById != userId)
+        {
+            throw new UnauthorizedAccessException("You can only manage participants for your own races.");
         }
         existingRegistration.Status = registration.Status;
         await _registrationRepository.UpdateRegistration(existingRegistration);

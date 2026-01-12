@@ -62,4 +62,30 @@ public class OrganiserController : ControllerBase
             return StatusCode(500, new { error = "Error verifying pending organisers" });
         }
     }
+
+    [HttpPut("reject/{userId}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<OrganiserDto>))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> RejectOrganiser(int userId)
+    {
+        try
+        {
+            var result = await _organiserService.RejectOrganiser(userId);
+            if (!result) return BadRequest(new { error = "Could not reject organiser" });
+            
+            return Ok(new { message = "Organiser reject successfully" });
+        }
+        catch (ArgumentException ax)
+        {
+            _logger.LogError(ax, "Error rejecting pending organisers");
+            return BadRequest(new { error = ax.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error rejecting pending organisers");
+            return StatusCode(500, new { error = "Error rejecting pending organisers" });
+        }
+    }
 }

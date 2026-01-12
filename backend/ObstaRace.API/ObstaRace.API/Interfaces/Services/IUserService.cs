@@ -8,6 +8,8 @@ public interface IUserService
     Task<ICollection<UserDto>> GetAllUsers();
     Task<UserDto?> GetUser(int id);
     Task<UserStatsDto> GetUserStats();
+    Task<bool> BanUser(int userId);
+    Task<bool> UnbanUser(int userId);
     //LOGIN/REGISTER
     Task<UserDto?> RegisterUser(RegisterDto registerDto);
     Task<LoginResponseDto?> LoginUser(LoginDto loginDto);

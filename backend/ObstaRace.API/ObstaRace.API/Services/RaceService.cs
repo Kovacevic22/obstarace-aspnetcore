@@ -41,7 +41,14 @@ public class RaceService : IRaceService
         return race == null ? null : _mapper.Map<RaceDto>(race);
     }
 
-    public async Task<RaceDto> CreateRace(CreateRaceDto raceDto)
+    public async Task<ICollection<RaceDto>> GetMyRaces(int userId)
+    {
+        _logger.LogInformation("Retrieving races created by {id}",userId);
+        var races = await _raceRepository.GetMyRaces(userId);
+        return _mapper.Map<List<RaceDto>>(races);
+    }
+
+    public async Task<RaceDto> CreateRace(CreateRaceDto raceDto, int userId)
     {
         var slug = raceDto.Slug.ToLower().Trim();
         slug = Regex.Replace(slug,@"[^a-z0-9]+", "-");
@@ -58,7 +65,7 @@ public class RaceService : IRaceService
             throw new ArgumentException("Cannot create race in the past");
         }
 
-        if (raceDto.Date.Date > raceDto.RegistrationDeadLine.Date)
+        if (raceDto.Date.Date < raceDto.RegistrationDeadLine.Date)
         {
             _logger.LogWarning("Cannot create race! Deadline must be rather then date!");
             throw new ArgumentException("Cannot create race! Deadline must be rather then date!");
@@ -70,7 +77,7 @@ public class RaceService : IRaceService
         }
         
         var race = _mapper.Map<Race>(raceDto);
-
+        race.CreatedById = userId;
         if (raceDto.ObstacleIds.Any())
         {
             race.RaceObstacles = raceDto.ObstacleIds.Select(id => new RaceObstacle()
@@ -93,7 +100,7 @@ public class RaceService : IRaceService
         _logger.LogInformation("Calculating race statistics from repository");
         return await _raceRepository.GetRaceStats();
     }
-    public async Task<RaceDto> UpdateRace(UpdateRaceDto raceDto, int id)
+    public async Task<RaceDto> UpdateRace(UpdateRaceDto raceDto, int id,int userId, Role role)
     {
         _logger.LogInformation("Updating race {raceDto}", raceDto.Name);
         var existingRace = await _raceRepository.GetRace(id);
@@ -101,6 +108,10 @@ public class RaceService : IRaceService
         {
             _logger.LogWarning("Race with id {id} does not exist", id);
             throw new ArgumentException($"Race with id {id} does not exist");
+        }
+        if (role != Role.Admin && existingRace.CreatedById != userId)
+        {
+            throw new UnauthorizedAccessException("You can only edit your own races.");
         }
         if (raceDto.Date.Date < DateTime.UtcNow.Date)
         {
@@ -138,18 +149,14 @@ public class RaceService : IRaceService
         return _mapper.Map<RaceDto>(existingRace);
     }
 
-    public async Task<bool> DeleteRace(int raceId)
+    public async Task<bool> DeleteRace(int raceId, int userId,Role role)
     {
         _logger.LogInformation("Deleting race {raceId}", raceId);
         var race = await _raceRepository.GetRace(raceId);
         if (race == null) return false;
-        if (race.RaceObstacles.Any())
+        if (race.CreatedById != userId && role != Role.Admin)
         {
-            race.RaceObstacles.Clear();
-        }
-        if (race.Registrations.Any())
-        {
-            race.Registrations.Clear();
+            throw new UnauthorizedAccessException("You can only delete your own races");
         }
         await _raceRepository.UpdateRace(race);
         return await _raceRepository.DeleteRace(raceId);

@@ -49,7 +49,7 @@ public class ObstacleService : IObstacleService
         }
         return _mapper.Map<ObstacleDto>(obstacle);
     }
-    public async Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id)
+    public async Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id, int userId, Role role)
     {
         _logger.LogInformation("Updating obstacle {ObstacleDto.Name}", obstacle.Name);
         var existingObstacle = await _obstacleRepository.GetObstacle(id);
@@ -57,6 +57,10 @@ public class ObstacleService : IObstacleService
         {
             _logger.LogWarning("Obstacle with id {id} does not exist", id);
             throw new ArgumentException($"Obstacle with id {id} does not exist");
+        }
+        if (role != Role.Admin && existingObstacle.CreatedById != userId)
+        {
+            throw new UnauthorizedAccessException("You can only edit your own obstacles.");
         }
         _mapper.Map(obstacle, existingObstacle);
         if (!await _obstacleRepository.UpdateObstacle(existingObstacle))

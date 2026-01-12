@@ -68,7 +68,7 @@ export function RaceDetailsPage({user}:Props) {
         try{
             setIsRegistering(true);
             setError(null);
-            await registrationService.createRegistration(user.id,race.id);
+            await registrationService.createRegistration(race.id);
             setIsConfirmModalOpen(false);
             window.location.href = "/registrations";
         }catch (e){

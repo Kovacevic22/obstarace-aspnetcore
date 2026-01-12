@@ -6,7 +6,7 @@ import obstacleService from "../../services/obstacleService.ts";
 import {type CreateObstacleDto, Difficulty, type ObstacleDto} from "../../Models/obstacles.type.ts";
 import * as React from "react";
 
-export function EditRace({ isOpen, onClose, id }: { isOpen: boolean, onClose: () => void,id:number }) {
+export function EditRace({ isOpen, onClose, id, onSuccess }: { isOpen: boolean, onClose: () => void,id:number, onSuccess: () => void }) {
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isObstacleDeleteModalOpen, setIsObstacleDeleteModalOpen] = useState(false);
@@ -99,6 +99,7 @@ export function EditRace({ isOpen, onClose, id }: { isOpen: boolean, onClose: ()
         try{
             await raceService.updateRace(id,raceForm);
             onClose();
+            onSuccess();
             window.location.reload();
         }catch(e){
             console.error(e);

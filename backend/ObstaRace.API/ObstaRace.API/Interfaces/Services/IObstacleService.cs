@@ -10,6 +10,6 @@ public interface IObstacleService
     
     //CRUD
     Task<ObstacleDto> CreateObstacle(CreateObstacleDto obstacle, int userId);
-    Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id);
+    Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id,int userId, Role userRole);
     Task<bool> DeleteObstacle(int obstacleId, int userId, Role role);
 }

@@ -1,3 +1,5 @@
+import type {UserDto} from "./users.type.ts";
+
 export enum RegistrationStatus {
     Pending = 0,
     Confirmed = 1,
@@ -16,4 +18,5 @@ export interface RegistrationDto {
     bibNumber: string;
     status: RegistrationStatus;
     race: RaceDto;
+    user: UserDto;
 }

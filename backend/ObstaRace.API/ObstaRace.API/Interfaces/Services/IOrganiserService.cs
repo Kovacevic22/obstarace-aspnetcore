@@ -6,4 +6,5 @@ public interface IOrganiserService
 {
     Task<ICollection<OrganiserDto>> GetPendingOrganisers();
     Task<bool> VerifyOrganiser(int userId);
+    Task<bool> RejectOrganiser(int userId);
 }

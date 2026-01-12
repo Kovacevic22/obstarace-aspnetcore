@@ -7,7 +7,7 @@ public interface IRegistrationRepository
     Task<ICollection<Registration>> GetAllRegistrations(int? userId);
     Task<Registration?> GetRegistration(int id);
     Task<bool> RegistrationExists(int id);
-    
+    Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId);
     //CRUD
     Task<bool> CreateRegistration(Registration registration);
     Task<bool> UpdateRegistration(Registration registration);

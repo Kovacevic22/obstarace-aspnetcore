@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
+using ObstaRace.API.Models;
 
 
 namespace ObstaRace.API.Controllers;
@@ -37,6 +38,25 @@ public class RaceController : ControllerBase
         }
     }
 
+    [HttpGet("my-races")]
+    [Authorize(Roles = "Organiser")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<RaceDto>))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetMyRaces()
+    {
+        try
+        {   var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            _logger.LogInformation("Getting races");
+            var races = await _raceService.GetMyRaces(userId);
+            return Ok(races);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving races");
+            return StatusCode(500, new { error = "Error retrieving races" });
+        }
+    }
     [HttpGet("{raceId:int}")]
     [ProducesResponseType(200, Type = typeof(RaceDto))]
     [ProducesResponseType(404)]
@@ -114,11 +134,12 @@ public class RaceController : ControllerBase
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             if(!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating race with name {RaceName}", raceDto.Name);
-            var race = await _raceService.CreateRace(raceDto);
-            return CreatedAtAction(nameof(GetRace), new {raceId = race.Id}, race);
+            var race = await _raceService.CreateRace(raceDto,userId);
+            return Ok(race);
         }
         catch (ArgumentException ex)
         {
@@ -139,11 +160,17 @@ public class RaceController : ControllerBase
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating race with id {RaceId}", raceId);
-            var race = await _raceService.UpdateRace(raceDto, raceId);
+            var race = await _raceService.UpdateRace(raceDto, raceId,userId,userRole);
             return Ok(race);
+        }
+        catch (UnauthorizedAccessException ux)
+        {
+            return BadRequest(new { error = ux.Message });
         }
         catch (ArgumentException ex)
         {
@@ -164,9 +191,16 @@ public class RaceController : ControllerBase
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userRole =
+                (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
             _logger.LogInformation("Deleting race with id {RaceId}", raceId);
-            await _raceService.DeleteRace(raceId);
+            await _raceService.DeleteRace(raceId, userId, userRole);
             return NoContent();
+        }
+        catch (UnauthorizedAccessException ux)
+        {
+            return BadRequest(new { error = ux.Message });
         }
         catch (ArgumentException ex)
         {
