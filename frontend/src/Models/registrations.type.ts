@@ -1,14 +1,11 @@
 import type {UserDto} from "./users.type.ts";
+import type {ParticipantDto} from "./participant.type.ts";
+import type {RaceDto} from "./races.type.ts";
 
 export enum RegistrationStatus {
     Pending = 0,
     Confirmed = 1,
     Cancelled = 2
-}
-
-export interface RaceDto {
-    name: string;
-    location?: string;
 }
 
 export interface RegistrationDto {
@@ -20,4 +17,5 @@ export interface RegistrationDto {
     status: RegistrationStatus;
     race: RaceDto;
     user: UserDto;
+    participant: ParticipantDto;
 }

@@ -8,15 +8,11 @@ public enum Role
 public class User
 {
     public int Id {get; set; }
-    public string Name {get; set; }
-    public string Surname {get; set; }
     public string Email {get; set; }
     public string PasswordHash {get; set; }
     public string PhoneNumber {get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public string EmergencyContact { get; set; }
     public Role Role {get; set; }
     public bool Banned {get; set; }
     public Organiser? Organiser {get; set; }
-    public IList<Registration> Registrations {get; set;}
+    public Participant? Participant { get; set; }
 }

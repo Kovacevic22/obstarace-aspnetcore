@@ -1,4 +1,5 @@
 import type {OrganiserDto} from "./organiser.type.ts";
+import type { RegisterParticipantDto } from "./participant.type.ts";
 
 
 export interface LoginData {
@@ -8,10 +9,7 @@ export interface LoginData {
 export interface RegisterData {
     email: string;
     password: string;
-    name: string;
-    surname: string;
     phoneNumber: string;
-    dateOfBirth: string;
-    emergencyContact: string;
     organiser?: OrganiserDto;
+    participant?: RegisterParticipantDto;
 }

@@ -22,7 +22,7 @@ export function HeroSection({ user }: Props) {
             <div className="relative z-20 container mx-auto px-6 sm:px-12 lg:px-16">
                 <div className="max-w-4xl">
                     <h1 className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-                        {user ? `Ready, ${user.name}?` : "Dominate"} <br />
+                        {user ? `Ready, ${user.participant?.name || 'Champion'}?` : "Dominate"} <br />
                         <span className="text-transparent bg-clip-text bg-linear-to-r from-accent to-fire">
                             {user ? `CONQUER THE TRAIL.` : "THE OBSTACLES."}
                         </span>

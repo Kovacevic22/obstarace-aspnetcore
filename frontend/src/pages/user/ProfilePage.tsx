@@ -1,7 +1,8 @@
-import {Role, type UpdateUserDto, type UserDto} from "../../Models/users.type.ts";
+import {Role, type UserDto} from "../../Models/users.type.ts";
 import {useState} from "react";
 import userService from "../../services/userService.ts";
 import ConfirmModal from "../../components/common/ConfirmModal.tsx";
+import type {UpdateParticipantDto} from "../../Models/participant.type.ts";
 
 interface Props {
     user: UserDto | null;
@@ -11,10 +12,11 @@ export function ProfilePage({ user }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
-    const [formUpdated, setFormUpdated] = useState<UpdateUserDto>({
-        dateOfBirth: user?.dateOfBirth ? new Date(user?.dateOfBirth).toISOString().split('T')[0] : "",
-        emergencyContact: user?.emergencyContact || "",
-        phoneNumber: user?.phoneNumber || ""
+    const [formUpdated, setFormUpdated] = useState<UpdateParticipantDto>({
+        dateOfBirth: user?.participant?.dateOfBirth
+            ? new Date(user.participant.dateOfBirth).toISOString().split('T')[0]
+            : "",
+        emergencyContact: user?.participant?.emergencyContact || "",
     });
     if (!user) return (
         <div className="min-h-screen bg-[#0a0c0b] flex items-center justify-center relative overflow-hidden">
@@ -33,7 +35,7 @@ export function ProfilePage({ user }: Props) {
 
         return data?.title || data?.error || "Error";
     };
-    const isFormValid = formUpdated.phoneNumber!="" && formUpdated.phoneNumber!.length > 0;
+    const isFormValid = formUpdated.emergencyContact!="" && formUpdated.emergencyContact!.length > 0;
     const updateUser = async ()=>{
         try{
             setLoading(true);
@@ -68,8 +70,8 @@ export function ProfilePage({ user }: Props) {
                             <p className="text-accent text-[10px] font-black uppercase tracking-[0.5em]">System_Profile // ID: {user.id}</p>
                         </div>
                         <h1 className="text-6xl md:text-8xl font-black uppercase tracking-[-0.05em] leading-[0.8]">
-                            {user.name}<br/>
-                            <span className="text-white/10">{user.surname}</span>
+                            {user.participant?.name}<br/>
+                            <span className="text-white/10">{user.participant?.surname}</span>
                         </h1>
                         <div className="flex gap-4 mt-6">
                             <div className="px-3 py-1 bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-white/40 backdrop-blur-sm">
@@ -111,15 +113,15 @@ export function ProfilePage({ user }: Props) {
                                     <input
                                         value={formUpdated.emergencyContact}
                                         onChange={(e)=>setFormUpdated({...formUpdated,emergencyContact:e.target.value})}
-                                        type="text" defaultValue={user.emergencyContact} placeholder="NAME / CONTACT" className="bg-white/3 border border-white/10 px-5 py-4 text-sm font-bold text-white outline-none focus:border-accent/50 focus:bg-white/5 transition-all" />
+                                        type="text" defaultValue={user.participant?.emergencyContact} placeholder="NAME / CONTACT" className="bg-white/3 border border-white/10 px-5 py-4 text-sm font-bold text-white outline-none focus:border-accent/50 focus:bg-white/5 transition-all" />
                                 </div>
 
                                 <div className="flex flex-col gap-3 group">
                                     <label className="text-[9px] uppercase tracking-widest text-white/30 font-black italic group-focus-within:text-accent transition-colors">Contact_Frequency</label>
                                     <input
-                                        value={formUpdated.phoneNumber}
-                                        onChange={(e)=>setFormUpdated({...formUpdated,phoneNumber:e.target.value})}
-                                        type="text" defaultValue={user.phoneNumber} placeholder="+381..." className="bg-white/3 border border-white/10 px-5 py-4 text-sm font-bold text-white outline-none focus:border-accent/50 focus:bg-white/5 transition-all" />
+                                        disabled={true}
+                                        readOnly={true}
+                                        type="text" defaultValue={user.phoneNumber} className="bg-white/2 border border-white/5 px-5 py-4 text-sm font-bold text-white/30 outline-none border-dashed cursor-not-allowed italic transition-all" />
                                 </div>
 
                                 <div className="flex flex-col gap-3 group">
@@ -128,7 +130,7 @@ export function ProfilePage({ user }: Props) {
                                         value={formUpdated.dateOfBirth}
                                         onChange={(e)=>setFormUpdated({...formUpdated,dateOfBirth:e.target.value})}
                                         type="date"
-                                        defaultValue={user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : ""}
+                                        defaultValue={user.participant?.dateOfBirth ? new Date(user.participant?.dateOfBirth).toISOString().split('T')[0] : ""}
                                         className="bg-white/3 border border-white/10 px-5 py-4 text-sm font-bold text-white outline-none focus:border-accent/50 focus:bg-white/5 transition-all w-full"
                                     />
                                 </div>
@@ -158,12 +160,12 @@ export function ProfilePage({ user }: Props) {
                             <div className="space-y-8">
                                 <div className="flex justify-between items-end border-b border-white/5 pb-4">
                                     <span className="text-[9px] uppercase tracking-widest text-white/30 font-black">Total_Races</span>
-                                    <span className="text-4xl font-black italic tracking-tighter text-white">{user.activity.totalRaces || 0}</span>
+                                    <span className="text-4xl font-black italic tracking-tighter text-white">{user.participant?.activity.totalRaces || 0}</span>
                                 </div>
 
                                 <div className="flex justify-between items-end border-b border-white/5 pb-4">
                                     <span className="text-[9px] uppercase tracking-widest text-white/30 font-black">Finished_Races</span>
-                                    <span className="text-4xl font-black italic tracking-tighter text-white">{user.activity.finishedRaces || 0}</span>
+                                    <span className="text-4xl font-black italic tracking-tighter text-white">{user.participant?.activity.finishedRaces || 0}</span>
                                 </div>
                             </div>
 

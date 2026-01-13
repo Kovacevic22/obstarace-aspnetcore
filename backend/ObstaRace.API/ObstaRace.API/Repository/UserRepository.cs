@@ -17,12 +17,16 @@ public class UserRepository : IUserRepository
     //GET
     public async Task<ICollection<User>> GetAllUsers()
     {
-        return await _context.Users.OrderBy(u => u.Id).ToListAsync();
+        return await _context.Users
+            .Include(u => u.Participant)
+            .Include(u => u.Organiser)
+            .OrderBy(u => u.Id)
+            .ToListAsync();
     }
     public async Task<User?> GetUser(int id)
     {
         return await _context.Users
-            .Include(u=>u.Registrations)
+            .Include(u=>u.Participant).ThenInclude(p=>p.Registrations)
             .Include(u => u.Organiser)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
@@ -82,6 +86,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .Include(u => u.Organiser)
+            .Include(u => u.Participant)
             .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
     }
 }

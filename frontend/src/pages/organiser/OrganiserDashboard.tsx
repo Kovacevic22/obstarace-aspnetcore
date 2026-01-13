@@ -302,7 +302,9 @@ export function OrganiserDashboard() {
                             pendingRegistrations.map((registration: RegistrationDto) => (
                                 <tr className="hover:bg-white/3 transition-all group border-l-2 border-l-transparent hover:border-l-accent">
                                     <td className="p-4 md:p-6">
-                                        <div className="text-white text-base md:text-lg tracking-tighter font-black">{registration.user.name} {registration.user.surname}</div>
+                                        <div className="text-white text-base md:text-lg tracking-tighter font-black">
+                                            {registration.participant.name} {registration.participant.surname}
+                                        </div>
                                         <div className="text-[9px] md:text-[10px] text-accent font-bold not-italic tracking-widest uppercase">Bib: #{registration.bibNumber} (Auto-Gen)</div>
                                     </td>
                                     <td className="p-4 md:p-6 text-center">

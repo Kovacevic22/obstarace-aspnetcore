@@ -20,6 +20,7 @@ public class RegistrationDto
     public RegistrationStatus Status { get; set; }
     public RaceDto Race { get; set; }
     public UserDto User { get; set; }
+    public ParticipantDto Participant { get; set; }
 }
 
 public class CreateRegistrationDto

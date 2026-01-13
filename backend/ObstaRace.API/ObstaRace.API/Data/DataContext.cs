@@ -15,6 +15,7 @@ public class DataContext : DbContext
     public DbSet<Registration> Registrations { get; set; }
     public DbSet<RaceObstacle> RaceObstacles { get; set; }
     public DbSet<Organiser> Organisers { get; set; }
+    public DbSet<Participant> Participants { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<RaceObstacle>().HasKey(pc => new { pc.RaceId, pc.ObstacleId });
@@ -22,7 +23,11 @@ public class DataContext : DbContext
         modelBuilder.Entity<RaceObstacle>().HasOne(p => p.Obstacle).WithMany(p => p.RaceObstacles).HasForeignKey(po => po.ObstacleId).OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<Registration>().HasOne(p => p.Race).WithMany(p => p.Registrations).HasForeignKey(po => po.RaceId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Registration>().HasOne(p => p.User).WithMany(p => p.Registrations).HasForeignKey(po => po.UserId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Registration>().HasOne(p => p.User).WithMany().HasForeignKey(po => po.UserId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Registration>()
+            .HasOne<Participant>() 
+            .WithMany(p => p.Registrations) 
+            .HasForeignKey(r => r.UserId);
         
         modelBuilder.Entity<Registration>() .HasIndex(r => new { r.UserId, r.RaceId }).IsUnique();
         
@@ -32,12 +37,20 @@ public class DataContext : DbContext
         modelBuilder.Entity<Race>().Property(r => r.RegistrationDeadLine).HasColumnType("date");
         modelBuilder.Entity<Race>().HasIndex(r => r.Slug).IsUnique();
         
-        modelBuilder.Entity<User>().Property(u => u.DateOfBirth).HasColumnType("date");
+        modelBuilder.Entity<Participant>().Property(p => p.DateOfBirth).HasColumnType("date");
         
         modelBuilder.Entity<Organiser>().HasKey(o => o.UserId);
         modelBuilder.Entity<User>().HasOne(u=>u.Organiser)
             .WithOne(u=>u.User)
             .HasForeignKey<Organiser>(o=>o.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Participant>().HasKey(p => p.UserId); 
+        modelBuilder.Entity<User>().HasOne(u => u.Participant)
+            .WithOne(p => p.User)
+            .HasForeignKey<Participant>(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        
     }
 }

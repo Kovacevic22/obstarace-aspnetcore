@@ -210,7 +210,13 @@ export function AdminDashboard() {
                         users.map((user) => (
                             <tr key={user.id} className="hover:bg-white/3 transition-all group border-l-2 border-l-transparent hover:border-l-secondary whitespace-nowrap md:whitespace-normal">
                                 <td className="p-4 md:p-6">
-                                    <div className="text-white text-base md:text-lg tracking-tighter font-black">{user.name} {user.surname}</div>
+                                    <div className="text-white text-base md:text-lg tracking-tighter font-black">{/* Proveravamo da li je trkač, organizator ili samo email */}
+                                        {user.participant
+                                            ? `${user.participant.name} ${user.participant.surname}`
+                                            : user.organiser
+                                                ? user.organiser.organisationName
+                                                : "System Admin / User"}
+                                    </div>
                                     <div className="text-[9px] md:text-[10px] text-white/20 lowercase font-bold not-italic tracking-normal">{user.email}</div>
                                 </td>
                                 <td className="p-4 md:p-6 text-center">
@@ -219,7 +225,11 @@ export function AdminDashboard() {
                                 <td className="p-4 md:p-6 text-right">
                                     <button
                                         disabled={user.role === 1}
-                                        onClick={()=>setConfirmConfig({ isOpen: true, type: user.banned ? 'unban' : 'ban', userId: user.id, userName: `${user.name} ${user.surname}` })}
+                                        onClick={()=>setConfirmConfig({ isOpen: true, type: user.banned ? 'unban' : 'ban', userId: user.id, userName: user.participant
+                                                ? `${user.participant.name} ${user.participant.surname}`
+                                                : user.organiser
+                                                    ? user.organiser.organisationName
+                                                    : user.email })}
                                         className={`text-[8px] md:text-[9px] tracking-[0.2em] border px-3 md:px-5 py-2 transition-all font-black uppercase italic
                                          ${user.role === 1
                                             ? "opacity-50 border-white/10 text-white cursor-not-allowed bg-white/5"

@@ -125,11 +125,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{userId:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [ProducesResponseType(200, Type = typeof(UserDto))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto updateUserDto)
+    public async Task<IActionResult> UpdateUser(int userId, UpdateParticipantDto updateUserDto)
     {
         try
         {

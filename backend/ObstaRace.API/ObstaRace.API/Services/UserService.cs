@@ -16,25 +16,43 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
-    public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration)
+    private readonly IParticipantRepository _participantRepository;
+    public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration, IParticipantRepository participantRepository)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _logger = logger;
         _configuration = configuration;
+        _participantRepository = participantRepository;
     }
     public async Task<ICollection<UserDto>> GetAllUsers()
     {
         _logger.LogInformation("Getting all users");
         var users = await _userRepository.GetAllUsers();
-        return _mapper.Map<List<UserDto>>(users);
+        var userDtos = _mapper.Map<List<UserDto>>(users);
+        
+        foreach (var userDto in userDtos.Where(u => u.Participant != null))
+        {
+            userDto.Participant.Activity = await _participantRepository.GetParticipantActivity(userDto.Id);
+        }
+        
+        return userDtos;
     }
 
     public async Task<UserDto?> GetUser(int id)
     {
         _logger.LogInformation("Getting user with id {UserId}", id);
         var user = await _userRepository.GetUser(id);
-        return user==null?null:_mapper.Map<UserDto>(user);
+        if (user == null) return null;
+        
+        var userDto = _mapper.Map<UserDto>(user);
+
+        if (user.Participant != null)
+        {
+            userDto.Participant.Activity = await _participantRepository.GetParticipantActivity(id);
+        }
+        
+        return userDto;
     }
 
     public Task<UserStatsDto> GetUserStats()
@@ -71,10 +89,16 @@ public class UserService : IUserService
 
         var user = _mapper.Map<User>(registerDto);
         user.PasswordHash = PasswordHash(registerDto.Password);
-        user.Role = registerDto.Organiser != null ? Role.Organiser : Role.User;
-        if (user.Organiser != null)
+        if (registerDto.Organiser != null)
         {
+            user.Role = Role.Organiser;
             user.Organiser.Status = OrganiserStatus.Pending;
+            user.Participant = null;
+        }
+        else
+        {
+            user.Role = Role.User;
+            if (user.Participant == null) throw new ArgumentException("Participant data is required.");
         }
         _logger.LogInformation("User account created successfully");
         await _userRepository.CreateUser(user);
@@ -92,10 +116,19 @@ public class UserService : IUserService
             throw new ArgumentException("Invalid email or password");
         }
 
+        if (user == null)
+        {
+            _logger.LogError("User does not exist");
+            throw new ArgumentException("User does not exist");
+        }
         if (user.Banned)
         {
-            _logger.LogWarning("Login failed for {Email}", loginDto.Email);
-            throw new ArgumentException($"{user.Name} {user.Surname} are banned!");
+            var displayName = user.Participant != null 
+                ? $"{user.Participant.Name} {user.Participant.Surname}" 
+                : user.Email;
+        
+            _logger.LogWarning("Login failed for banned user {Email}", loginDto.Email);
+            throw new ArgumentException($"{displayName} is banned!");
         }
         if (user.Role == Role.Organiser && user.Organiser != null)
         {
@@ -119,12 +152,14 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<UserDto?> UpdateUser(UpdateUserDto updateUserDto, int userId)
+    public async Task<UserDto?> UpdateUser(UpdateParticipantDto updateUserDto, int userId)
     {
         _logger.LogInformation("Updating user with id {userId}",userId);
         var user = await _userRepository.GetUser(userId);
         if(user==null)throw new  ArgumentException($"User with id {userId} does not exist");
-        _mapper.Map(updateUserDto, user);
+        if (user.Participant == null) 
+            throw new ArgumentException("User does not have a participant profile to update");
+        _mapper.Map(updateUserDto, user.Participant);
         if (!await _userRepository.UpdateUser(user))
         {
             _logger.LogInformation("Failed to update user");

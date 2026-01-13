@@ -115,11 +115,13 @@ public class RegistrationService : IRegistrationService
         {
             UserId = userId,
             RaceId = raceId,
+            ParticipantUserId = userId,
             BibNumber = bibNumber.ToString(),
             Status = RegistrationStatus.Pending
         };
         await _registrationRepository.CreateRegistration(registration);
-        return _mapper.Map<RegistrationDto>(registration);
+        var fullRegistration = await _registrationRepository.GetRegistration(registration.Id);
+        return _mapper.Map<RegistrationDto>(fullRegistration);
     }
     public async Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id, int userId, Role role)
     {

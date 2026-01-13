@@ -1,4 +1,4 @@
-import {Link, useParams} from "react-router";
+import {Link, useNavigate, useParams} from "react-router";
 import {useEffect, useState} from "react";
 import raceService from "../services/raceService.ts";
 import {Difficulty, type RaceDto, Status} from "../Models/races.type.ts";
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export function RaceDetailsPage({user}:Props) {
+    const navigate = useNavigate();
     const {slug} = useParams<{slug:string}>();
     const [race, setRace] = useState<RaceDto|null>();
     const [loading, setLoading] = useState(true);
@@ -72,6 +73,7 @@ export function RaceDetailsPage({user}:Props) {
             setError(null);
             await registrationService.createRegistration(race.id);
             setIsConfirmModalOpen(false);
+            navigate('/my-registrations');
         }catch (e){
             console.error(e);
             setError(parseApiError(e));

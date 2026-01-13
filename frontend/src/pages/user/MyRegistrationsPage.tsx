@@ -68,7 +68,7 @@ const MyRegistrations = ({ user }: Props) => {
                         Registrations <span className="text-accent">Archive</span>
                     </h1>
                     <p className="text-[10px] tracking-[0.5em] mt-3 not-italic font-medium text-white/30 uppercase">
-                        USER_LOG // {loading ? "SCANNING..." : `${user?.activity.totalRaces} ACTIVE_RECORDS_FOUND`}
+                        USER_LOG // {loading ? "SCANNING..." : `${user?.participant?.activity.totalRaces || 0} ACTIVE_RECORDS_FOUND`}
                     </p>
                 </div>
 
