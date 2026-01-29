@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
@@ -25,8 +26,12 @@ public class ObstacleController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            Role userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
             _logger.LogInformation("User {UserId} with role {Role} requesting obstacles", userId, userRole);
             var obstacles = await _obstacleService.GetAllObstacles(userId,userRole,search);
             return Ok(obstacles);   
@@ -72,7 +77,9 @@ public class ObstacleController : ControllerBase
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
             var obstacle = await _obstacleService.CreateObstacle(obstacleDto,userId);
             return CreatedAtAction(nameof(GetObstacle), new { obstacleId = obstacle.Id }, obstacle);
@@ -96,8 +103,12 @@ public class ObstacleController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating obstacle {obstacleId}", obstacleId);
@@ -123,9 +134,12 @@ public class ObstacleController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var userRole =
-                (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
             _logger.LogInformation("User with id {userId} and role {userRole} deleting obstacle {idObstacle}", userId,
                 userRole, obstacleId);
             var result = await _obstacleService.DeleteObstacle(obstacleId, userId, userRole);

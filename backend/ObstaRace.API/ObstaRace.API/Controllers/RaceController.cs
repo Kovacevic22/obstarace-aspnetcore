@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
@@ -46,7 +47,9 @@ public class RaceController : ControllerBase
     public async Task<IActionResult> GetMyRaces()
     {
         try
-        {   var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+        {   var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Getting races");
             var races = await _raceService.GetMyRaces(userId);
             return Ok(races);
@@ -134,7 +137,9 @@ public class RaceController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
             if(!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating race with name {RaceName}", raceDto.Name);
@@ -160,8 +165,12 @@ public class RaceController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating race with id {RaceId}", raceId);
@@ -191,9 +200,12 @@ public class RaceController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var userRole =
-                (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
             _logger.LogInformation("Deleting race with id {RaceId}", raceId);
             await _raceService.DeleteRace(raceId, userId, userRole);
             return NoContent();

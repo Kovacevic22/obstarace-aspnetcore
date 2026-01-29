@@ -93,10 +93,10 @@ public class RaceRepository : IRaceRepository
             await transaction.CommitAsync();
             return true;
         }
-        catch
+        catch(Exception ex)
         {
             await transaction.RollbackAsync();
-            throw;
+            throw new Exception("Failed to update race with obstacles", ex);
         }
     }
 

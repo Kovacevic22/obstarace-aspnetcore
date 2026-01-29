@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
@@ -27,7 +28,9 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Getting all registrations");
             var registrations = await _registrationService.GetAllRegistrations(userId);
             return Ok(registrations);
@@ -89,7 +92,9 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            var organiserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int organiserId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Organiser {organiserId} requesting participants for race {RaceId}", organiserId, raceId);
             var participants = await _registrationService.GetParticipantsForRace(organiserId, raceId);
             return Ok(participants);
@@ -113,7 +118,9 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
             if(!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Creating registration for race {RaceId} and user {UserId}", registrationDto.RaceId, userId);
@@ -139,8 +146,12 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            int userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var userRole = (Role)Enum.Parse(typeof(Role), User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
             if(!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             _logger.LogInformation("Updating registration with id {RegistrationId}", id);
@@ -166,11 +177,11 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if(userIdClaim == null)return Unauthorized(new {message = "You are not authorized to delete this registration"});
-            int currentUserId = int.Parse(userIdClaim.Value);
-            _logger.LogInformation("User {UserId} attempting to delete registration {RegistrationId}", currentUserId, id);
-            await _registrationService.DeleteRegistration(id,currentUserId);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            _logger.LogInformation("User {UserId} attempting to delete registration {RegistrationId}", userId, id);
+            await _registrationService.DeleteRegistration(id,userId);
             return NoContent();
         }
         catch (ArgumentException ex)
@@ -193,7 +204,9 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            var organiserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int organiserId = int.Parse(userIdClaim.Value);
             var result = await _registrationService.ConfirmUserRegistration(registrationId, organiserId);
             return Ok(result);
         }
@@ -216,7 +229,9 @@ public class RegistrationController : ControllerBase
     {
         try
         {
-            var organiserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int organiserId = int.Parse(userIdClaim.Value);
             var result = await _registrationService.CancelUserRegistration(registrationId, organiserId);
             return Ok(result);
         }

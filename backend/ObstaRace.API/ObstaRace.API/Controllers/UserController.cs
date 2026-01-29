@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.API.Dto;
 using ObstaRace.API.Interfaces.Services;
+using ObstaRace.API.Models;
 
 namespace ObstaRace.API.Controllers;
 [Route("api/users")]
@@ -133,10 +135,13 @@ public class UserController : ControllerBase
     {
         try
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized(new { error = "You are not authorized to update this user" });
-            int currentUserId = int.Parse(userIdClaim);
-            bool isAdmin = User.IsInRole("Admin");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int currentUserId = int.Parse(userIdClaim.Value);
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (roleClaimValue == null) return Unauthorized();
+            Role userRole = (Role)Enum.Parse(typeof(Role), roleClaimValue);
+            bool isAdmin = userRole==Role.Admin;
             if (currentUserId != userId && !isAdmin)
             {
                 return Unauthorized(new {message = "You are not authorized to update this user"}); 

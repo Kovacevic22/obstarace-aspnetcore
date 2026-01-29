@@ -53,7 +53,6 @@ public class RaceService : IRaceService
         var slug = raceDto.Slug.ToLower().Trim();
         slug = Regex.Replace(slug,@"[^a-z0-9]+", "-");
         slug = slug.Trim('-');
-        raceDto.Slug = slug;
         if (await _raceRepository.GetRaceBySlug(raceDto.Slug) != null)
         {
             _logger.LogError("Cannot create race with that slug");
@@ -77,6 +76,7 @@ public class RaceService : IRaceService
         }
         
         var race = _mapper.Map<Race>(raceDto);
+        raceDto.Slug = slug;
         race.CreatedById = userId;
         if (raceDto.ObstacleIds.Any())
         {
