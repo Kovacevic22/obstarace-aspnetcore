@@ -1,10 +1,8 @@
 import {HeroSection} from "../components/home/HeroSection.tsx";
-import type {UserDto} from "../Models/users.type.ts";
-interface Props {
-    user: UserDto | null;
-}
+import {useAuth} from "../hooks/useAuth.ts";
 
-function HomePage({ user }: Props) {
+function HomePage() {
+    const { user } = useAuth();
     return (
         <>
             <HeroSection user={user}/>

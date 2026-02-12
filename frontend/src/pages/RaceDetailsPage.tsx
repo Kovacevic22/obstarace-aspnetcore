@@ -1,87 +1,37 @@
-import {Link, useNavigate, useParams} from "react-router";
-import {useEffect, useState} from "react";
-import raceService from "../services/raceService.ts";
-import {Difficulty, type RaceDto, Status} from "../Models/races.type.ts";
+import {Link, useParams} from "react-router";
+import {useState} from "react";
+import {Difficulty, Status} from "../Models/races.type.ts";
 import ConfirmModal from "../components/common/ConfirmModal.tsx";
-import type {UserDto} from "../Models/users.type.ts";
-import {registrationService} from "../services/registrationService.ts";
 import CountRegistrations from "../components/common/CountRegistrations.tsx";
-interface Props {
-    user: UserDto | null;
-}
+import {useRaceDetails} from "../hooks/useRaceDetails.ts";
+import {useAuth} from "../hooks/useAuth.ts";
 
-export function RaceDetailsPage({user}:Props) {
-    const navigate = useNavigate();
+export function RaceDetailsPage() {
+    const {user} = useAuth();
     const {slug} = useParams<{slug:string}>();
-    const [race, setRace] = useState<RaceDto|null>();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const {
+        race,
+        loading,
+        error,
+        setError,
+        isRegistering,
+        isClosed,
+        registerToRace,
+        getDaysRemaining
+    } = useRaceDetails(slug, user?.id);
+
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [isRegistering, setIsRegistering] = useState(false);
-    useEffect(() => {
-        const fetchRace = async () =>{
-            if(slug){
-                try{
-                    const data = await raceService.raceDetails(slug);
-                    setRace(data);
-                }catch (e){
-                    console.error(e);
-                    setError(parseApiError(e));
-                }finally {
-                    setLoading(false);
-                }
-            }
-        };
-        void fetchRace();
-    }, [slug]);
-    if(loading)return <div className="min-h-screen bg-dark flex items-center justify-center text-accent font-black uppercase tracking-[0.5em] animate-pulse">Loading Arena...</div>
-    if(!race)return <div className="min-h-screen bg-dark flex items-center justify-center text-secondary font-black uppercase italic">Mission not found.</div>
-    //--------------------------------------------------------------------------//
-    const parseApiError = (error : any): string => {
-        const data = error?.response?.data;
 
-        if (data?.errors) {
-            return Object.values(data.errors).flat().join(" | ");
-        }
+    if(loading) return <div className="min-h-screen bg-dark flex items-center justify-center text-accent font-black uppercase tracking-[0.5em] animate-pulse">Loading Arena...</div>
+    if(!race) return <div className="min-h-screen bg-dark flex items-center justify-center text-secondary font-black uppercase italic">Mission not found.</div>
 
-        return data?.title || data?.error || "Error";
-    };
-    const getDaysRemaining = (deadline:string)=>
-    {
-        const today = new Date();
-        const target = new Date(deadline);
-        const diffInMs = target.getTime() - today.getTime();
-        const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-        if(diffInDays<0)return "Completed :(";
-        if(diffInDays==0)return "Ongoing!";
-        if(diffInDays==1)return "1 day left!";
-        return `${diffInDays} days left`;
-    }
-    const isClosed = new Date(race.registrationDeadLine).getTime() < new Date().getTime();
-    //-------------------------------------------------------------------------//
-    const registerToRace = async ()=>{
-        if (!user) {
-            setError("AUTHENTICATION_REQUIRED: YOU MUST BE LOGGED IN TO REGISTRATION.");
-            setIsConfirmModalOpen(true);
-            return;
-        }
-
-        if (!race) return;
-        try{
-            setLoading(true)
-            setIsRegistering(true);
-            setError(null);
-            await registrationService.createRegistration(race.id);
+    const handleRegistration = async () => {
+        const success = await registerToRace();
+        if (success) {
             setIsConfirmModalOpen(false);
-            navigate('/my-registrations');
-        }catch (e){
-            console.error(e);
-            setError(parseApiError(e));
-        }finally {
-            setLoading(false);
-            setIsRegistering(false);
         }
-    }
+    };
+
     return (
         <div className="relative min-h-screen bg-dark text-light overflow-x-hidden selection:bg-accent selection:text-dark">
             <div
@@ -170,7 +120,7 @@ export function RaceDetailsPage({user}:Props) {
                                 </div>
                                 <div className="space-y-1">
                                     <span className="text-[10px] uppercase tracking-[0.3em] text-secondary font-bold italic">Registration Deadline</span>
-                                     <p className="text-xl font-black italic text-secondary uppercase">
+                                    <p className="text-xl font-black italic text-secondary uppercase">
                                         {new Date(race.registrationDeadLine).toLocaleDateString('sr-RS', {
                                             day: '2-digit',
                                             month: '2-digit',
@@ -212,7 +162,6 @@ export function RaceDetailsPage({user}:Props) {
                         Sector_Recon // {race.obstacles?.length || 0} Identified_Obstacles
                     </p>
                 </div>
-
                 {race.obstacles && race.obstacles.length > 0 ? (
                     <div className="overflow-hidden bg-white/2 border border-white/5 shadow-2xl backdrop-blur-sm rounded-sm mx-4">
                         <table className="w-full text-left border-collapse">
@@ -261,8 +210,8 @@ export function RaceDetailsPage({user}:Props) {
             </div>
             <ConfirmModal
                 isOpen={isConfirmModalOpen}
-                onClose={() => setIsConfirmModalOpen(false)}
-                onConfirm={registerToRace}
+                onClose={() => { setIsConfirmModalOpen(false); setError(null); }}
+                onConfirm={handleRegistration}
                 title="CONFIRM REGISTRATION"
                 message={`ARE YOU SURE YOU WANT TO REGISTER FOR ${race.name.toUpperCase()}? THIS ACTION WILL ASSIGN YOU A TACTICAL BIB NUMBER.`}
                 error={error}

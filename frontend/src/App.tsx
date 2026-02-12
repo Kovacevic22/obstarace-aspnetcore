@@ -1,103 +1,48 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { BrowserRouter as Router, Routes, Route } from 'react-router';
-import HomePage from "./pages/HomePage.tsx";
-import LoginPage from "./pages/auth/LoginPage.tsx";
-import RegisterPage from "./pages/auth/RegisterPage.tsx";
-import RacesPage from "./pages/RacesPage.tsx";
-import PublicNavbar from "./components/navbar/PublicNavbar.tsx";
-import Footer from "./components/common/Footer.tsx";
+import { useAuth } from "./hooks/useAuth";
 import {useEffect, useState} from "react";
-import {authService} from "./services/authService.ts";
-import AdminNavbar from "./components/navbar/AdminNavbar.tsx";
-import OrganiserNavbar from "./components/navbar/OrganiserNavbar.tsx";
-import UserNavbar from "./components/navbar/UserNavbar.tsx";
-import type {UserDto} from "./Models/users.type.ts";
-import RaceDetailsPage from "./pages/RaceDetailsPage.tsx";
-import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
-import MyRegistrationsPage from "./pages/user/MyRegistrationsPage.tsx";
-import ScrollToTop from "./components/common/ScrollToTop.tsx";
-import ProfilePage from "./pages/user/ProfilePage.tsx";
-import OrganiserPortal from "./pages/organiser/OrganiserPortal.tsx";
+import {LoadingScreen} from "./components/common/LoadingScreen.tsx";
 import OfflinePage from "./pages/OfflinePage.tsx";
-import OrganiserDashboard from "./pages/organiser/OrganiserDashboard.tsx";
-function App() {
-    const [user, setUser] = useState<UserDto|null>(null);
-    const [loading, setLoading] = useState(true);
+import {AppRoutes} from "./routes/AppRoutes.tsx";
+import Footer from "./components/common/Footer.tsx";
+import {NavbarSelector} from "./components/navbar/NavbarSelector.tsx";
+import { BrowserRouter } from "react-router";
+import {AuthProvider} from "./context/AuthContext.tsx";
+import ScrollToTop from "./components/common/ScrollToTop.tsx";
+
+function AppContent() {
+    const { loading } = useAuth();
     const [isServerDown, setIsServerDown] = useState(false);
+
     useEffect(() => {
-       const checkAuth= async () => {
-           const handleOffline = () => setIsServerDown(true);
-           window.addEventListener("offline-detected", handleOffline);
-           const checkAuth = async () => {
-               try {
-                   const response = await authService.me();
-                   setUser(response);
-               } catch (err: any) {
-                   console.log(err);
-                   setUser(null);
-               } finally {
-                   setLoading(false);
-               }
-           };
-           void checkAuth();
-           return () => window.removeEventListener("offline-detected", handleOffline);
-       };
-       void checkAuth();
-    },[]);
+        const handleOffline = () => setIsServerDown(true);
+        window.addEventListener("offline-detected", handleOffline);
+        return () => window.removeEventListener("offline-detected", handleOffline);
+    }, []);
+
     if (isServerDown || window.location.pathname === "/offline") {
         return <OfflinePage />;
     }
-    const renderNavbar = () => {
-        if(user==null)return <PublicNavbar/>;
-        const userRole = (user as any).role;
-        switch (userRole) {
-            case 1:
-                return <AdminNavbar />;
-            case 2:
-                return <OrganiserNavbar />;
-            default:
-                return <UserNavbar />;
-        }
-    }
-    if (loading)
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-dark">
-                <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-accent opacity-20 animate-ping"></div>
-                    <div className="w-16 h-16 border-4 border-accent/10 border-t-accent rounded-full animate-spin"></div>
-                </div>
 
-                <div className="mt-8 flex flex-col items-center gap-2">
-                    <div className="text-white font-black uppercase tracking-[0.5em] text-[10px] animate-pulse">
-                        Loading <span className="text-accent">Arena</span>
-                    </div>
-                    <div className="w-32 h-px bg-white/5 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-accent w-1/2 animate-[loading-bar_1.5s_infinite_ease-in-out]"></div>
-                    </div>
-                </div>
-            </div>
-        );
-  return (
-    <Router>
-        <ScrollToTop/>
-        {renderNavbar()}
-      <Routes>
-          <Route
-              path="/"
-              element={(user as any)?.role === 1 ? <AdminDashboard /> :(user as any)?.role === 2?<OrganiserDashboard/> : <HomePage user={user}/>}
-          />
-        <Route path="/login" element={<LoginPage/>} />
-        <Route path="/register" element={<RegisterPage/>} />
-        <Route path="/races" element={<RacesPage/>}/>
-          <Route path="/races/:slug" element={<RaceDetailsPage user={user} />} />
-          <Route path="/my-registrations" element={<MyRegistrationsPage user={user}/>}/>
-          <Route path="/profile" element={<ProfilePage user={user}/>}/>
-          <Route path="/organiser-portal" element={<OrganiserPortal/>}/>
-          <Route path="/offline" element={<OfflinePage />} />
-      </Routes>
-        <Footer/>
-    </Router>
-  )
+    if (loading) return <LoadingScreen />;
+
+    return (
+        <>
+            <NavbarSelector />
+            <AppRoutes />
+            <Footer />
+        </>
+    );
+};
+
+function App() {
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <ScrollToTop />
+                <AppContent />
+            </AuthProvider>
+        </BrowserRouter>
+    );
 }
 
 export default App

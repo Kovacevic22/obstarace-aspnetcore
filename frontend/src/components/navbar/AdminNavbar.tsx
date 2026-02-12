@@ -1,8 +1,9 @@
 import {Link} from "react-router"
 import LogoImg from "../../assets/Logo.png"
-import authService from "../../services/authService.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 export function AdminNavbar(){
+    const { logout } = useAuth();
     return(
         <div className="fixed top-0 left-0 right-0 z-50 bg-dark/95 backdrop-blur-md border-b border-white/5">
             <div className="max-w-7xl mx-auto px-6 h-18 flex justify-between items-center">
@@ -22,7 +23,7 @@ export function AdminNavbar(){
                         Access: Root Admin
                     </div>
                     <button
-                        onClick={() => authService.logout()}
+                        onClick={logout}
                         className="px-4 py-1.5 border border-white/10 text-white/40 text-[10px] font-black uppercase tracking-widest cursor-pointer hover:text-secondary hover:border-secondary/50 transition-all active:scale-95"
                     >
                         [ Logout ]

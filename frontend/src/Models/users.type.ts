@@ -6,7 +6,6 @@ export enum Role {
     Admin = 1,
     Organiser = 2,
 }
-
 export interface UserDto {
     id: number;
     email: string;

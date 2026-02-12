@@ -1,5 +1,5 @@
 import type {ObstacleDto} from "./obstacles.type.ts";
-
+export type DistanceRange = "short" | "mid" | "long" | "all";
 export enum Difficulty {
     Easy = 0,
     Medium = 1,

@@ -1,8 +1,9 @@
 import LogoImg from "../../assets/Logo.png"
 import {Link} from "react-router";
-import authService from "../../services/authService.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 export function UserNavbar(){
+    const { logout } = useAuth();
     return(
         <div className="fixed top-0 left-0 right-0 z-50 bg-dark/90 backdrop-blur-md border-b border-white/5">
             <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
@@ -31,7 +32,7 @@ export function UserNavbar(){
                             Profile
                         </div>
                     </Link>
-                    <div onClick={authService.logout} className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 cursor-pointer transition-all">
+                    <div onClick={logout} className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 cursor-pointer transition-all">
                         Logout
                     </div>
                 </div>

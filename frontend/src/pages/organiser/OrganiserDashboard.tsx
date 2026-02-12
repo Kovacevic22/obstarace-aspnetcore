@@ -1,113 +1,52 @@
-import {useCallback, useEffect, useState} from "react";
-import {Difficulty, type RaceDto, Status} from "../../Models/races.type.ts";
-import raceService from "../../services/raceService.ts";
+import { useState } from "react";
+import { Difficulty, Status } from "../../Models/races.type.ts";
 import CreateRace from "../../components/races/CreateRace.tsx";
 import EditRace from "../../components/races/EditRace.tsx";
-import type {ObstacleDto} from "../../Models/obstacles.type.ts";
-import obstacleService from "../../services/obstacleService.ts";
-import type {RegistrationDto} from "../../Models/registrations.type.ts";
-import {registrationService} from "../../services/registrationService.ts";
 import ConfirmModal from "../../components/common/ConfirmModal.tsx";
 import CountRegistrations from "../../components/common/CountRegistrations.tsx";
+import { useOrganiserData } from "../../hooks/useOrganiserData.ts";
+import { registrationService } from "../../services/registrationService.ts";
+import obstacleService from "../../services/obstacleService.ts";
 
 export function OrganiserDashboard() {
+    const {
+        races, obstacles, pendingRegistrations, loading, error,
+        refreshData, fetchRegistrationsForRace, parseApiError
+    } = useOrganiserData();
+
     const [activeTab, setActiveTab] = useState<'races' | 'obstacles' | 'registrations'>('races');
-    const [selectedRaceFilter, setSelectedRaceFilter] = useState<number>();
-    const [races, setRaces] = useState<RaceDto[]>([]);
-    const [obstacles, setObstacles] = useState<ObstacleDto[]>([]);
-    const [pendingRegistrations, setPendingRegistrations] = useState<RegistrationDto[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string|null>();
-    const [modalError, setModalError] = useState<string|null>(null);
+    const [selectedRaceFilter, setSelectedRaceFilter] = useState<number>(0);
+    const [modalError, setModalError] = useState<string | null>(null);
+
     const [raceModal, setRaceModal] = useState<{
-        isOpen: boolean;
-        mode: 'create' | 'edit' | null;
-        id: number | null;
+        isOpen: boolean; mode: 'create' | 'edit' | null; id: number | null;
     }>({ isOpen: false, mode: null, id: null });
+
     const [confirmConfig, setConfirmConfig] = useState<{
-        isOpen: boolean;
-        type: 'confirm' | 'cancel'| 'delete' | null;
-        id: number | null;
-    }>({ isOpen: false, type: null, id: null});
-    const refreshData = useCallback(async () => {
-        try {
-            setLoading(true);
-            const [racesData, obstaclesData, registrationsData] = await Promise.all([
-                raceService.getMyRaces(),
-                obstacleService.getObstacles(),
-                registrationService.getParticipantsForRace()
-            ]);
-            setRaces(racesData);
-            setObstacles(obstaclesData);
-            setPendingRegistrations(registrationsData);
-        } catch (e) {
-            console.error(e);
-            setError(parseApiError(e));
-        } finally {
-            setLoading(false);
-        }
-    },[]);
+        isOpen: boolean; type: 'confirm' | 'cancel' | 'delete' | null; id: number | null;
+    }>({ isOpen: false, type: null, id: null });
 
-    useEffect(() => {
-        void refreshData();
-    }, [refreshData]);
-
-
-    const openRaceModal = (mode: 'create' | 'edit', id: number | null = null) => {
-        setRaceModal({ isOpen: true, mode, id });
-    };
-
-    const closeRaceModal = () => {
-        setRaceModal({ isOpen: false, mode: null, id: null });
-    };
-    ////FUNCTIONS
-    const parseApiError = (error : any): string => {
-        const data = error?.response?.data;
-
-        if (data?.errors) {
-            return Object.values(data.errors).flat().join(" | ");
-        }
-
-        return data?.title || data?.error || "Error";
-    };
-    ////////////////////////////
-
-    const handleRaceSelect = async (raceId: number)=> {
+    const handleRaceSelect = (raceId: number) => {
         setSelectedRaceFilter(raceId);
+        void fetchRegistrationsForRace(raceId);
+    };
+
+    const handleConfirmation = async () => {
+        if (!confirmConfig.id || !confirmConfig.type) return;
         try {
-            setLoading(true);
-            const data = await registrationService.getParticipantsForRace(raceId);
-            setPendingRegistrations(data);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    }
-    const handleConfirmation = async ()=>{
-        if(!confirmConfig.id || !confirmConfig.type)return;
-        try{
-            setLoading(true);
             setModalError(null);
-            if(confirmConfig.type == 'confirm'){
-                await registrationService.confirmUserRegistration(confirmConfig.id);
-            }
-            if(confirmConfig.type == 'cancel'){
-                await registrationService.cancelUserRegistration(confirmConfig.id);
-            }
-            if(confirmConfig.type == 'delete'){
-                await obstacleService.removeObstacle(confirmConfig.id);
-            }
-            setConfirmConfig(prev=>({...prev, isOpen:false}));
+            if (confirmConfig.type === 'confirm') await registrationService.confirmUserRegistration(confirmConfig.id);
+            if (confirmConfig.type === 'cancel') await registrationService.cancelUserRegistration(confirmConfig.id);
+            if (confirmConfig.type === 'delete') await obstacleService.removeObstacle(confirmConfig.id);
+
+            setConfirmConfig(prev => ({ ...prev, isOpen: false }));
             void refreshData();
-        }catch(err){
-            console.error(err);
+        } catch (err) {
             setModalError(parseApiError(err));
-        }finally {
-            setLoading(false);
         }
-    }
-    if (loading) {
+    };
+
+    if (loading && races.length === 0) {
         return (
             <div className="min-h-screen bg-dark flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
@@ -122,19 +61,14 @@ export function OrganiserDashboard() {
         return (
             <div className="min-h-screen bg-dark flex items-center justify-center p-6">
                 <div className="max-w-md w-full bg-red-500/10 border border-red-500/50 p-8 backdrop-blur-xl">
-                    <div className="flex items-start gap-4">
-                        <div className="w-2 h-2 bg-red-500 mt-1 animate-pulse" />
-                        <div className="space-y-4">
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-red-500">System_Failure // Error</h3>
-                            <p className="text-xs font-bold text-white/80 leading-relaxed uppercase">{error}</p>
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="text-[10px] font-black uppercase tracking-widest text-white hover:text-accent transition-colors cursor-pointer block"
-                            >
-                                [ Reboot_System ]
-                            </button>
-                        </div>
-                    </div>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2">System_Failure</h3>
+                    <p className="text-xs font-bold text-white/80 uppercase">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="mt-4 text-[10px] font-black uppercase text-white hover:text-accent cursor-pointer"
+                    >
+                        [ Reboot ]
+                    </button>
                 </div>
             </div>
         );
@@ -142,38 +76,28 @@ export function OrganiserDashboard() {
 
     return (
         <div className="min-h-screen bg-dark text-light p-4 md:p-6 lg:p-12">
-            <div className="h-20 md:h-28 w-full" />
-
-
+            <div className="h-20 md:h-28" />
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter text-white drop-shadow-2xl">
+                    <h1 className="text-3xl md:text-5xl font-black uppercase italic text-white">
                         Organiser <span className="text-accent">Dashboard</span>
                     </h1>
-                    <div className="flex items-center gap-3">
-                        <span className="w-2 h-2 bg-accent animate-pulse rounded-full"></span>
-                        <p className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold italic">
-                            Unit Ops // Sector: {activeTab.toUpperCase()}
-                        </p>
-                    </div>
+                    <p className="text-[9px] uppercase tracking-[0.3em] text-white/30 font-bold italic">Unit Ops // {activeTab}</p>
                 </div>
-
-                <div className="flex gap-4 w-full md:w-auto">
-                    <button
-                        onClick={()=>openRaceModal("create")}
-                        className="flex-1 md:flex-none bg-accent text-dark px-8 py-3 font-black uppercase italic text-xs hover:scale-105 transition-all shadow-[0_0_25px_rgba(166,124,82,0.4)] cursor-pointer active:scale-95">
-                        + New Race
-                    </button>
-                </div>
+                <button
+                    onClick={() => setRaceModal({ isOpen: true, mode: 'create', id: null })}
+                    className="bg-accent text-dark px-8 py-3 font-black uppercase italic text-xs hover:scale-105 transition-all shadow-[0_0_25px_rgba(166,124,82,0.4)] cursor-pointer"
+                >
+                    + New Race
+                </button>
             </div>
 
-
-            <div className="flex gap-6 md:gap-10 mb-12 border-b border-white/5 overflow-x-auto no-scrollbar">
+            <div className="flex gap-6 mb-12 border-b border-white/5 overflow-x-auto no-scrollbar">
                 {['races', 'obstacles', 'registrations'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
-                        className={`pb-4 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer whitespace-nowrap ${
+                        className={`pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer ${
                             activeTab === tab ? 'text-accent border-b-2 border-accent' : 'text-white/20 hover:text-white/60'
                         }`}
                     >
@@ -182,190 +106,166 @@ export function OrganiserDashboard() {
                 ))}
             </div>
 
-
             {activeTab === 'registrations' && (
-                <div className="mb-8 flex flex-col md:flex-row items-center gap-4 bg-white/3 p-4 border border-white/5">
+                <div className="mb-8 flex items-center gap-4 bg-white/3 p-4 border border-white/5">
                     <label className="text-[10px] font-black uppercase tracking-widest text-accent italic">Select Race:</label>
                     <select
                         value={selectedRaceFilter}
                         onChange={(e) => handleRaceSelect(Number(e.target.value))}
-                        className="bg-dark border border-white/10 text-white text-[10px] font-black uppercase px-4 py-2 outline-none focus:border-accent transition-all cursor-pointer"
+                        className="bg-dark border border-white/10 text-white text-[10px] font-black uppercase px-4 py-2 outline-none focus:border-accent cursor-pointer"
                     >
                         <option value={0}>-- ALL ACTIVE MISSIONS --</option>
-                        {races.map(race => (
-                            <option key={race.id} value={race.id}>
-                                {race.name}
-                            </option>
-                        ))}
+                        {races.map(race => <option key={race.id} value={race.id}>{race.name}</option>)}
                     </select>
                 </div>
             )}
 
-
-            <div className="bg-white/2 border border-white/10 overflow-x-auto shadow-2xl no-scrollbar">
-                <table className="w-full text-left border-collapse min-w-150 md:min-w-full">
+            <div className="bg-white/2 border border-white/10 overflow-x-auto shadow-2xl">
+                <table className="w-full text-left border-collapse">
                     <thead className="text-[10px] uppercase tracking-[0.2em] text-white/20 border-b border-white/10 bg-white/1">
                     <tr>
-                        <th className="p-4 md:p-6 font-black w-1/3 italic">Designation</th>
-                        <th className="p-4 md:p-6 font-black text-center w-1/4 italic">Participants</th>
-                        <th className="p-4 md:p-6 font-black text-center w-1/3 italic">Status / Class</th>
-                        <th className="p-4 md:p-6 font-black text-right w-1/3 italic">Operations</th>
+                        <th className="p-6 italic">Designation</th>
+                        <th className="p-6 text-center italic">Details</th>
+                        <th className="p-6 text-center italic">Status</th>
+                        <th className="p-6 text-right italic">Operations</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5 uppercase italic font-black">
+                    {activeTab === 'races' && races.length > 0 && races.map(race => (
+                        <tr key={race.id} className="hover:bg-white/3 transition-all group border-l-2 border-l-transparent hover:border-l-accent">
+                            <td className="p-6">
+                                <div className="text-white text-lg font-black">{race.name}</div>
+                                <div className="text-[9px] text-white/20 font-bold uppercase">{race.location} // {race.distance}KM</div>
+                            </td>
+                            <td className="p-6 text-center">
+                                <div className="text-white text-lg"><CountRegistrations raceId={race.id}/> / {race.maxParticipants}</div>
+                                <div className="text-[9px] text-white/20 uppercase">Participants</div>
+                            </td>
+                            <td className="p-6 text-center">
+                                <span className="text-[10px] px-3 py-1 border border-accent/20 bg-accent/10">{Status[race.status]}</span>
+                            </td>
+                            <td className="p-6 text-right">
+                                <button
+                                    onClick={() => setRaceModal({ isOpen: true, mode: 'edit', id: race.id })}
+                                    className="text-accent text-[10px] hover:brightness-125 cursor-pointer"
+                                >
+                                    [ MODIFY ]
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
 
-                    {activeTab === 'races' && (
-                        races.length > 0 ? (
-                            races.map((race: RaceDto) => (
-                                <tr key={race.id} className="hover:bg-white/3 transition-all group border-l-2 border-l-transparent hover:border-l-accent whitespace-nowrap md:whitespace-normal">
-                                    <td className="p-4 md:p-6">
-                                        <div className="text-white text-base md:text-lg tracking-tighter font-black uppercase italic">
-                                            {race.name}
-                                        </div>
-                                        <div className="text-[9px] text-white/20 not-italic font-bold tracking-widest uppercase">
-                                            Sector: {race.location} // {race.distance}KM
-                                        </div>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-center">
-                                        <div className="text-white text-base md:text-lg tracking-tighter font-black uppercase italic">
-                                            <CountRegistrations raceId={race.id}/> <span className="text-accent/40">/</span> {race.maxParticipants}
-                                        </div>
-                                        <div className="text-[9px] text-white/20 not-italic font-bold tracking-widest uppercase">
-                                            Registered Units
-                                        </div>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-center">
-                    <span className={`text-[9px] md:text-[10px] px-3 py-1 border font-black ${
-                        race.status === 0 ? "bg-accent/10 text-white border-accent/20" : "bg-white/5 text-white/40 border-white/10"
-                    }`}>
-                        {Status[race.status]}
-                    </span>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-right">
-                                        <button
-                                            onClick={() => openRaceModal('edit',race.id)}
-                                            className="text-accent text-[10px] tracking-[0.2em] hover:brightness-125 cursor-pointer font-black"
-                                        >
-                                            [ MODIFY ]
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={3} className="p-20 text-center text-white/10 tracking-[1em]">NO_RACES</td>
-                            </tr>
-                        )
-                    )}
+                    {activeTab === 'obstacles' && obstacles.length > 0 && obstacles.map(obs => (
+                        <tr key={obs.id} className="hover:bg-white/3 transition-all border-l-2 border-l-transparent hover:border-l-white">
+                            <td className="p-6">
+                                <div className="text-white text-lg font-black">{obs.name}</div>
+                                <div className="text-[9px] text-white/30 truncate max-w-xs not-italic font-bold lowercase first-letter:uppercase">
+                                    {obs.description || "No description provided"}
+                                </div>
+                            </td>
+                            <td className="p-6 text-center">
+                                <span className={`px-4 py-2 border text-[11px] ${
+                                    obs.difficulty === 2 ? 'text-red-500 border-red-500/30 bg-red-500/10' :
+                                        obs.difficulty === 1 ? 'text-orange-500 border-orange-500/30 bg-orange-500/10' :
+                                            'text-green-500 border-green-500/30 bg-green-500/10'
+                                }`}>
+                                    {Difficulty[obs.difficulty]}
+                                </span>
+                            </td>
+                            <td className="p-6 text-center">
+                                <div className="text-[9px] text-white/20">Created</div>
+                            </td>
+                            <td className="p-6 text-right">
+                                <button
+                                    onClick={() => setConfirmConfig({ isOpen: true, type: 'delete', id: obs.id })}
+                                    className="text-white/40 text-[10px] hover:text-red-500 transition-colors cursor-pointer"
+                                >
+                                    [ DELETE ]
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
 
-
-                    {activeTab === 'obstacles' && (
-                        obstacles.length > 0 ? (
-                            obstacles.map((obstacle: ObstacleDto) => (
-                                <tr key={obstacle.id} className="hover:bg-white/3 transition-all group border-l-2 border-l-transparent hover:border-l-white">
-                                    <td className="p-4 md:p-6">
-                                        <div className="text-white text-base md:text-lg tracking-tighter uppercase font-black">
-                                            {obstacle.name}
-                                        </div>
-                                        <div className="text-[9px] text-white/30 not-italic font-bold tracking-widest uppercase mt-1 max-w-xs truncate md:max-w-md">
-                                            Description: {obstacle.description || "NO_SPECIFICATIONS_PROVIDED"}
-                                        </div>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-center">
-                                                    <span className={`px-4 py-2 border text-[11px] font-black tracking-widest uppercase italic ${
-                                                        obstacle.difficulty === 2 ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                                                            obstacle.difficulty === 1 ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
-                                                                'bg-green-500/10 text-green-500 border-green-500/20'
-                                                    }`}>
-                                                        {Difficulty[obstacle.difficulty]}
-                                                    </span>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-right">
-                                        <button
-                                            onClick={()=>setConfirmConfig({isOpen:true,type:'delete',id:obstacle.id})}
-                                            className="text-white/40 text-[10px] tracking-[0.2em] hover:text-red-500 cursor-pointer transition-colors font-black"
-                                        >
-                                            [ DELETE ]
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={3} className="p-20 text-center text-white/10 tracking-[1em]">NO_OBSTACLES</td>
-                            </tr>
-                        )
-                    )}
-
-                    {activeTab === 'registrations' && (
-                        pendingRegistrations.length > 0 ? (
-                            pendingRegistrations.map((registration: RegistrationDto) => (
-                                <tr className="hover:bg-white/3 transition-all group border-l-2 border-l-transparent hover:border-l-accent">
-                                    <td className="p-4 md:p-6">
-                                        <div className="text-white text-base md:text-lg tracking-tighter font-black">
-                                            {registration.participant.name} {registration.participant.surname}
-                                        </div>
-                                        <div className="text-[9px] md:text-[10px] text-accent font-bold not-italic tracking-widest uppercase">Bib: #{registration.bibNumber} (Auto-Gen)</div>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-center">
-                                        <span className="text-[9px] md:text-[10px] bg-white/5 text-white/40 px-3 py-1 border border-white/10 font-black">PENDING_STATUS</span>
-                                    </td>
-                                    <td className="p-4 md:p-6 text-right space-x-3">
-                                        <button
-                                            onClick={()=>setConfirmConfig({isOpen:true,type:'confirm',id:registration.id})}
-                                            className="text-[8px] md:text-[9px] border border-green-500/20 text-green-500 px-4 py-2 hover:bg-green-500 hover:text-white transition-all cursor-pointer font-black">[ CONFIRM ]</button>
-                                        <button
-                                            onClick={()=>setConfirmConfig({isOpen:true,type:'cancel',id:registration.id})}
-                                            className="text-[8px] md:text-[9px] border border-red-500/20 text-red-500 px-4 py-2 hover:bg-red-500 hover:text-white transition-all cursor-pointer font-black">[ CANCEL ]</button>
-                                    </td>
-                                </tr>
-                            ))):(
-                            <tr>
-                                <td colSpan={3} className="p-20 text-center text-white/10 tracking-[1em]">NO_REGISTRATIONS</td>
-                            </tr>
-                        )
-                    )}
+                    {activeTab === 'registrations' && pendingRegistrations.length > 0 && pendingRegistrations.map(reg => (
+                        <tr key={reg.id} className="hover:bg-white/3 transition-all border-l-2 border-l-transparent hover:border-l-accent">
+                            <td className="p-6">
+                                <div className="text-white text-lg font-black">{reg.participant.name} {reg.participant.surname}</div>
+                                <div className="text-accent text-[10px]">BIB: #{reg.bibNumber} // {reg.race?.name}</div>
+                            </td>
+                            <td className="p-6 text-center">
+                                <div className="text-[16px] text-white/30 not-italic font-bold">
+                                    {reg.user.phoneNumber || 'N/A'}
+                                </div>
+                            </td>
+                            <td className="p-6 text-center">
+                                <span className="text-[16px] bg-orange-500/10 text-orange-500 px-3 py-1 border border-orange-500/20 animate-pulse">PENDING</span>
+                            </td>
+                            <td className="p-6 text-right space-x-3">
+                                <button
+                                    onClick={() => setConfirmConfig({ isOpen: true, type: 'confirm', id: reg.id })}
+                                    className="text-green-500 border border-green-500/20 px-4 py-2 hover:bg-green-500 hover:text-white transition-all cursor-pointer"
+                                >
+                                    [ CONFIRM ]
+                                </button>
+                                <button
+                                    onClick={() => setConfirmConfig({ isOpen: true, type: 'cancel', id: reg.id })}
+                                    className="text-red-500 border border-red-500/20 px-4 py-2 hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+                                >
+                                    [ CANCEL ]
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
                     </tbody>
                 </table>
-            </div>
 
-            <div className="mt-8 flex justify-between items-center opacity-20 border-t border-white/10 pt-4">
-                <div className="text-[8px] uppercase tracking-[0.5em] font-black">Auth_Level: Organiser // Grid: Stable</div>
-                <div className="text-[8px] uppercase tracking-[0.5em] font-black italic underline decoration-accent/30 underline-offset-4">LOGGING_ACTIVE</div>
+                {/* Empty States */}
+                {activeTab === 'races' && races.length === 0 && (
+                    <div className="p-20 text-center">
+                        <div className="text-white/5 text-6xl mb-4">🏁</div>
+                        <p className="text-white/10 text-[10px] tracking-[0.5em] font-black uppercase italic mb-6">NO_RACES_CREATED</p>
+                        <button
+                            onClick={() => setRaceModal({ isOpen: true, mode: 'create', id: null })}
+                            className="bg-accent text-dark px-8 py-3 font-black uppercase italic text-xs hover:scale-105 transition-all cursor-pointer"
+                        >
+                            + Create Your First Race
+                        </button>
+                    </div>
+                )}
+
+                {activeTab === 'obstacles' && obstacles.length === 0 && (
+                    <div className="p-20 text-center">
+                        <div className="text-white/5 text-6xl mb-4">🚧</div>
+                        <p className="text-white/10 text-[10px] tracking-[0.5em] font-black uppercase italic">NO_OBSTACLES_FOUND</p>
+                        <p className="text-white/5 text-[8px] mt-2 not-italic font-bold">Create a race first to add obstacles</p>
+                    </div>
+                )}
+
+                {activeTab === 'registrations' && pendingRegistrations.length === 0 && (
+                    <div className="p-20 text-center">
+                        <div className="text-white/5 text-6xl mb-4">📋</div>
+                        <p className="text-white/10 text-[10px] tracking-[0.5em] font-black uppercase italic">NO_PENDING_REGISTRATIONS</p>
+                        <p className="text-white/5 text-[8px] mt-2 not-italic font-bold">
+                            {selectedRaceFilter === 0 ? 'All registrations have been processed' : 'No pending registrations for selected race'}
+                        </p>
+                    </div>
+                )}
             </div>
             {raceModal.isOpen && (
-                raceModal.mode === 'create' ? (
-                    <CreateRace
-                        isOpen={raceModal.isOpen}
-                        onClose={closeRaceModal}
-                        onSuccess={refreshData}
-                    />
-                ) : (
-                    <EditRace
-                        id={raceModal.id || 0}
-                        isOpen={raceModal.isOpen}
-                        onClose={closeRaceModal}
-                        onSuccess={refreshData}
-                    />
-                )
+                raceModal.mode === 'create' ?
+                    <CreateRace isOpen={true} onClose={() => setRaceModal({ ...raceModal, isOpen: false })} onSuccess={refreshData} /> :
+                    <EditRace id={raceModal.id || 0} isOpen={true} onClose={() => setRaceModal({ ...raceModal, isOpen: false })} onSuccess={refreshData} />
             )}
             <ConfirmModal
                 isOpen={confirmConfig.isOpen}
-                onClose={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+                onClose={() => setConfirmConfig(p => ({ ...p, isOpen: false }))}
                 onConfirm={handleConfirmation}
-                title={
-                    confirmConfig.type === 'confirm' ? "AUTHORIZE" :
-                        confirmConfig.type === 'cancel' ? "REJECT" : "TERMINATE OBSTACLE"
-                }
+                title={confirmConfig.type === 'confirm' ? "AUTHORIZE" : "TERMINATE"}
                 variant={confirmConfig.type === 'confirm' ? "success" : "danger"}
-                message={
-                    confirmConfig.type === 'delete'
-                        ? "ARE YOU SURE YOU WANT TO PERMANENTLY REMOVE THIS OBSTACLE FROM THE DATABASE?"
-                        : `ARE YOU SURE YOU WANT TO ${confirmConfig.type?.toUpperCase()} THIS REGISTRATION?`
-                }
+                message="CONFIRM ACTION FOR SELECTED UNIT?"
                 error={modalError}
             />
         </div>
     );
 }
-export default OrganiserDashboard
+export default OrganiserDashboard;
