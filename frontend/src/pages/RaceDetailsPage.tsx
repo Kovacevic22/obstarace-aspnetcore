@@ -79,6 +79,7 @@ export function RaceDetailsPage({user}:Props) {
             setError(parseApiError(e));
         }finally {
             setLoading(false);
+            setIsRegistering(false);
         }
     }
     return (
