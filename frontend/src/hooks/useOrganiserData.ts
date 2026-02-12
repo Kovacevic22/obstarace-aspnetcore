@@ -5,6 +5,7 @@ import { registrationService } from "../services/registrationService.ts";
 import type {RaceDto} from "../Models/races.type.ts";
 import type {ObstacleDto} from "../Models/obstacles.type.ts";
 import type {RegistrationDto} from "../Models/registrations.type.ts";
+import {parseApiError} from "../utils/errorParser.ts";
 
 export const useOrganiserData = () => {
     const [races, setRaces] = useState<RaceDto[]>([]);
@@ -12,12 +13,6 @@ export const useOrganiserData = () => {
     const [pendingRegistrations, setPendingRegistrations] = useState<RegistrationDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    const parseApiError = (err: any): string => {
-        const data = err?.response?.data;
-        if (data?.errors) return Object.values(data.errors).flat().join(" | ");
-        return data?.title || data?.error || "Error";
-    };
 
     const refreshData = useCallback(async () => {
         try {

@@ -1,8 +1,8 @@
 import { useSearchParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import raceService from "../services/raceService.ts";
-import { AxiosError } from "axios";
-import type {RaceDto} from "../Models/races.type.ts";
+import type { RaceDto } from "../Models/races.type.ts";
+import { parseApiError } from "../utils/errorParser.ts";
 
 export const useRaceFilters = () => {
     const [races, setRaces] = useState<RaceDto[]>([]);
@@ -10,54 +10,40 @@ export const useRaceFilters = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const currentSearch = searchParams.get("search") || "";
-    const currentDifficulty = searchParams.get("difficulty") || "all";
-    const currentDistance = searchParams.get("distanceRange") || "all";
-
-    const filters = {
-        search: currentSearch,
-        difficulty: currentDifficulty,
-        distance: currentDistance
-    };
+    const filters = useMemo(() => ({
+        search: searchParams.get("search") || "",
+        difficulty: searchParams.get("difficulty") || "all",
+        distance: searchParams.get("distanceRange") || "all"
+    }), [searchParams]);
 
     const updateFilters = (newFilters: any) => {
         const params: any = {};
-
-        if (newFilters.search) {
-            params.search = newFilters.search;
-        }
-
-        if (newFilters.difficulty && newFilters.difficulty !== "all") {
-            params.difficulty = newFilters.difficulty;
-        }
-
-        if (newFilters.distance && newFilters.distance !== "all") {
-            params.distanceRange = newFilters.distance;
-        }
-
+        if (newFilters.search) params.search = newFilters.search;
+        if (newFilters.difficulty && newFilters.difficulty !== "all") params.difficulty = newFilters.difficulty;
+        if (newFilters.distance && newFilters.distance !== "all") params.distanceRange = newFilters.distance;
         setSearchParams(params);
     };
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await raceService.races(filters);
+            setRaces(data);
+            setError("");
+        } catch (err) {
+            setError(parseApiError(err));
+        } finally {
+            setLoading(false);
+        }
+    }, [filters]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const data = await raceService.races(filters);
-                setRaces(data);
-            } catch (err) {
-                if (err instanceof AxiosError) {
-                    setError("Error loading races");
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
         const timer = setTimeout(() => {
-            fetchData();
+            void fetchData();
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [searchParams]);
+    }, [fetchData]);
+
     return {
         races,
         filters,

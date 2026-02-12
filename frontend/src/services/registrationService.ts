@@ -29,5 +29,9 @@ export const registrationService = {
     countRegistrations: async (registrationId:number): Promise<number>  => {
         const response = await api.get(`api/registrations/count/${registrationId}`);
         return response.data;
+    },
+    isUserRegistered: async (raceId:number): Promise<boolean> => {
+        const response = await api.get(`api/registrations/check/${raceId}`);
+        return response.data;
     }
 }

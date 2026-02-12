@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import raceService from "../services/raceService.ts";
 import { registrationService } from "../services/registrationService.ts";
-import { AxiosError } from "axios";
 import { useNavigate } from "react-router";
 import type {RaceDto} from "../Models/races.type.ts";
+import {parseApiError} from "../utils/errorParser.ts";
 
 export const useRaceDetails = (slug: string | undefined, userId: number | undefined) => {
     const navigate = useNavigate();
@@ -11,30 +11,24 @@ export const useRaceDetails = (slug: string | undefined, userId: number | undefi
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isRegistering, setIsRegistering] = useState(false);
-
-    const parseApiError = useCallback((err: unknown): string => {
-        if (err instanceof AxiosError) {
-            const data = err.response?.data;
-            if (data?.errors) return Object.values(data.errors).flat().join(" | ");
-            return data?.title || data?.error || "Error";
-        }
-        return err instanceof Error ? err.message : "Unknown error";
-    }, []);
-
+    const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false);
     const fetchRace = useCallback(async () => {
         if (!slug) return;
         try {
             setLoading(true);
             const data = await raceService.raceDetails(slug);
             setRace(data);
+            if (userId && data.id) {
+                const registered = await registrationService.isUserRegistered(data.id);
+                setIsAlreadyRegistered(registered);
+            }
             setError(null);
         } catch (e) {
             setError(parseApiError(e));
         } finally {
             setLoading(false);
         }
-    }, [slug, parseApiError]);
-
+    }, [slug, userId]);
     const registerToRace = async () => {
         if (!userId) {
             setError("AUTHENTICATION_REQUIRED: YOU MUST BE LOGGED IN TO REGISTER.");
@@ -79,6 +73,7 @@ export const useRaceDetails = (slug: string | undefined, userId: number | undefi
         isRegistering,
         isClosed,
         registerToRace,
-        getDaysRemaining
+        getDaysRemaining,
+        isAlreadyRegistered
     };
 };

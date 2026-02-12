@@ -5,6 +5,7 @@ import organiserService from "../services/organiserService.ts";
 import type { RaceDto, RaceStatsDto } from "../Models/races.type.ts";
 import type { UserDto, UserStatsDto } from "../Models/users.type.ts";
 import type { OrganiserPendingDto } from "../Models/organiser.type.ts";
+import {parseApiError} from "../utils/errorParser.ts";
 
 export const useAdminData = () => {
     const [races, setRaces] = useState<RaceDto[]>([]);
@@ -14,12 +15,6 @@ export const useAdminData = () => {
     const [pendingOrganisers, setPendingOrganisers] = useState<OrganiserPendingDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    const parseApiError = (err: any): string => {
-        const data = err?.response?.data;
-        if (data?.errors) return Object.values(data.errors).flat().join(" | ");
-        return data?.title || data?.error || "Error";
-    };
     const fetchDashboardData = useCallback(async () => {
         try {
             setLoading(true);

@@ -17,7 +17,8 @@ export function RaceDetailsPage() {
         isRegistering,
         isClosed,
         registerToRace,
-        getDaysRemaining
+        getDaysRemaining,
+        isAlreadyRegistered
     } = useRaceDetails(slug, user?.id);
 
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -135,16 +136,22 @@ export function RaceDetailsPage() {
                                 </div>
                             </div>
                             <button
-                                disabled={isClosed || isRegistering}
+                                disabled={isClosed || isRegistering || isAlreadyRegistered}
                                 onClick={() => setIsConfirmModalOpen(true)}
                                 className={`w-full group relative px-8 py-5 font-black uppercase tracking-tighter transition-all text-center text-sm italic
-                                ${isClosed
+                                ${(isClosed || isAlreadyRegistered)
                                     ? "bg-white/10 text-white/30 cursor-not-allowed border border-white/5"
                                     : "bg-accent text-dark hover:-translate-y-1 hover:shadow-[0_8px_0_0_rgba(166,124,82,1)] active:translate-y-0 active:shadow-none cursor-pointer"}
-                                `}>
-                                {isRegistering ? "SYCHRONIZING..." : isClosed ? "Registration Closed" : "Initialize Registration"}
+                                `}
+                            >
+                                {isRegistering
+                                    ? "SYCHRONIZING..."
+                                    : isAlreadyRegistered
+                                        ? "ALREADY_REGISTERED_ON_THIS_RACE"
+                                        : isClosed
+                                            ? "Registration Closed"
+                                            : "Initialize Registration"}
                             </button>
-
                             <div className="mt-8 pt-8 border-t border-white/5 flex flex-col gap-2 opacity-20">
                                 <p className="text-[8px] uppercase tracking-widest font-black italic">Protocol: Secure Entry</p>
                             </div>

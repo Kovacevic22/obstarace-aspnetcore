@@ -1,21 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { registrationService } from "../services/registrationService.ts";
-import { AxiosError } from "axios";
 import type {RegistrationDto} from "../Models/registrations.type.ts";
+import {parseApiError} from "../utils/errorParser.ts";
 
 export const useMyRegistrations = (userId: number | undefined) => {
     const [registrations, setRegistrations] = useState<RegistrationDto[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const parseApiError = useCallback((err: unknown): string => {
-        if (err instanceof AxiosError) {
-            const data = err.response?.data;
-            if (data?.errors) return Object.values(data.errors).flat().join(" | ");
-            return data?.title || data?.error || "Error";
-        }
-        return err instanceof Error ? err.message : "Unknown error";
-    }, []);
+    const [error, setError] = useState<string|null>(null);
 
     const fetchRegistrations = useCallback(async () => {
         if (!userId) return;
@@ -29,7 +20,7 @@ export const useMyRegistrations = (userId: number | undefined) => {
         } finally {
             setLoading(false);
         }
-    }, [userId, parseApiError]);
+    }, [userId]);
 
     const deleteRegistration = async (registrationId: number) => {
         try {

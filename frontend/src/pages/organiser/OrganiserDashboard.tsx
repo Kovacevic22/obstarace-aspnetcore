@@ -177,7 +177,7 @@ export function OrganiserDashboard() {
                             </td>
                             <td className="p-6 text-right">
                                 <button
-                                    onClick={() => setConfirmConfig({ isOpen: true, type: 'delete', id: obs.id })}
+                                    onClick={() => {setConfirmConfig({ isOpen: true, type: 'delete', id: obs.id });setModalError(null);}}
                                     className="text-white/40 text-[10px] hover:text-red-500 transition-colors cursor-pointer"
                                 >
                                     [ DELETE ]
@@ -202,7 +202,7 @@ export function OrganiserDashboard() {
                             </td>
                             <td className="p-6 text-right space-x-3">
                                 <button
-                                    onClick={() => setConfirmConfig({ isOpen: true, type: 'confirm', id: reg.id })}
+                                    onClick={() => {setConfirmConfig({ isOpen: true, type: 'confirm', id: reg.id })}}
                                     className="text-green-500 border border-green-500/20 px-4 py-2 hover:bg-green-500 hover:text-white transition-all cursor-pointer"
                                 >
                                     [ CONFIRM ]
@@ -219,7 +219,6 @@ export function OrganiserDashboard() {
                     </tbody>
                 </table>
 
-                {/* Empty States */}
                 {activeTab === 'races' && races.length === 0 && (
                     <div className="p-20 text-center">
                         <div className="text-white/5 text-6xl mb-4">🏁</div>

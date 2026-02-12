@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import userService from "../services/userService.ts";
-import { AxiosError } from "axios";
 import type {UpdateParticipantDto} from "../Models/participant.type.ts";
 import type {UserDto} from "../Models/users.type.ts";
+import {parseApiError} from "../utils/errorParser.ts";
 
 export const useProfileData = (user: UserDto | null) => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -14,15 +14,6 @@ export const useProfileData = (user: UserDto | null) => {
             : "",
         emergencyContact: user?.participant?.emergencyContact || "",
     });
-
-    const parseApiError = useCallback((err: unknown): string => {
-        if (err instanceof AxiosError) {
-            const data = err.response?.data;
-            if (data?.errors) return Object.values(data.errors).flat().join(" | ");
-            return data?.title || data?.error || "Error";
-        }
-        return err instanceof Error ? err.message : "Unknown error";
-    }, []);
 
     const updateProfile = async () => {
         if (!user?.id) return false;

@@ -163,6 +163,12 @@ public class RegistrationService : IRegistrationService
         
         return await _registrationRepository.DeleteRegistration(registrationId);
     }
+
+    public async Task<bool> IsUserRegistered(int raceId, int userId)
+    {
+        _logger.LogInformation("Checking if {RaceId} user {UserId}", raceId, userId);
+        return  await _registrationRepository.UserRegistered(userId, raceId);
+    }
     //ADDITIONAL METHODS
     private int GenerateBibNumber(int raceId, int count)
     {

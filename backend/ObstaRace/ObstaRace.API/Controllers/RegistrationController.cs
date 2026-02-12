@@ -244,4 +244,22 @@ public class RegistrationController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+    [HttpGet("check/{raceId:int}")]
+    [Authorize] 
+    public async Task<IActionResult> IsUserRegistered(int raceId)
+    {
+        try
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+            bool isRegistered = await _registrationService.IsUserRegistered(raceId, userId);
+            return Ok(isRegistered); 
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking registration status");
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
 }
