@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0c0b;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #1a2420;
+            border: 2px solid #a67c52;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #a67c52;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+        .accent { color: #a67c52; }
+        .status-badge {
+            display: inline-block;
+            background-color: #a67c52;
+            color: #0a0c0b;
+            padding: 8px 24px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+        .content {
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        .race-info {
+            background-color: #0a0c0b;
+            border-left: 4px solid #a67c52;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .checklist {
+            background-color: #0a0c0b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .checklist-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+        }
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        .checkmark {
+            color: #a67c52;
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #a67c52;
+            color: #0a0c0b;
+            padding: 15px 40px;
+            text-decoration: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+    <title></title>
+</head>
+<body>
+<div class='container'>
+    <div class='header'>
+        <div class='title'>OBSTA<span class='accent'>RACE</span></div>
+        <div class='status-badge'>✓ APPROVED</div>
+    </div>
+
+    <div class='content'>
+        <p style='font-size: 18px; font-weight: bold; color: #a67c52;'>
+            Mission Status: APPROVED
+        </p>
+
+        <p style='font-size: 16px;'>Dear <strong>{{RecipientName}}</strong>,</p>
+
+        <p>
+            Excellent news! Your registration for <strong class='accent'>{{RaceName}}</strong>
+            has been <strong>approved by the race organizer</strong>.
+        </p>
+
+        <div class='race-info'>
+            <span class='accent'>▸</span> {{RaceName}}
+        </div>
+
+        <p style='font-weight: bold; font-size: 16px; margin-top: 30px;'>
+            PRE-RACE CHECKLIST:
+        </p>
+
+        <div class='checklist'>
+            <div class='checklist-item'>
+                <span class='checkmark'>✓</span>
+                <span>Review race rules and obstacle details</span>
+            </div>
+            <div class='checklist-item'>
+                <span class='checkmark'>✓</span>
+                <span>Prepare your gear (shoes, gloves, hydration pack)</span>
+            </div>
+            <div class='checklist-item'>
+                <span class='checkmark'>✓</span>
+                <span>Arrive 30 minutes before start time</span>
+            </div>
+            <div class='checklist-item'>
+                <span class='checkmark'>✓</span>
+                <span>Warm up properly and stay hydrated</span>
+            </div>
+            <div class='checklist-item'>
+                <span class='checkmark'>✓</span>
+                <span>Bring ID and registration confirmation</span>
+            </div>
+        </div>
+
+        <p style='background-color: #a67c52; color: #0a0c0b; padding: 15px; font-weight: bold; margin-top: 20px;'>
+            💪Remember: Every obstacle conquered is a victory. See you at the starting line!
+        </p>
+
+        <p style='text-align: center;'>
+            <a href='{{FrontendUrl}}/my-races' class='cta-button'>
+                VIEW MY RACES
+            </a>
+        </p>
+    </div>
+
+    <div class='footer'>
+        <p>© 2025 ObstaRace | Born in the mud</p>
+        <p style='margin-top: 5px; font-size: 9px;'>
+            Questions? Contact the race organizer through your dashboard.
+        </p>
+    </div>
+</div>
+</body>
+</html>

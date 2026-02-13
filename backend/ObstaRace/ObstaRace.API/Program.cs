@@ -5,8 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using ObstaRace.Application.Interfaces.Repositories;
 using ObstaRace.Application.Interfaces.Services;
 using ObstaRace.Application.Services;
+using ObstaRace.Infrastructure.Configuration;
 using ObstaRace.Infrastructure.Data;
 using ObstaRace.Infrastructure.Repository;
+using ObstaRace.Infrastructure.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "default_key_at_least_32_chars_long")),
         ClockSkew = TimeSpan.Zero
     };
     options.Events = new JwtBearerEvents
@@ -41,12 +43,16 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
+var allowedOrigins = builder.Configuration.GetSection("FrontendSettings:AllowedOrigins").Get<string[]>();
+if (allowedOrigins == null || allowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException("You are not define AllowedOrigins!");
+}
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", builder =>
     {
-        builder.WithOrigins("http://localhost:3000","http://localhost:5173")
+        builder.WithOrigins(allowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -67,6 +73,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
 builder.Services.AddScoped<IOrganiserService, OrganiserService>();
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("AdditionalConnection"));

@@ -14,13 +14,16 @@ public class RegistrationService : IRegistrationService
     private readonly IRaceRepository _raceRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<RegistrationService> _logger;
-    public RegistrationService(IRegistrationRepository registrationRepository, IMapper mapper, ILogger<RegistrationService> logger, IUserRepository userRepository, IRaceRepository raceRepository)
+    private readonly IEmailService _emailService;
+    public RegistrationService(IRegistrationRepository registrationRepository, IMapper mapper, ILogger<RegistrationService> logger, 
+        IUserRepository userRepository, IRaceRepository raceRepository, IEmailService emailService)
     {
         _registrationRepository = registrationRepository;
         _mapper = mapper;
         _logger = logger;
         _userRepository = userRepository;
         _raceRepository = raceRepository;
+        _emailService = emailService;
     }
     public async Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId)
     {
@@ -54,6 +57,25 @@ public class RegistrationService : IRegistrationService
         }
         registration.Status = RegistrationStatus.Confirmed;
         await  _registrationRepository.UpdateRegistration(registration);
+        try
+        {
+            var user = await _userRepository.GetUser(registration.UserId);
+            if (user != null)
+            {
+                var participantName = user.Participant != null ? $"{user.Participant.Name} {user.Participant.Surname}" : user.Email;
+                await _emailService.SendRaceRegistrationApprovedAsync(
+                    recipientEmail: user.Email,
+                    recipientName: participantName,
+                    raceName: race.Name
+                );
+                
+                _logger.LogInformation("Approval email sent to {Email} for race {RaceName}", user.Email, race.Name);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send approval email for registration {RegistrationId}", registrationId);
+        }
         return true;
     }
 
@@ -69,6 +91,27 @@ public class RegistrationService : IRegistrationService
         }
         registration.Status = RegistrationStatus.Cancelled;
         await  _registrationRepository.UpdateRegistration(registration);
+        try
+        {
+            var user = await _userRepository.GetUser(registration.UserId);
+            if (user != null)
+            {
+                var participantName = user.Participant != null ? $"{user.Participant.Name} {user.Participant.Surname}" : user.Email;
+
+                await _emailService.SendRaceRegistrationRejectedAsync(
+                    recipientEmail: user.Email,
+                    recipientName: participantName,
+                    raceName: race.Name,
+                    reason: "Your registration was cancelled by the race organizer. This is most likely due to failed or missing payment, or because the event has reached full capacity."
+                );
+                
+                _logger.LogInformation("Rejection email sent to {Email} for race {RaceName}", user.Email, race.Name);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send rejection email for registration {RegistrationId}", registrationId);
+        }
         return true;
     }
 
@@ -121,6 +164,21 @@ public class RegistrationService : IRegistrationService
         };
         await _registrationRepository.CreateRegistration(registration);
         var fullRegistration = await _registrationRepository.GetRegistration(registration.Id);
+        try
+        {
+            var participantName = user.Participant != null ? $"{user.Participant.Name} {user.Participant.Surname}" : user.Email;
+            await _emailService.SendRaceRegistrationConfirmationAsync(
+                recipientEmail: user.Email,
+                recipientName: participantName,
+                raceName: race.Name,
+                raceDate: race.Date,
+                location: race.Location
+                );
+            _logger.LogInformation("Confirmation email sent to {Email} for race {RaceName}", user.Email, race.Name);
+        }catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send confirmation email for race {raceId}", raceId);
+        }
         return _mapper.Map<RegistrationDto>(fullRegistration);
     }
     public async Task<RegistrationDto> UpdateRegistration(UpdateRegistrationDto registration, int id, int userId, Role role)
