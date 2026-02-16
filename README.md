@@ -17,6 +17,7 @@ A web application for managing and organizing obstacle races. Users can join rac
 * **Browse Races:** Find races by typing the name, or filter by difficulty and distance.
 * **Register:** Sign up for races easily.
 * **Stats:** Track your finished races.
+* * **Automated Notifications:** Receive email confirmations upon registration, status updates (Approved/Rejected) from organizers, and a reminder 7 days before the race.
 ### For Organisers
 * **Create Races:** Add new events and obstacles.
 * **Manage:** View and approve participants.
@@ -42,10 +43,13 @@ The project is organized into two main parts:
 │   │   ├── Interfaces/               # Service Interfaces
 │   │   └── Helper/                   # AutoMapper Profiles
 │   │
-│   ├── ObstaRace.Infrastructure/     # Infrastructure Layer (Data Access)
-│   │   ├── Data/                     # DbContext (EF Core)
+│   ├── ObstaRace.Infrastructure/     # Infrastructure Layer (Data Access & External Services)
+│   │   ├── Configuration/            # Email and Reminder settings (IOptions)
+│   │   ├── Data/                     # DbContext
+│   │   ├── EmailTemplates/           # HTML templates for automated emails
+│   │   ├── Migrations/               # Database Migrations
 │   │   ├── Repository/               # Repository Pattern Implementation
-│   │   └── Migrations/               # Database Migrations
+│   │   └── Service/                  # EmailService & RaceReminderBgService
 │   │
 │   └── ObstaRace.Domain/             # Domain Layer (Core)
 │       └── Models/                   # Database Entities
