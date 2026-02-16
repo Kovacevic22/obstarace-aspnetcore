@@ -82,9 +82,8 @@ public class RaceReminderBgService:BackgroundService
         var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
         _logger.LogInformation("Checking for races in 7 days...");
         var targetDate = DateTime.Today.AddDays(7);
-        var registrations = await registrationRepo.GetRegistrationsForReminderAsync(targetDate);
-        _logger.LogInformation("Found {Count} registrations needing reminders", registrations.Count);
-        foreach (var registration in registrations)
+        var processedCount = 0;
+        await foreach (var registration in registrationRepo.GetRegistrationsForReminderAsync(targetDate))
         {
             try
             {
@@ -100,6 +99,8 @@ public class RaceReminderBgService:BackgroundService
                 );
                 registration.ReminderSent = true;
                 await registrationRepo.UpdateRegistration(registration);
+                processedCount++;
+                _logger.LogInformation("Reminder sent to {Email} ({Count})", registration.User.Email, processedCount);
             }
             catch (Exception ex)
             {

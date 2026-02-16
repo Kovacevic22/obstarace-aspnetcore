@@ -1,4 +1,5 @@
 using System.Text;
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +14,10 @@ using ObstaRace.Infrastructure.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -80,6 +84,7 @@ builder.Services.Configure<ReminderSettings>(
 );
 
 builder.Services.AddHostedService<RaceReminderBgService>();
+builder.Services.AddHostedService<RaceStatusBgService>();
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("AdditionalConnection"));
@@ -94,6 +99,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+app.UseIpRateLimiting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

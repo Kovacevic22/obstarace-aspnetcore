@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0a0c0b; color: #ffffff; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #1a2420; border: 2px solid #a67c52; padding: 40px; }
+        .header { text-align: center; border-bottom: 2px solid #a67c52; padding-bottom: 20px; margin-bottom: 30px; }
+        .title { font-size: 32px; font-weight: 900; text-transform: uppercase; }
+        .accent { color: #a67c52; }
+        .badge { display: inline-block; background: linear-gradient(135deg, #a67c52 0%, #8a6240 100%); color: #0a0c0b; padding: 15px 40px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin: 20px 0; border-radius: 4px; }
+        .trophy { font-size: 64px; margin: 20px 0; }
+        .content { line-height: 1.8; font-size: 14px; }
+        .race-box { background-color: #0a0c0b; border-left: 4px solid #a67c52; padding: 20px; margin: 20px 0; }
+        .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; font-size: 11px; color: #666; }
+    </style>
+</head>
+<body>
+<div class='container'>
+    <div class='header'>
+        <div class='title'>OBSTA<span class='accent'>RACE</span></div>
+        <div class='badge'>🏆 RACE COMPLETED</div>
+    </div>
+
+    <div class='trophy'>🏅</div>
+
+    <div class='content'>
+        <p style='font-size: 18px; font-weight: bold;'>Congratulations, <strong>{{RecipientName}}</strong>!</p>
+
+        <p>You've crossed the finish line! We're marking your participation in <strong class='accent'>{{RaceName}}</strong> as officially completed.</p>
+
+        <div class='race-box'>
+            <div style='font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #a67c52; font-weight: bold;'>Race Event</div>
+            <div style='font-size: 18px; font-weight: bold; margin-top: 5px;'>{{RaceName}}</div>
+            <div style='font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #a67c52; font-weight: bold; margin-top: 15px;'>Completed On</div>
+            <div style='font-size: 16px; font-weight: bold; margin-top: 5px;'>{{RaceDate}}</div>
+            <div style='font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #a67c52; font-weight: bold; margin-top: 15px;'>Location</div>
+            <div style='font-size: 16px; font-weight: bold; margin-top: 5px;'>{{Location}}</div>
+        </div>
+
+        <p style='background: linear-gradient(135deg, #a67c52 0%, #8a6240 100%); color: #0a0c0b; padding: 20px; font-weight: bold; margin-top: 30px; text-align: center; border-radius: 4px;'>
+            💪 "Every obstacle conquered, every barrier broken. You didn't just finish — you dominated."
+        </p>
+
+        <p style='margin-top: 30px;'>Keep pushing your limits and we'll see you at the next challenge!</p>
+    </div>
+
+    <div class='footer'>
+        <p>© 2025 ObstaRace | Born in the mud</p>
+    </div>
+</div>
+</body>
+</html>

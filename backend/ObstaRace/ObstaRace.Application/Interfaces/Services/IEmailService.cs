@@ -6,6 +6,6 @@ public interface IEmailService
     Task SendGenericEmailAsync(string recipientEmail, string subject, string htmlBody);
     Task SendRaceRegistrationApprovedAsync(string recipientEmail, string recipientName, string raceName);
     Task SendRaceRegistrationRejectedAsync(string recipientEmail, string recipientName, string raceName, string reason);
-
+    Task SendRaceCompletedAsync(string recipientEmail, string recipientName, string raceName, DateTime raceDate, string location);
     Task SendRaceReminderAsync(string recipientEmail, string recipientName, string raceName, DateTime raceDate, string location);
 }

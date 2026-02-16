@@ -24,4 +24,9 @@ public interface IRaceRepository
     Task<bool> RaceNameExists(string name);
     Task<bool> RaceHasRegistrations(int id);
     Task<bool> RaceHasObstacles(int id);
+    Task<List<Race>> GetRacesStartingToday();
+    Task<List<Race>> GetRacesToComplete();
+    Task<List<Race>> GetCompletedRaces();
+    IAsyncEnumerable<Registration> StreamRegistrationsForCompletedRace(int raceId);
+    Task<bool> UpdateRaceStatus(int raceId, Status status);
 }

@@ -18,6 +18,7 @@ public class UserRepository : IUserRepository
     public async Task<ICollection<User>> GetAllUsers(int? page, int? pageSize)
     {
         var query =  _context.Users
+            .AsNoTracking()
             .Include(u => u.Participant)
             .Include(u => u.Organiser)
             .OrderByDescending(u => u.CreatedAt);

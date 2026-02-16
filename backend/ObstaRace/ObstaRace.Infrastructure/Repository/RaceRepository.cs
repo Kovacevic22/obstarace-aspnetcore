@@ -16,9 +16,9 @@ public class RaceRepository : IRaceRepository
     //GET
     public async Task<ICollection<Race>> GetAllRaces(string? difficulty, string? distance, string? search, int? page, int? pageSize)
     {
-        var query =  _context.Races.AsQueryable();
+        var query =  _context.Races.AsNoTracking().AsQueryable();
         if(!string.IsNullOrWhiteSpace(search))query = query.Where(r => r.Name.ToLower().Contains(search.ToLower()));
-        if (!string.IsNullOrEmpty(difficulty) && difficulty != "all") query = query.Where(r => r.Difficulty == (Difficulty)int.Parse(difficulty));
+        if (!string.IsNullOrEmpty(difficulty) && difficulty != "all" && int.TryParse(difficulty, out int diffValue)) query = query.Where(r => r.Difficulty == (Difficulty)diffValue);
         if (!string.IsNullOrEmpty(distance) && distance != "all" && distance != "Any distance")
         {
             query = distance switch
@@ -71,7 +71,7 @@ public class RaceRepository : IRaceRepository
 
     public async Task<ICollection<Race>> GetMyRaces(int userId, int? page, int? pageSize)
     {
-        var query = _context.Races.Where(r => r.CreatedById == userId)
+        var query = _context.Races.AsNoTracking().Where(r => r.CreatedById == userId)
             .Include(r => r.RaceObstacles)
             .ThenInclude(ro => ro.Obstacle)
             .OrderByDescending(r => r.CreatedAt);
@@ -134,5 +134,53 @@ public class RaceRepository : IRaceRepository
     public async Task<bool> RaceHasObstacles(int id)
     {
         return await _context.RaceObstacles.AnyAsync(r => r.RaceId == id);
+    }
+
+    public async Task<List<Race>> GetRacesStartingToday()
+    {
+        var today = DateTime.UtcNow.Date;
+        var tomorrow = today.AddDays(1);
+        return await _context.Races.Where(r =>
+            r.Date.Date >= today &&
+            r.Date.Date < tomorrow &&
+            r.Status == Status.UpComing).ToListAsync();
+    }
+
+    public async Task<List<Race>> GetRacesToComplete()
+    {
+        return await _context.Races.Where(r =>
+            r.Date < DateTime.UtcNow &&       
+            r.Status == Status.OnGoing)
+            .ToListAsync();
+    }
+
+    public async Task<List<Race>> GetCompletedRaces()
+    {
+        return await _context.Races
+            .AsNoTracking()
+            .Where(r => r.Status == Status.Completed && r.Date < DateTime.UtcNow)
+            .ToListAsync();
+    }
+    public async IAsyncEnumerable<Registration> StreamRegistrationsForCompletedRace(int raceId)
+    {
+        await foreach (var registration in _context.Registrations
+                           .Include(r => r.User)
+                           .ThenInclude(u => u.Participant)
+                           .Where(r => 
+                               r.RaceId == raceId && 
+                               r.Status == RegistrationStatus.Confirmed)
+                           .AsAsyncEnumerable())
+        {
+            yield return registration;
+        }
+    }
+
+    public async Task<bool> UpdateRaceStatus(int raceId, Status status)
+    {
+        var race = await _context.Races.FindAsync(raceId);
+        if (race == null) return false;
+    
+        race.Status = status;
+        return await SaveChanges();
     }
 }

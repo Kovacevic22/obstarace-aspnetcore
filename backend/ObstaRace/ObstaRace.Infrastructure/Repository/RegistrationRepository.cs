@@ -16,11 +16,13 @@ public class RegistrationRepository : IRegistrationRepository
     public async Task<ICollection<Registration>> GetAllRegistrations(int? userId, int? page, int? pageSize)
     {
         var query = userId!=null? _context.Registrations
+                .AsNoTracking()
             .Include(r => r.Race)
             .Include(r => r.Participant)
             .Where(r => r.UserId == userId)
             .OrderByDescending(r=>r.CreatedAt):
             _context.Registrations
+                .AsNoTracking()
                 .Include(r => r.Race)
                 .Include(r => r.Participant)
                 .OrderByDescending(r=>r.CreatedAt);
@@ -34,6 +36,7 @@ public class RegistrationRepository : IRegistrationRepository
     public async Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId, int? page, int? pageSize)
     {
         var query = _context.Registrations
+            .AsNoTracking()
             .Include(r => r.Race)
             .ThenInclude(ra => ra.RaceObstacles)
             .ThenInclude(ro => ro.Obstacle)
@@ -88,18 +91,21 @@ public class RegistrationRepository : IRegistrationRepository
         return await SaveChanges();
     }
 
-    public async Task<List<Registration>> GetRegistrationsForReminderAsync(DateTime targetDate)
+    public async IAsyncEnumerable<Registration> GetRegistrationsForReminderAsync(DateTime targetDate)
     {
-        return await _context.Registrations
-            .Include(r => r.Race)
-            .Include(r => r.User)
-            .ThenInclude(u => u.Participant)
-            .Where(r => 
-                    r.Status == RegistrationStatus.Confirmed &&  
-                    !r.ReminderSent &&                           
-                    r.Race.Date.Date == targetDate                
-            )
-            .ToListAsync();
+        await foreach (var registration in _context.Registrations
+                           .Include(r => r.Race)
+                           .Include(r => r.User)
+                           .ThenInclude(u => u.Participant)
+                           .Where(r => 
+                               r.Status == RegistrationStatus.Confirmed &&  
+                               !r.ReminderSent &&                           
+                               r.Race.Date.Date == targetDate
+                           )
+                           .AsAsyncEnumerable())
+        {
+            yield return registration;
+        }
     }
 
     //ADDITIONAL METHODS
