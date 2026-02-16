@@ -14,7 +14,7 @@ public class RaceRepository : IRaceRepository
         _context = context;
     }
     //GET
-    public async Task<ICollection<Race>> GetAllRaces(string? difficulty, string? distance, string? search)
+    public async Task<ICollection<Race>> GetAllRaces(string? difficulty, string? distance, string? search, int? page, int? pageSize)
     {
         var query =  _context.Races.AsQueryable();
         if(!string.IsNullOrWhiteSpace(search))query = query.Where(r => r.Name.ToLower().Contains(search.ToLower()));
@@ -29,8 +29,14 @@ public class RaceRepository : IRaceRepository
                 _ => query
             };
         }
-
-        return await query.OrderBy(r => r.Id).ToListAsync();
+        query = query.OrderByDescending(r => r.CreatedAt);
+        if (page.HasValue && pageSize.HasValue)
+        {
+            query = query
+                .Skip((page.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
+        }
+        return await query.ToListAsync();
     }
 
     public async Task<Race?> GetRace(int id)
@@ -63,13 +69,19 @@ public class RaceRepository : IRaceRepository
         return await _context.Races.AnyAsync(r => r.Id == id);
     }
 
-    public async Task<ICollection<Race>> GetMyRaces(int userId)
+    public async Task<ICollection<Race>> GetMyRaces(int userId, int? page, int? pageSize)
     {
-        return await _context.Races.Where(r => r.CreatedById == userId)
-            .Include(r=>r.RaceObstacles)
+        var query = _context.Races.Where(r => r.CreatedById == userId)
+            .Include(r => r.RaceObstacles)
             .ThenInclude(ro => ro.Obstacle)
-            .OrderByDescending(r => r.Date)
-            .ToListAsync();
+            .OrderByDescending(r => r.CreatedAt);
+        if (page.HasValue && pageSize.HasValue)
+        {
+            query = (IOrderedQueryable<Race>)query
+                    .Skip((page.Value - 1) * pageSize.Value)
+                    .Take(pageSize.Value);
+        }
+        return await query.ToListAsync();
     }
 
     //CRUD

@@ -7,11 +7,11 @@ namespace ObstaRace.Application.Interfaces.Services;
 public interface IRaceService
 {
     //GET
-    Task<ICollection<RaceDto>> GetAllRaces(string? difficulty, string? distanceRange, string? search);
+    Task<ICollection<RaceDto>> GetAllRaces(string? difficulty, string? distanceRange, string? search, int? page, int? pageSize);
     Task<RaceDto?> GetRace(int id);
     Task<RaceDto?> GetRaceBySlug(string slug);
     Task<RaceStatsDto> GetRaceStats();
-    Task<ICollection<RaceDto>> GetMyRaces(int userId);
+    Task<ICollection<RaceDto>> GetMyRaces(int userId, int? page, int? pageSize);
     //POST
     Task<RaceDto> CreateRace(CreateRaceDto race, int userId);
     //UPDATE

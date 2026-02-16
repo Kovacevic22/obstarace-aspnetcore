@@ -19,9 +19,9 @@ public class RaceService : IRaceService
         _mapper = mapper;
         _logger = logger;
     }
-    public async Task<ICollection<RaceDto>> GetAllRaces(string? difficulty, string? distanceRange, string? search)
+    public async Task<ICollection<RaceDto>> GetAllRaces(string? difficulty, string? distanceRange, string? search, int? page, int? pageSize)
     {
-        var races = await _raceRepository.GetAllRaces(difficulty,distanceRange,search);
+        var races = await _raceRepository.GetAllRaces(difficulty,distanceRange,search, page, pageSize);
         return _mapper.Map<List<RaceDto>>(races);
     }
     public async Task<RaceDto?> GetRace(int id)
@@ -42,10 +42,10 @@ public class RaceService : IRaceService
         return race == null ? null : _mapper.Map<RaceDto>(race);
     }
 
-    public async Task<ICollection<RaceDto>> GetMyRaces(int userId)
+    public async Task<ICollection<RaceDto>> GetMyRaces(int userId, int? page, int? pageSize)
     {
         _logger.LogInformation("Retrieving races created by {id}",userId);
-        var races = await _raceRepository.GetMyRaces(userId);
+        var races = await _raceRepository.GetMyRaces(userId, page,pageSize);
         return _mapper.Map<List<RaceDto>>(races);
     }
 

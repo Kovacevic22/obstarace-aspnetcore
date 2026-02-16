@@ -20,12 +20,14 @@ public class UserController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetAllUsers([FromQuery]int page = 1, [FromQuery]int pageSize = 12)
     {
         try
         {
+            if (pageSize > 50) pageSize = 50;
+            if (page <= 0) page = 1;
             _logger.LogInformation("Getting all users");
-            var users = await _userService.GetAllUsers();
+            var users = await _userService.GetAllUsers(page, pageSize);
             return Ok(users);
         }
         catch (Exception ex)

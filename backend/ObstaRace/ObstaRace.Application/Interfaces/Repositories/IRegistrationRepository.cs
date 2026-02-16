@@ -5,10 +5,10 @@ namespace ObstaRace.Application.Interfaces.Repositories;
 
 public interface IRegistrationRepository
 {
-    Task<ICollection<Registration>> GetAllRegistrations(int? userId);
+    Task<ICollection<Registration>> GetAllRegistrations(int? userId, int? page, int? pageSize);
     Task<Registration?> GetRegistration(int id);
     Task<bool> RegistrationExists(int id);
-    Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId);
+    Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId, int? page, int? pageSize);
     //CRUD
     Task<bool> CreateRegistration(Registration registration);
     Task<bool> UpdateRegistration(Registration registration);

@@ -6,4 +6,5 @@ public class RaceObstacle
     public int ObstacleId { get; set; }
     public Race Race { get; set; }
     public Obstacle Obstacle { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

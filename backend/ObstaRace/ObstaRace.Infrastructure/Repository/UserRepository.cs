@@ -15,13 +15,14 @@ public class UserRepository : IUserRepository
     }
     //--------------USER-----------------//
     //GET
-    public async Task<ICollection<User>> GetAllUsers()
+    public async Task<ICollection<User>> GetAllUsers(int? page, int? pageSize)
     {
-        return await _context.Users
+        var query =  _context.Users
             .Include(u => u.Participant)
             .Include(u => u.Organiser)
-            .OrderBy(u => u.Id)
-            .ToListAsync();
+            .OrderByDescending(u => u.CreatedAt);
+        if(page.HasValue && pageSize.HasValue)query = (IOrderedQueryable<User>)query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+        return await query.ToListAsync();
     }
     public async Task<User?> GetUser(int id)
     {

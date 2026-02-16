@@ -19,4 +19,5 @@ public class Registration
     public string BibNumber { get; set; }
     public RegistrationStatus Status { get; set; }
     public bool ReminderSent  { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

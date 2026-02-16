@@ -24,15 +24,17 @@ public class RegistrationController : ControllerBase
     [Authorize]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RegistrationDto>))]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetAllRegistrations()
+    public async Task<IActionResult> GetAllRegistrations([FromQuery]int page = 1, [FromQuery]int pageSize = 12)
     {
         try
         {
+            if (pageSize > 50) pageSize = 50;
+            if (page <= 0) page = 1;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Getting all registrations");
-            var registrations = await _registrationService.GetAllRegistrations(userId);
+            var registrations = await _registrationService.GetAllRegistrations(userId,page,pageSize);
             return Ok(registrations);
         }
         catch (Exception ex)
@@ -88,15 +90,17 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(200, Type = typeof(RegistrationDto))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetParticipantsForRace([FromQuery]int? raceId)
+    public async Task<IActionResult> GetParticipantsForRace([FromQuery]int? raceId,[FromQuery]int page=1, [FromQuery]int pageSize=12)
     {
         try
         {
+            if (pageSize > 50) pageSize = 50;
+            if (page <= 0) page = 1;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int organiserId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Organiser {organiserId} requesting participants for race {RaceId}", organiserId, raceId);
-            var participants = await _registrationService.GetParticipantsForRace(organiserId, raceId);
+            var participants = await _registrationService.GetParticipantsForRace(organiserId, raceId, page, pageSize);
             return Ok(participants);
         }
         catch (UnauthorizedAccessException ex)

@@ -27,10 +27,10 @@ public class UserService : IUserService
         _configuration = configuration;
         _participantRepository = participantRepository;
     }
-    public async Task<ICollection<UserDto>> GetAllUsers()
+    public async Task<ICollection<UserDto>> GetAllUsers(int? page, int? pageSize)
     {
         _logger.LogInformation("Getting all users");
-        var users = await _userRepository.GetAllUsers();
+        var users = await _userRepository.GetAllUsers(page, pageSize);
         var userDtos = _mapper.Map<List<UserDto>>(users);
         
         foreach (var userDto in userDtos.Where(u => u.Participant != null))

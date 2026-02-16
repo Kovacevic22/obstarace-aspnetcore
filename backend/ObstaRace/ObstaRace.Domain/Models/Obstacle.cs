@@ -15,4 +15,5 @@ public class Obstacle
     public int CreatedById { get; set; }
     public User CreatedBy { get; set; }
     public IList<RaceObstacle> RaceObstacles { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

@@ -13,39 +13,45 @@ public class RegistrationRepository : IRegistrationRepository
         _context = context;
     }
 
-    public async Task<ICollection<Registration>> GetAllRegistrations(int? userId)
+    public async Task<ICollection<Registration>> GetAllRegistrations(int? userId, int? page, int? pageSize)
     {
-        if(userId != null)
-            return await _context.Registrations
-                .Include(r => r.Race)
-                .Include(r => r.Participant)
-                .Where(r => r.UserId == userId)
-                .OrderBy(r => r.Id)
-                .ToListAsync();
-                
-        return await _context.Registrations
+        var query = userId!=null? _context.Registrations
             .Include(r => r.Race)
             .Include(r => r.Participant)
-            .OrderBy(r => r.Id)
-            .ToListAsync();
+            .Where(r => r.UserId == userId)
+            .OrderByDescending(r=>r.CreatedAt):
+            _context.Registrations
+                .Include(r => r.Race)
+                .Include(r => r.Participant)
+                .OrderByDescending(r=>r.CreatedAt);
+        if (page.HasValue && pageSize.HasValue)
+        {
+            query = (IOrderedQueryable<Registration>)query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+        return await query.ToListAsync();
     }
 
-    public async Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId)
+    public async Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId, int? page, int? pageSize)
     {
-        var registrations = _context.Registrations
+        var query = _context.Registrations
             .Include(r => r.Race)
             .ThenInclude(ra => ra.RaceObstacles)
             .ThenInclude(ro => ro.Obstacle)
             .Include(r => r.User)
             .Include(r => r.Participant)
-            .Where(r => r.Race.CreatedById == organiserId && r.Status == RegistrationStatus.Pending); 
+            .Where(r => r.Race.CreatedById == organiserId && r.Status == RegistrationStatus.Pending)
+            .OrderByDescending(r => r.CreatedAt); 
         
         if (raceId.HasValue && raceId > 0)
         {
-            registrations = registrations.Where(r => r.RaceId == raceId.Value);
+            query = (IOrderedQueryable<Registration>)query.Where(r => r.RaceId == raceId.Value);
         }
 
-        return await registrations.OrderByDescending(r => r.Id).ToListAsync();
+        if (page.HasValue && pageSize.HasValue)
+        {
+            query = (IOrderedQueryable<Registration>)query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+        return await query.ToListAsync();
     }
 
     public async Task<Registration?> GetRegistration(int id)

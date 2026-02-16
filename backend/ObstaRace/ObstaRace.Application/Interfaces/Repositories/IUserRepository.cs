@@ -7,7 +7,7 @@ namespace ObstaRace.Application.Interfaces.Repositories;
 
 public interface IUserRepository
 {
-    Task<ICollection<User>> GetAllUsers();
+    Task<ICollection<User>> GetAllUsers(int? page, int? pageSize);
     Task<User?> GetUser(int id);
     Task<bool> UserExists(int id);
     Task<UserStatsDto> GetUserStats();

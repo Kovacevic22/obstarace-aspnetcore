@@ -52,6 +52,8 @@ public class AuthController : ControllerBase
     {
         try
         {
+            if (User.Identity.IsAuthenticated) return BadRequest(new { error = "You are already signed in with a valid session." });
+            
             _logger.LogInformation("Logging in user");
             var response = await _userService.LoginUser(loginDto);
             if (response == null)

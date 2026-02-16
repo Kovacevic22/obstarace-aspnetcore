@@ -15,4 +15,5 @@ public class User
     public bool Banned {get; set; }
     public Organiser? Organiser {get; set; }
     public Participant? Participant { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

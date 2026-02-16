@@ -14,8 +14,8 @@ public class ObstacleRepository : IObstacleRepository
     }
     public async Task<ICollection<Obstacle>> GetAllObstacles(string? search)
     {
-        if (string.IsNullOrEmpty(search)) return await _context.Obstacles.OrderBy(o => o.Id).ToListAsync();
-        return await _context.Obstacles.Where(o => o.Name.ToLower().Contains(search.ToLower())).OrderBy(o=>o.Id).ToListAsync();
+        if (string.IsNullOrEmpty(search)) return await _context.Obstacles.OrderByDescending(o => o.CreatedAt).ToListAsync();
+        return await _context.Obstacles.Where(o => o.Name.ToLower().Contains(search.ToLower())).OrderByDescending(o=>o.CreatedAt).ToListAsync();
     }
 
     public async Task<Obstacle?> GetObstacle(int id)
@@ -30,7 +30,7 @@ public class ObstacleRepository : IObstacleRepository
     public async Task<ICollection<Obstacle>> GetObstaclesFromCreator(int userId, string? search)
     {
         if(string.IsNullOrEmpty(search))return await _context.Obstacles.Where(o => o.CreatedById==userId).OrderBy(o => o.Id).ToListAsync();
-        return await _context.Obstacles.Where(o => o.CreatedById == userId && o.Name.ToLower().Contains(search.ToLower())).OrderBy(o => o.Id).ToListAsync();
+        return await _context.Obstacles.Where(o => o.CreatedById == userId && o.Name.ToLower().Contains(search.ToLower())).OrderBy(o => o.CreatedAt).ToListAsync();
     }
     //CRUD
     public async Task<bool> CreateObstacle(Obstacle obstacle)

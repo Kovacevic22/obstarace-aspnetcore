@@ -24,12 +24,15 @@ public class RaceController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RaceDto>))]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetAllRaces([FromQuery]string? difficulty, [FromQuery]string? distanceRange, [FromQuery]string? search)
+    public async Task<IActionResult> GetAllRaces([FromQuery]string? difficulty, [FromQuery]string? distanceRange, 
+        [FromQuery]string? search, [FromQuery]int page = 1, [FromQuery]int pageSize = 12)
     {
         try
         {
+            if (pageSize > 50) pageSize = 50;
+            if (page <= 0) page = 1;
             _logger.LogInformation("Getting races");
-            var races = await _raceService.GetAllRaces(difficulty, distanceRange, search);
+            var races = await _raceService.GetAllRaces(difficulty, distanceRange, search,page,pageSize);
             return Ok(races);
         }
         catch (Exception ex)
@@ -44,14 +47,16 @@ public class RaceController : ControllerBase
     [ProducesResponseType(200, Type = typeof(IEnumerable<RaceDto>))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> GetMyRaces()
+    public async Task<IActionResult> GetMyRaces([FromQuery]int page = 1, int pageSize = 12)
     {
         try
-        {   var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        {   if (pageSize > 50) pageSize = 50;
+            if (page <= 0) page = 1;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("Getting races");
-            var races = await _raceService.GetMyRaces(userId);
+            var races = await _raceService.GetMyRaces(userId, page, pageSize);
             return Ok(races);
         }
         catch (Exception ex)

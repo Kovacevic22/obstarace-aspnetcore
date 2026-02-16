@@ -25,9 +25,9 @@ public class RegistrationService : IRegistrationService
         _raceRepository = raceRepository;
         _emailService = emailService;
     }
-    public async Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId)
+    public async Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId, int? page, int? pageSize)
     {
-        var registrations = await _registrationRepository.GetAllRegistrations(userId);
+        var registrations = await _registrationRepository.GetAllRegistrations(userId, page, pageSize);
         return _mapper.Map<List<RegistrationDto>>(registrations);
     }
     public async Task<RegistrationDto?> GetRegistration(int id)
@@ -36,11 +36,11 @@ public class RegistrationService : IRegistrationService
         return registration==null?null:_mapper.Map<RegistrationDto>(registration);
     }
 
-    public async Task<ICollection<RegistrationDto>> GetParticipantsForRace(int organiserId, int? raceId)
+    public async Task<ICollection<RegistrationDto>> GetParticipantsForRace(int organiserId, int? raceId, int? page, int? pageSize)
     {
         _logger.LogInformation("Fetching registrations for organiser {Id}, Filter: {RaceId}", organiserId, raceId ?? 0);
     
-        var registrations = await _registrationRepository.GetParticipantsForRace(organiserId, raceId);
+        var registrations = await _registrationRepository.GetParticipantsForRace(organiserId, raceId, page, pageSize);
     
         return _mapper.Map<List<RegistrationDto>>(registrations);
     }

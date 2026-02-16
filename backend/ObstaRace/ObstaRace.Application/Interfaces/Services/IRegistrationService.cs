@@ -7,9 +7,9 @@ namespace ObstaRace.Application.Interfaces.Services;
 
 public interface IRegistrationService
 {
-    Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId);
+    Task<ICollection<RegistrationDto>> GetAllRegistrations(int userId, int? page, int? pageSize);
     Task<RegistrationDto?> GetRegistration(int id);
-    Task<ICollection<RegistrationDto>> GetParticipantsForRace(int organiserId, int? raceId);
+    Task<ICollection<RegistrationDto>> GetParticipantsForRace(int organiserId, int? raceId, int? page, int? pageSize);
     Task<bool> ConfirmUserRegistration(int registrationId, int organiserId);
     Task<bool> CancelUserRegistration(int registrationId, int organiserId);
     
