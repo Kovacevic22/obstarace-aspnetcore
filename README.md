@@ -17,7 +17,7 @@ A web application for managing and organizing obstacle races. Users can join rac
 * **Browse Races:** Find races by typing the name, or filter by difficulty and distance.
 * **Register:** Sign up for races easily.
 * **Stats:** Track your finished races.
-* * **Automated Notifications:** Receive email confirmations upon registration, status updates (Approved/Rejected) from organizers, and a reminder 7 days before the race.
+* **Automated Notifications:** Receive email confirmations upon registration, status updates (Approved/Rejected) from organizers, and a reminder 7 days before the race.
 ### For Organisers
 * **Create Races:** Add new events and obstacles.
 * **Manage:** View and approve participants.
