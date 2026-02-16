@@ -18,4 +18,5 @@ public class Registration
     public Race Race { get; set; }
     public string BibNumber { get; set; }
     public RegistrationStatus Status { get; set; }
+    public bool ReminderSent  { get; set; }
 }

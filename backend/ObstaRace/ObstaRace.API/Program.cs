@@ -75,6 +75,11 @@ builder.Services.AddScoped<IOrganiserService, OrganiserService>();
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<ReminderSettings>(
+    builder.Configuration.GetSection("ReminderSettings")
+);
+
+builder.Services.AddHostedService<RaceReminderBgService>();
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("AdditionalConnection"));

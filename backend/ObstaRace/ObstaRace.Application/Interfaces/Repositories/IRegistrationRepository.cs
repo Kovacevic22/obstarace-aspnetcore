@@ -13,7 +13,7 @@ public interface IRegistrationRepository
     Task<bool> CreateRegistration(Registration registration);
     Task<bool> UpdateRegistration(Registration registration);
     Task<bool> DeleteRegistration(int registrationId);
-    
+    Task<List<Registration>> GetRegistrationsForReminderAsync(DateTime targetDate);
     //ADDITIONAL METHODS
     Task<bool> SaveChanges();
     Task<Registration?> GetRegistrationByUserId(int userId);

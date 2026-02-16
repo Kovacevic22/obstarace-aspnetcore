@@ -81,6 +81,21 @@ public class RegistrationRepository : IRegistrationRepository
         _context.Registrations.Remove(registration);
         return await SaveChanges();
     }
+
+    public async Task<List<Registration>> GetRegistrationsForReminderAsync(DateTime targetDate)
+    {
+        return await _context.Registrations
+            .Include(r => r.Race)
+            .Include(r => r.User)
+            .ThenInclude(u => u.Participant)
+            .Where(r => 
+                    r.Status == RegistrationStatus.Confirmed &&  
+                    !r.ReminderSent &&                           
+                    r.Race.Date.Date == targetDate                
+            )
+            .ToListAsync();
+    }
+
     //ADDITIONAL METHODS
     public async Task<bool> SaveChanges()
     {

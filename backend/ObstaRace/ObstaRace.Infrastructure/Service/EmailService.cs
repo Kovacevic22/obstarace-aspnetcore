@@ -58,6 +58,18 @@ public class EmailService:IEmailService
 
         await SendEmailAsync(recipientEmail, subject, htmlBody);
     }
+
+    public async Task SendRaceReminderAsync(string recipientEmail, string recipientName, string raceName, DateTime raceDate, string location)
+    {
+        var subject = $"Reminder: {raceName}";
+        var htmlBody = await LoadTemplateAsync("RaceReminder.html");
+        htmlBody = htmlBody
+            .Replace("{{RecipientName}}", recipientName)
+            .Replace("{{RaceName}}", raceName)
+            .Replace("{{Location}}", location)
+            .Replace("{{RaceDate}}", raceDate.ToString("dd/MM/yyyy - HH:mm"));
+        await SendEmailAsync(recipientEmail, subject, htmlBody);
+    }
     public async Task SendGenericEmailAsync(string recipientEmail, string subject, string htmlBody)
     {
         await SendEmailAsync(recipientEmail, subject, htmlBody);
