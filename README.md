@@ -26,6 +26,33 @@ A web application for managing and organizing obstacle races. Users can join rac
 * **Full Access:** Create and delete any race or obstacle.
 * **Control:** Approve new organizers.
 * **Users:** Ban/Unban users if needed.
+
+---
+
+## Technical Overview
+
+**Clean Architecture (4-Layer):**
+- Presentation Layer (API): Controllers, middleware, and dependency injection
+- Application Layer: Business logic services and DTOs
+- Infrastructure Layer: Data access repositories and external services
+- Domain Layer: Core entities and business models
+
+**Security:**
+- JWT authentication with HttpOnly cookies
+- BCrypt password hashing
+- Rate limiting on authentication endpoints (brute-force protection)
+- Role-based authorization (Admin, Organiser, Participant)
+
+**Performance Optimizations:**
+- Async streaming with yield for memory-efficient bulk operations
+- Repository pattern with Entity Framework Core
+- Pagination on all data listings
+
+**Background Services:**
+- Automatic race status updates (hourly)
+- Email reminder system (7 days before race)
+- Completion notifications when race finishes
+
 ---
 ## Project Structure
 The project is organized into two main parts:
