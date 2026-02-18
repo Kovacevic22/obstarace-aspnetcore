@@ -33,11 +33,18 @@ public class UserService : IUserService
         var users = await _userRepository.GetAllUsers(page, pageSize);
         var userDtos = _mapper.Map<List<UserDto>>(users);
         
-        foreach (var userDto in userDtos.Where(u => u.Participant != null))
+        var participantIds = userDtos
+            .Where(u => u.Participant != null)
+            .Select(u => u.Id)
+            .ToList();
+        var activities = await _participantRepository.GetActivitiesForUsers(participantIds);
+        foreach (var userDto in userDtos.Where(u=>u.Participant != null))
         {
-            userDto.Participant.Activity = await _participantRepository.GetParticipantActivity(userDto.Id);
+            if (activities.TryGetValue(userDto.Id, out var activity))
+            {
+                userDto.Participant?.Activity = activity;
+            }
         }
-        
         return userDtos;
     }
 

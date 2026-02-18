@@ -158,21 +158,8 @@ public class RaceRepository : IRaceRepository
     {
         return await _context.Races
             .AsNoTracking()
-            .Where(r => r.Status == Status.Completed && r.Date < DateTime.UtcNow)
+            .Where(r => r.Status == Status.Completed && r.Date < DateTime.UtcNow && !r.EmailsSent)
             .ToListAsync();
-    }
-    public async IAsyncEnumerable<Registration> StreamRegistrationsForCompletedRace(int raceId)
-    {
-        await foreach (var registration in _context.Registrations
-                           .Include(r => r.User)
-                           .ThenInclude(u => u.Participant)
-                           .Where(r => 
-                               r.RaceId == raceId && 
-                               r.Status == RegistrationStatus.Confirmed)
-                           .AsAsyncEnumerable())
-        {
-            yield return registration;
-        }
     }
 
     public async Task<bool> UpdateRaceStatus(int raceId, Status status)
@@ -181,6 +168,13 @@ public class RaceRepository : IRaceRepository
         if (race == null) return false;
     
         race.Status = status;
+        return await SaveChanges();
+    }
+    public async Task<bool> MarkEmailsSent(int raceId)
+    {
+        var race = await _context.Races.FindAsync(raceId);
+        if (race == null) return false;
+        race.EmailsSent = true;
         return await SaveChanges();
     }
 }

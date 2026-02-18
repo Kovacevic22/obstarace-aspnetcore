@@ -47,6 +47,7 @@ public class Race
     public int MaxParticipants { get; set; }
     public int CreatedById { get; set; } 
     public User CreatedBy { get; set; }
+    public bool EmailsSent { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public IList<Registration> Registrations { get; set; }
     public IList<RaceObstacle> RaceObstacles { get; set; }

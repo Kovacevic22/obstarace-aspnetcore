@@ -90,9 +90,23 @@ public class RegistrationRepository : IRegistrationRepository
         _context.Registrations.Remove(registration);
         return await SaveChanges();
     }
-
+    public async IAsyncEnumerable<Registration> StreamRegistrationsForCompletedRace(int raceId)
+    {
+        await foreach (var registration in _context.Registrations
+                           .Include(r => r.User)
+                           .ThenInclude(u => u.Participant)
+                           .Where(r => 
+                               r.RaceId == raceId && 
+                               r.Status == RegistrationStatus.Confirmed)
+                           .AsAsyncEnumerable())
+        {
+            yield return registration;
+        }
+    }
     public async IAsyncEnumerable<Registration> GetRegistrationsForReminderAsync(DateTime targetDate)
     {
+        var start = targetDate.Date;
+        var end = start.AddDays(1);
         await foreach (var registration in _context.Registrations
                            .Include(r => r.Race)
                            .Include(r => r.User)
@@ -100,7 +114,8 @@ public class RegistrationRepository : IRegistrationRepository
                            .Where(r => 
                                r.Status == RegistrationStatus.Confirmed &&  
                                !r.ReminderSent &&                           
-                               r.Race.Date.Date == targetDate
+                               r.Race.Date >= start 
+                               && r.Race.Date < end
                            )
                            .AsAsyncEnumerable())
         {
@@ -109,6 +124,12 @@ public class RegistrationRepository : IRegistrationRepository
     }
 
     //ADDITIONAL METHODS
+    public async Task<int> GetNextBibNumber()
+    {
+        var max = await _context.Registrations
+            .MaxAsync(r => (int?)Convert.ToInt32(r.BibNumber)) ?? 0;
+        return max + 1;
+    }
     public async Task<bool> SaveChanges()
     {
         var saved = await _context.SaveChangesAsync();

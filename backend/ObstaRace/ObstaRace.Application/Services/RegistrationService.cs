@@ -153,7 +153,8 @@ public class RegistrationService : IRegistrationService
             _logger.LogWarning("Race {RaceId} has reached maximum participants", raceId);
             throw new ArgumentException("Race has reached maximum participants");
         }
-        var bibNumber = GenerateBibNumber(raceId, count);
+
+        var bibNumber = await _registrationRepository.GetNextBibNumber();
         var registration = new Registration
         {
             UserId = userId,
@@ -191,7 +192,8 @@ public class RegistrationService : IRegistrationService
             throw new ArgumentException("Registration not found");
         }
         var race = await _raceRepository.GetRace(existingRegistration.RaceId);
-        if (role != Role.Admin && race.CreatedById != userId)
+        if(race==null)throw new ArgumentException("Race not found");
+        if ( role != Role.Admin && race.CreatedById != userId)
         {
             throw new UnauthorizedAccessException("You can only manage participants for your own races.");
         }
@@ -226,10 +228,5 @@ public class RegistrationService : IRegistrationService
     {
         _logger.LogInformation("Checking if {RaceId} user {UserId}", raceId, userId);
         return  await _registrationRepository.UserRegistered(userId, raceId);
-    }
-    //ADDITIONAL METHODS
-    private int GenerateBibNumber(int raceId, int count)
-    {
-        return (raceId*100) + (count + 1);
     }
 }

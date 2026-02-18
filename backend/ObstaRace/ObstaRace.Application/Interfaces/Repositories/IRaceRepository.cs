@@ -27,6 +27,6 @@ public interface IRaceRepository
     Task<List<Race>> GetRacesStartingToday();
     Task<List<Race>> GetRacesToComplete();
     Task<List<Race>> GetCompletedRaces();
-    IAsyncEnumerable<Registration> StreamRegistrationsForCompletedRace(int raceId);
     Task<bool> UpdateRaceStatus(int raceId, Status status);
+    public Task<bool> MarkEmailsSent(int raceId);
 }

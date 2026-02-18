@@ -88,7 +88,7 @@ public class RaceReminderBgService:BackgroundService
             try
             {
                 var participantName = registration.User.Participant != null
-                    ? $"{registration.User.Participant.Name} {registration.Participant.Surname}"
+                    ? $"{registration.User.Participant.Name} {registration.User.Participant.Surname}"
                     : "Unknown name";
                 await emailService.SendRaceReminderAsync(
                     recipientEmail: registration.User.Email,

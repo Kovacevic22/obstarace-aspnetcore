@@ -14,7 +14,9 @@ public interface IRegistrationRepository
     Task<bool> UpdateRegistration(Registration registration);
     Task<bool> DeleteRegistration(int registrationId);
     IAsyncEnumerable<Registration> GetRegistrationsForReminderAsync(DateTime targetDate);
+    IAsyncEnumerable<Registration> StreamRegistrationsForCompletedRace(int raceId);
     //ADDITIONAL METHODS
+    public Task<int> GetNextBibNumber();
     Task<bool> SaveChanges();
     Task<Registration?> GetRegistrationByUserId(int userId);
     Task<List<Registration>?> GetRegistrationsByRaceId(int raceId);

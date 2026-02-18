@@ -42,4 +42,20 @@ public class ParticipantRepository : IParticipantRepository
         var saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
+    public async Task<Dictionary<int, ParticipantActivityDto>> GetActivitiesForUsers(List<int> userIds)
+    {
+        return await _context.Registrations
+            .Where(r => userIds.Contains(r.UserId))
+            .GroupBy(r => r.UserId)
+            .Select(g => new
+            {
+                UserId = g.Key,
+                Activity = new ParticipantActivityDto
+                {
+                    TotalRaces = g.Count(),
+                    FinishedRaces = g.Count(r => r.Status == RegistrationStatus.Finished)
+                }
+            })
+            .ToDictionaryAsync(x => x.UserId, x => x.Activity);
+    }
 }

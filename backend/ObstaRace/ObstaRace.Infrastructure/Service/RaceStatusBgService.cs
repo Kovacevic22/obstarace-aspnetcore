@@ -46,8 +46,7 @@ public class RaceStatusBgService:BackgroundService
     private async Task UpdateRaceStatuses()
     {
         using var scope = _serviceProvider.CreateScope();
-        var raceRepo = scope.ServiceProvider.GetService<IRaceRepository>();
-        var now =  DateTime.Now;
+        var raceRepo = scope.ServiceProvider.GetRequiredService<IRaceRepository>();
         var raceToStart = await raceRepo.GetRacesStartingToday();
         foreach (var race in raceToStart)
         {
@@ -65,15 +64,15 @@ public class RaceStatusBgService:BackgroundService
     private async Task FinishCompletedRaces()
     {
         using var scope = _serviceProvider.CreateScope();
-        var raceRepo = scope.ServiceProvider.GetService<IRaceRepository>();
-        var registrationRepo = scope.ServiceProvider.GetService<IRegistrationRepository>();
+        var raceRepo = scope.ServiceProvider.GetRequiredService<IRaceRepository>();
+        var registrationRepo = scope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
         var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
         var completedRaces = await raceRepo.GetCompletedRaces();
         _logger.LogInformation("Found {Count} completed races with pending registrations", completedRaces.Count);
         var totalProcessed = 0;
         foreach (var race in completedRaces)
         {
-            await foreach (var registration in raceRepo.StreamRegistrationsForCompletedRace(race.Id))
+            await foreach (var registration in registrationRepo.StreamRegistrationsForCompletedRace(race.Id))
             {
                 try
                 {
@@ -96,6 +95,7 @@ public class RaceStatusBgService:BackgroundService
                     _logger.LogError(ex, "Failed to finish registration {RegId}", registration.Id);
                 }
             }
+            await raceRepo.MarkEmailsSent(race.Id);
             _logger.LogInformation("Completed race processing finished. Total processed: {Count}", totalProcessed);
         }
     }

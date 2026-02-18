@@ -54,6 +54,7 @@ public class RaceService : IRaceService
         var slug = raceDto.Slug.ToLower().Trim();
         slug = Regex.Replace(slug,@"[^a-z0-9]+", "-");
         slug = slug.Trim('-');
+        raceDto.Slug = slug;
         if (await _raceRepository.GetRaceBySlug(raceDto.Slug) != null)
         {
             _logger.LogError("Cannot create race with that slug");
@@ -70,14 +71,14 @@ public class RaceService : IRaceService
             _logger.LogWarning("Cannot create race! Deadline must be rather then date!");
             throw new ArgumentException("Cannot create race! Deadline must be rather then date!");
         }
+
         if (await _raceRepository.RaceNameExists(raceDto.Name))
         {
             _logger.LogWarning("Race with the same name already exists");
             throw new ArgumentException("Race with the same name already exists");
         }
-        
+
         var race = _mapper.Map<Race>(raceDto);
-        raceDto.Slug = slug;
         race.CreatedById = userId;
         if (raceDto.ObstacleIds.Any())
         {
