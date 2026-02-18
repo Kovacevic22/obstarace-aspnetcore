@@ -7,7 +7,6 @@ namespace ObstaRace.Application.Interfaces.Repositories;
 
 public interface IParticipantRepository
 {
-    Task<Participant?> GetParticipant(int userId);
     Task<ParticipantActivityDto> GetParticipantActivity(int userId);
     Task<bool> UpdateParticipant(Participant participant);
     public Task<Dictionary<int, ParticipantActivityDto>> GetActivitiesForUsers(List<int> userIds);

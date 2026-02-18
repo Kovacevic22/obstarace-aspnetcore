@@ -64,10 +64,6 @@ public class RaceRepository : IRaceRepository
             TotalKilometers = await _context.Races.SumAsync(r => r.Distance)
         };
     }
-    public async Task<bool> RaceExists(int id)
-    {
-        return await _context.Races.AnyAsync(r => r.Id == id);
-    }
 
     public async Task<ICollection<Race>> GetMyRaces(int userId, int? page, int? pageSize)
     {
@@ -125,15 +121,6 @@ public class RaceRepository : IRaceRepository
     public async Task<bool> RaceNameExists(string name)
     {
         return await _context.Races.AnyAsync(r => r.Name == name);
-    }
-    public async Task<bool> RaceHasRegistrations(int id)
-    {
-        return await _context.Registrations.AnyAsync(r => r.RaceId == id);
-    }
-
-    public async Task<bool> RaceHasObstacles(int id)
-    {
-        return await _context.RaceObstacles.AnyAsync(r => r.RaceId == id);
     }
 
     public async Task<List<Race>> GetRacesStartingToday()

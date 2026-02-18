@@ -22,10 +22,6 @@ public class ObstacleRepository : IObstacleRepository
     {
         return await _context.Obstacles.FindAsync(id);
     }
-    public async Task<bool> ObstacleExists(int id)
-    {
-        return  await _context.Obstacles.AnyAsync(o => o.Id == id);
-    }
 
     public async Task<ICollection<Obstacle>> GetObstaclesFromCreator(int userId, string? search)
     {

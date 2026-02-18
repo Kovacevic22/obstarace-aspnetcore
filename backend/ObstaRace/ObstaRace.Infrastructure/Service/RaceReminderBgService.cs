@@ -81,7 +81,7 @@ public class RaceReminderBgService:BackgroundService
         var registrationRepo = scope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
         var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
         _logger.LogInformation("Checking for races in 7 days...");
-        var targetDate = DateTime.Today.AddDays(7);
+        var targetDate = DateTime.Today.AddDays(_settings.DaysBefore);
         var processedCount = 0;
         await foreach (var registration in registrationRepo.GetRegistrationsForReminderAsync(targetDate))
         {

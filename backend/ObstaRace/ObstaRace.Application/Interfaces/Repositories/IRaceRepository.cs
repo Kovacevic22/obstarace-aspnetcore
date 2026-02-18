@@ -11,7 +11,6 @@ public interface IRaceRepository
     Task<Race?> GetRace(int id);
     Task<Race?> GetRaceBySlug(string slug);
     Task<RaceStatsDto> GetRaceStats();
-    Task<bool> RaceExists(int id);
     Task<ICollection<Race>> GetMyRaces(int userId, int? page, int? pageSize);
     //POST
     Task<bool> CreateRace(Race race);
@@ -20,10 +19,7 @@ public interface IRaceRepository
     //DELETE
     Task<bool> DeleteRace(int raceId);
     //ADDITIONAL METHODS
-    Task<bool> SaveChanges();
     Task<bool> RaceNameExists(string name);
-    Task<bool> RaceHasRegistrations(int id);
-    Task<bool> RaceHasObstacles(int id);
     Task<List<Race>> GetRacesStartingToday();
     Task<List<Race>> GetRacesToComplete();
     Task<List<Race>> GetCompletedRaces();

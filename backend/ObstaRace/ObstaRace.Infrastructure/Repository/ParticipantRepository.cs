@@ -16,12 +16,6 @@ public class ParticipantRepository : IParticipantRepository
         _context = context;
     }
 
-    public async Task<Participant?> GetParticipant(int userId)
-    {
-        return await _context.Participants
-            .FirstOrDefaultAsync(p => p.UserId == userId);
-    }
-
     public async Task<ParticipantActivityDto> GetParticipantActivity(int userId)
     {
         var totalRaces = await _context.Registrations

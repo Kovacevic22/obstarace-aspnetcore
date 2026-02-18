@@ -67,10 +67,6 @@ public class RegistrationRepository : IRegistrationRepository
             .ThenInclude(ro => ro.Obstacle)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
-    public async Task<bool> RegistrationExists(int id)
-    {
-        return await _context.Registrations.AnyAsync(r => r.Id == id);
-    }
     //CRUD
     public async Task<bool> CreateRegistration(Registration registration)
     {
@@ -134,16 +130,6 @@ public class RegistrationRepository : IRegistrationRepository
     {
         var saved = await _context.SaveChangesAsync();
         return saved > 0;
-    }
-
-    public async Task<Registration?> GetRegistrationByUserId(int userId)
-    {
-        return await _context.Registrations.FirstOrDefaultAsync(r => r.UserId == userId); 
-    }
-
-    public async Task<List<Registration>?> GetRegistrationsByRaceId(int raceId)
-    {
-        return await _context.Registrations.Where(r => r.RaceId == raceId).ToListAsync();
     }
 
     public async Task<bool> UserRegistered(int userId, int raceId)

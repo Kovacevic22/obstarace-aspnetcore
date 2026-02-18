@@ -42,7 +42,7 @@ public class UserService : IUserService
         {
             if (activities.TryGetValue(userDto.Id, out var activity))
             {
-                userDto.Participant?.Activity = activity;
+                if (userDto.Participant != null) userDto.Participant.Activity = activity;
             }
         }
         return userDtos;
@@ -118,17 +118,16 @@ public class UserService : IUserService
     {
         _logger.LogInformation("Logging in user with email {Email}", loginDto.Email);
         var user = await _userRepository.GetUserByEmail(loginDto.Email);
-        var isPasswordValid = user != null && BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
-        if (!isPasswordValid)
-        {
-            _logger.LogWarning("Login failed for {Email}", loginDto.Email);
-            throw new ArgumentException("Invalid email or password");
-        }
-
         if (user == null)
         {
             _logger.LogError("User does not exist");
             throw new ArgumentException("User does not exist");
+        }
+        var isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
+        if (!isPasswordValid)
+        {
+            _logger.LogWarning("Login failed for {Email}", loginDto.Email);
+            throw new ArgumentException("Invalid email or password");
         }
         if (user.Banned)
         {

@@ -13,11 +13,6 @@ public class OrganiserRepository :  IOrganiserRepository
         _context = context;
     }
 
-    public async Task<ICollection<Organiser>> GetAllOrganisers()
-    {
-        return await _context.Organisers.OrderBy(o => o.UserId).ToListAsync();
-    }
-
     public async Task<ICollection<Organiser>> GetPendingOrganisers()
     {
         return await _context.Organisers
