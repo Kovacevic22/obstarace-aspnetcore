@@ -9,7 +9,7 @@ public interface IRegistrationRepository
     Task<Registration?> GetRegistration(int id);
     Task<ICollection<Registration>> GetParticipantsForRace(int organiserId, int? raceId, int? page, int? pageSize);
     //CRUD
-    Task<bool> CreateRegistration(Registration registration);
+    Task<bool> CreateRegistration(Registration registration, int maxParticipants);
     Task<bool> UpdateRegistration(Registration registration);
     Task<bool> DeleteRegistration(int registrationId);
     IAsyncEnumerable<Registration> GetRegistrationsForReminderAsync(DateTime targetDate);

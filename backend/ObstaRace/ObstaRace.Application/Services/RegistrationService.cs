@@ -163,7 +163,8 @@ public class RegistrationService : IRegistrationService
             BibNumber = bibNumber.ToString(),
             Status = RegistrationStatus.Pending
         };
-        await _registrationRepository.CreateRegistration(registration);
+        var succes = await _registrationRepository.CreateRegistration(registration, race.MaxParticipants);
+        if(!succes)throw new ArgumentException("Race has reached maximum participants");
         var fullRegistration = await _registrationRepository.GetRegistration(registration.Id);
         try
         {

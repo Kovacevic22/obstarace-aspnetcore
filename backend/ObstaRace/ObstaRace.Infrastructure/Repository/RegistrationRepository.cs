@@ -68,10 +68,30 @@ public class RegistrationRepository : IRegistrationRepository
             .FirstOrDefaultAsync(r => r.Id == id);
     }
     //CRUD
-    public async Task<bool> CreateRegistration(Registration registration)
+    public async Task<bool> CreateRegistration(Registration registration, int maxParticipants)
     {
-        _context.Registrations.Add(registration);
-        return await SaveChanges();
+        await using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        try
+        {
+            var count = await _context.Registrations.CountAsync(
+                r => r.RaceId == registration.RaceId &&
+                     r.Status != RegistrationStatus.Cancelled &&
+                     r.Status != RegistrationStatus.Pending);
+            if (count >= maxParticipants)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+            _context.Registrations.Add(registration);
+            await SaveChanges();
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
     public async Task<bool> UpdateRegistration(Registration registration)
     {
