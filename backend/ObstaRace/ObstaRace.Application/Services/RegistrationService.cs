@@ -153,14 +153,11 @@ public class RegistrationService : IRegistrationService
             _logger.LogWarning("Race {RaceId} has reached maximum participants", raceId);
             throw new ArgumentException("Race has reached maximum participants");
         }
-
-        var bibNumber = await _registrationRepository.GetNextBibNumber();
         var registration = new Registration
         {
             UserId = userId,
             RaceId = raceId,
             ParticipantUserId = userId,
-            BibNumber = bibNumber.ToString(),
             Status = RegistrationStatus.Pending
         };
         var succes = await _registrationRepository.CreateRegistration(registration, race.MaxParticipants);

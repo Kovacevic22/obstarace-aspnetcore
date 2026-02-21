@@ -16,7 +16,7 @@ public class Registration
     public Participant Participant { get; set; }
     public User User { get; set; }
     public Race Race { get; set; }
-    public string BibNumber { get; set; }
+    public int BibNumber { get; set; }
     public RegistrationStatus Status { get; set; }
     public bool ReminderSent  { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

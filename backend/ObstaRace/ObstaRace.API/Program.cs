@@ -9,6 +9,7 @@ using ObstaRace.Application.Services;
 using ObstaRace.Infrastructure.Configuration;
 using ObstaRace.Infrastructure.Data;
 using ObstaRace.Infrastructure.Repository;
+using ObstaRace.Infrastructure.Seeders;
 using ObstaRace.Infrastructure.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -90,6 +91,11 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("AdditionalConnection"));
 });
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+    await DataSeeder.SeedAsync(context);
+}
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

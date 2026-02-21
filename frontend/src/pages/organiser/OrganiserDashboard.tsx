@@ -257,7 +257,7 @@ export function OrganiserDashboard() {
             )}
             <ConfirmModal
                 isOpen={confirmConfig.isOpen}
-                onClose={() => setConfirmConfig(p => ({ ...p, isOpen: false }))}
+                onClose={() => {setConfirmConfig(p => ({ ...p, isOpen: false })); setModalError(null)}}
                 onConfirm={handleConfirmation}
                 title={confirmConfig.type === 'confirm' ? "AUTHORIZE" : "TERMINATE"}
                 variant={confirmConfig.type === 'confirm' ? "success" : "danger"}

@@ -72,7 +72,7 @@ public class RaceStatusBgService:BackgroundService
         var totalProcessed = 0;
         foreach (var race in completedRaces)
         {
-            await foreach (var registration in registrationRepo.StreamRegistrationsForCompletedRace(race.Id))
+            await foreach (var registration in registrationRepo.GetRegistrationsForCompletedRace(race.Id))
             {
                 try
                 {

@@ -2,14 +2,15 @@ import type {CreateRaceDto, RaceDto, RaceStatsDto, UpdateRaceDto} from "../Model
 import api from "./api.ts";
 
 export const raceService = {
-    races: async (filters? : {search?:string, difficulty?:string, distance?:string}): Promise<RaceDto[]> => {
+    races: async (filters? : {search?:string, difficulty?:string, distance?:string, page:number}): Promise<RaceDto[]> => {
         const response = await api.get<RaceDto[]>("api/races", {
             params: {
                 search: filters?.search,
                 difficulty: filters?.difficulty !== "all" ? filters?.difficulty : undefined,
                 distanceRange: (filters?.distance !== "Any distance" && filters?.distance !== "all")
                     ? filters?.distance
-                    : undefined
+                    : undefined,
+                page: filters?.page,
             }
         });
         return response.data;

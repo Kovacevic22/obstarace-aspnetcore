@@ -31,8 +31,7 @@ public class DataContext : DbContext
             .HasForeignKey(r => r.UserId);
         
         modelBuilder.Entity<Registration>() .HasIndex(r => new { r.UserId, r.RaceId }).IsUnique();
-        
-        modelBuilder.Entity<Registration>().HasIndex(r => r.BibNumber).IsUnique();
+        modelBuilder.Entity<Registration>().Property(r => r.BibNumber).ValueGeneratedOnAdd();
         
         modelBuilder.Entity<Race>().Property(r => r.Date).HasColumnType("date");
         modelBuilder.Entity<Race>().Property(r => r.RegistrationDeadLine).HasColumnType("date");
