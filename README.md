@@ -31,7 +31,7 @@ A web application for managing and organizing obstacle races. Users can join rac
 
 ## Technical Overview
 
-**Clean Architecture (4-Layer):**
+**Architecture (4-Layer):**
 - Presentation Layer (API): Controllers, middleware, and dependency injection
 - Application Layer: Business logic services and DTOs
 - Infrastructure Layer: Data access repositories and external services
@@ -85,9 +85,13 @@ The project is organized into two main parts:
     └── src/                          # React Application
         ├── assets/                   # Static files (Images, Logos)
         ├── components/               # Reusable UI Components
+        ├── context/                  # React Context Providers
+        ├── hooks/                    # Custom React Hooks
         ├── Models/                   # TypeScript Types/Interfaces
         ├── pages/                    # Main Application Views
-        └── services/                 # API Calls (Axios/Fetch)
+        ├── routes/                   # Route Definitions
+        ├── services/                 # API Calls (Axios/Fetch)
+        └── utils/                    # Helper Functions
 ```
 ---
 ## Class Diagram
@@ -102,24 +106,34 @@ The project is organized into two main parts:
 ### Prerequisites
 * .NET 10 SDK
 * Node.js and npm
+* SQL Server / SQL Server Express
 * Git
 
 ### Backend Setup
 ```bash
 # Navigate to backend directory
-cd backend/ObstaRace.API
+cd backend/ObstaRace
 
+# Copy the example config and fill in your values
+cp appsettings.example.json appsettings.json
+```
+
+Open `appsettings.json` and fill in:
+* **ConnectionStrings** – your SQL Server connection string
+* **Jwt.Key** – a random secret key (min. 32 characters)
+* **EmailSettings** – your SMTP credentials
+```bash
 # Restore dependencies
 dotnet restore
 
 # Apply database migrations
-dotnet ef database update --project ../ObstaRace.Infrastructure
+dotnet ef database update --project ObstaRace.Infrastructure --startup-project ObstaRace.API
 
 # Run the API
 dotnet run
 ```
 
-The API will run on `https://localhost:5001` by default.
+The API will run on `https://localhost:5235` by default.
 
 ### Frontend Setup
 ```bash
@@ -134,9 +148,3 @@ npm run dev
 ```
 
 The frontend will run on `http://localhost:5173` by default.
-
-### Configuration
-Update `appsettings.json` in `ObstaRace.API` with your:
-* Database connection string
-* JWT secret key
-* CORS origins if needed
