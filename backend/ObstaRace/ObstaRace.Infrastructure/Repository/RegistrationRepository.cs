@@ -102,9 +102,9 @@ public class RegistrationRepository : IRegistrationRepository
     }
     public async Task<bool> DeleteRegistration(int registrationId)
     {
-        var registration = await _context.Registrations.FindAsync(registrationId);
+        var registration =  await _context.Registrations.FindAsync(registrationId);
         if (registration == null) return false;
-    
+        
         _context.Registrations.Remove(registration);
         return await SaveChanges();
     }
