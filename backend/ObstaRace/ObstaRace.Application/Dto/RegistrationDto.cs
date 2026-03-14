@@ -3,39 +3,39 @@ using ObstaRace.Domain.Models;
 
 namespace ObstaRace.Application.Dto;
 
-public class RegistrationDto
+public sealed record RegistrationDto
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required]
-    public int UserId { get; set; }
+    public int UserId { get; init; }
 
     [Required]
-    public int RaceId { get; set; }
+    public int RaceId { get; init; }
 
     [Required]
-    public string BibNumber { get; set; }
+    public string BibNumber { get; init; }
 
     [Required]
-    public RegistrationStatus Status { get; set; }
-    public RaceDto Race { get; set; }
-    public UserDto User { get; set; }
-    public ParticipantDto Participant { get; set; }
+    public RegistrationStatus Status { get; init; }
+    public RaceDto Race { get; init; }
+    public UserDto User { get; init; }
+    public ParticipantDto Participant { get; init; }
 }
 
-public class CreateRegistrationDto
+public sealed record CreateRegistrationDto
 {
     [Required]
-    public int RaceId { get; set; }
+    public int RaceId { get; init; }
     [Required]
-    public int UserId { get; set; }
+    public int UserId { get; init; }
 }
 
-public class UpdateRegistrationDto
+public sealed record UpdateRegistrationDto
 {
-    public int RaceId { get; set; }
-    public string BibNumber { get; set; }
-    public RegistrationStatus Status { get; set; }
-    public int Count { get; set; }
-    public int UserId { get; set; }
+    public int RaceId { get; init; }
+    public string BibNumber { get; init; }
+    public RegistrationStatus Status { get; init; }
+    public int Count { get; init; }
+    public int UserId { get; init; }
 }

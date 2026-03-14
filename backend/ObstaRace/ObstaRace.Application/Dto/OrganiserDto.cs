@@ -4,18 +4,18 @@ using ObstaRace.Domain.Models;
 
 namespace ObstaRace.Application.Dto;
 
-public class OrganiserDto
+public sealed record OrganiserDto
 {
-    public int UserId { get; set; }
-    public string UserName { get; set; } 
-    public string UserSurname { get; set; } 
-    public string UserEmail { get; set; } 
-    public string OrganisationName { get; set; }
-    public string Description { get; set; } 
-    public OrganiserStatus Status { get; set; }
+    public int UserId { get; init; }
+    public string UserName { get; init; } 
+    public string UserSurname { get; init; } 
+    public string UserEmail { get; init; } 
+    public string OrganisationName { get; init; }
+    public string Description { get; init; } 
+    public OrganiserStatus Status { get; init; }
 }
-public class RegisterOrganiserDto
+public sealed record RegisterOrganiserDto
 {
-    public string OrganisationName { get; set; }
-    public string Description { get; set; }
+    public string OrganisationName { get; init; }
+    public string Description { get; init; }
 }

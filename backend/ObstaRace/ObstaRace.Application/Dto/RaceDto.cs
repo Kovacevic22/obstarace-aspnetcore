@@ -4,126 +4,126 @@ using ObstaRace.Domain.Models;
 
 namespace ObstaRace.Application.Dto;
 
-public class RaceDto
+public sealed record RaceDto
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required]
     [MaxLength(100)]
-    public string Name { get; set; }
+    public string Name { get; init; }
 
     [Required]
     [MaxLength(100)]
-    public string Slug { get; set; }
+    public string Slug { get; init; }
 
     [Required]
-    public DateTime Date { get; set; }
+    public DateTime Date { get; init; }
 
     [MaxLength(500)]
-    public string Description { get; set; }
+    public string Description { get; init; }
 
     [Required]
     [MaxLength(200)]
-    public string Location { get; set; }
+    public string Location { get; init; }
 
     [Required]
     [Range(0.1, 1000.0)]
-    public double Distance { get; set; }
+    public double Distance { get; init; }
 
     [Required]
-    public Difficulty Difficulty { get; set; }
+    public Difficulty Difficulty { get; init; }
 
     [Required]
-    public DateTime RegistrationDeadLine { get; set; }
+    public DateTime RegistrationDeadLine { get; init; }
 
     [Required]
-    public Status Status { get; set; }
+    public Status Status { get; init; }
 
     [Url]
-    public string ImageUrl { get; set; }
+    public string ImageUrl { get; init; }
 
     [Range(0, 10000)]
-    public int ElevationGain { get; set; }
+    public int ElevationGain { get; init; }
 
     [Required]
     [Range(1, 10000)]
-    public int MaxParticipants { get; set; }
-    public List<ObstacleDto> Obstacles { get; set; } = new List<ObstacleDto>();
-    public List<int> ObstacleIds { get; set; } = new List<int>();
+    public int MaxParticipants { get; init; }
+    public List<ObstacleDto> Obstacles { get; init; } = new List<ObstacleDto>();
+    public List<int> ObstacleIds { get; init; } = new List<int>();
 }
 
-public class CreateRaceDto
+public sealed record CreateRaceDto
 {
     [Required(ErrorMessage = "Race name is required.")]
     [MaxLength(100)]
-    public string Name { get; set; }
+    public string Name { get; init; }
     [Required]
     [MaxLength(100)]
-    public string Slug { get; set; }
+    public string Slug { get; init; }
     [Required]
-    public DateTime Date { get; set; }
+    public DateTime Date { get; init; }
     [MaxLength(500, ErrorMessage = "Description is too long.(<500 characters)")]
-    public string Description { get; set; }
+    public string Description { get; init; }
     [Required]
     [MaxLength(200)]
-    public string Location { get; set; }
+    public string Location { get; init; }
     [Required]
     [Range(0.1, 1000.0, ErrorMessage = "Distance must be between 0.1 and 1000.")]
-    public double Distance { get; set; }
+    public double Distance { get; init; }
     [Required]
-    public Difficulty Difficulty { get; set; }
+    public Difficulty Difficulty { get; init; }
     [Required]
-    public DateTime RegistrationDeadLine { get; set; }
+    public DateTime RegistrationDeadLine { get; init; }
     [Required]
-    public Status Status { get; set; }
+    public Status Status { get; init; }
     [Url(ErrorMessage = "Image url format is not valid.")]
-    public string ImageUrl { get; set; }
+    public string ImageUrl { get; init; }
     [Range(0, 10000, ErrorMessage = "Elevation gain must be between 0 and 10000.")]
-    public int ElevationGain { get; set; }
+    public int ElevationGain { get; init; }
     [Required]
     [Range(1, 10000, ErrorMessage = "Max participants must be between 1 and 1000.")]
-    public int MaxParticipants { get; set; }
-    public List<int> ObstacleIds { get; set; } = new List<int>();
+    public int MaxParticipants { get; init; }
+    public List<int> ObstacleIds { get; init; } = new List<int>();
 }
 
-public class UpdateRaceDto
+public sealed record UpdateRaceDto
 {
     [Required(ErrorMessage = "Race name is required.")]
     [MaxLength(100)]
-    public string Name { get; set; }
+    public string Name { get; init; }
     [Required]
     [MaxLength(100)]
-    public string Slug { get; set; }
+    public string Slug { get; init; }
     [Required]
-    public DateTime Date { get; set; }
+    public DateTime Date { get; init; }
     [MaxLength(500)]
-    public string Description { get; set; }
+    public string Description { get; init; }
     [Required]
     [MaxLength(200)]
-    public string Location { get; set; }
+    public string Location { get; init; }
     [Required]
     [Range(0.1, 1000.0, ErrorMessage = "Distance must be between 0.1 and 1000.")]
-    public double Distance { get; set; }
+    public double Distance { get; init; }
     [Required]
-    public Difficulty Difficulty { get; set; }
+    public Difficulty Difficulty { get; init; }
     [Required]
-    public DateTime RegistrationDeadLine { get; set; }
+    public DateTime RegistrationDeadLine { get; init; }
     [Required]
-    public Status Status { get; set; }
+    public Status Status { get; init; }
     [Url(ErrorMessage = "Image url format is not valid.")]
-    public string ImageUrl { get; set; }
+    public string ImageUrl { get; init; }
     [Range(0, 10000, ErrorMessage = "Elevation gain must be between 0 and 10000.")]
-    public int ElevationGain { get; set; }
+    public int ElevationGain { get; init; }
     [Required]
     [Range(1, 10000, ErrorMessage = "Max participants must be between 1 and 1000.")]
-    public int MaxParticipants { get; set; }
-    public List<int> ObstacleIds { get; set; } = new List<int>();
+    public int MaxParticipants { get; init; }
+    public List<int> ObstacleIds { get; init; } = new List<int>();
     
 }
 
-public class RaceStatsDto
+public sealed record RaceStatsDto
 {
-    public int TotalRaces { get; set; }
-    public double TotalKilometers { get; set; }
-    public int ArchivedCount { get; set; }
+    public int TotalRaces { get; init; }
+    public double TotalKilometers { get; init; }
+    public int ArchivedCount { get; init; }
 }

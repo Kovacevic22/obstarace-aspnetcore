@@ -2,41 +2,41 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ObstaRace.Application.Dto;
 
-public class ParticipantDto
+public  sealed record ParticipantDto
 {
-    public int UserId { get; set; }
-    public string Name { get; set; }
-    public string Surname { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public string EmergencyContact { get; set; }
-    public ParticipantActivityDto? Activity { get; set; }
+    public int UserId { get; init; }
+    public string Name { get; init; }
+    public string Surname { get; init; }
+    public DateTime DateOfBirth { get; init; }
+    public string EmergencyContact { get; init; }
+    public ParticipantActivityDto? Activity { get; init; }
 }
 
-public class RegisterParticipantDto
+public sealed record RegisterParticipantDto
 {
     [Required]
-    public string Name { get; set; }
+    public string Name { get; init; }
     [Required]
-    public string Surname { get; set; }
+    public string Surname { get; init; }
     [Required]
     [DataType(DataType.Date)]
-    public DateTime DateOfBirth { get; set; }
+    public DateTime DateOfBirth { get; init; }
     [Required]
     [Phone]
-    public string EmergencyContact { get; set; }
+    public string EmergencyContact { get; init; }
 }
 
-public class ParticipantActivityDto
+public sealed record ParticipantActivityDto
 {
-    public int TotalRaces { get; set; }
-    public int FinishedRaces { get; set; }
+    public int TotalRaces { get; init; }
+    public int FinishedRaces { get; init; }
 }
-public class UpdateParticipantDto
+public sealed record UpdateParticipantDto
 {
     [Required]
     [DataType(DataType.Date)]
-    public DateTime DateOfBirth { get; set; }
+    public DateTime DateOfBirth { get; init; }
     [Required]
     [Phone]
-    public string EmergencyContact { get; set; }
+    public string EmergencyContact { get; init; }
 }
