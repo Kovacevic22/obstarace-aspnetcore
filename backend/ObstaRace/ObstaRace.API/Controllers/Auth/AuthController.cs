@@ -23,8 +23,6 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
-        try
-        {
             var user = await _userService.RegisterUser(registerDto);
             if (user == null)
             {
@@ -32,16 +30,6 @@ public class AuthController : ControllerBase
                 return BadRequest(new { error = "Error registering user" });
             }
             return Ok(user);
-        }
-        catch (ArgumentException ax)
-        {
-            return BadRequest(new { error = ax.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error registering user");
-            return StatusCode(500, new { error = "Error registering user" });
-        }
     }
 
     [HttpPost("login")]
@@ -50,35 +38,22 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        try
-        {
             if (User.Identity.IsAuthenticated) return BadRequest(new { error = "You are already signed in with a valid session." });
             
             _logger.LogInformation("Logging in user");
             var response = await _userService.LoginUser(loginDto);
-            if (response == null)
+            if (response != null)
             {
-                _logger.LogError("Error logging in user");
-                return Unauthorized(new { error = "Invalid email or password" });
+                Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddDays(7)
+                });
+                return Ok(new { user = response.User });
             }
-            Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddDays(7)
-            });
-            return Ok(new {user = response.User});
-        }
-        catch (ArgumentException ax)
-        {
-            return Unauthorized(new { error = ax.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error logging in user");
-            return StatusCode(500, new { error = "Error logging in user" });
-        }
+            return Unauthorized();
     }
 
     [HttpPost("logout")]

@@ -28,10 +28,10 @@ public class RaceService : IRaceService
     {
         var race = await _raceRepository.GetRace(id);
         if (race == null) return null;
-        var raceDto = _mapper.Map<RaceDto>(race);
-        raceDto.ObstacleIds = race.RaceObstacles
-            .Select(ro => ro.ObstacleId)
-            .ToList();
+        var raceDto = _mapper.Map<RaceDto>(race) with 
+        {
+            ObstacleIds = race.RaceObstacles.Select(ro => ro.ObstacleId).ToList()
+        };
 
         return raceDto;
     }
@@ -54,7 +54,7 @@ public class RaceService : IRaceService
         var slug = raceDto.Slug.ToLower().Trim();
         slug = Regex.Replace(slug,@"[^a-z0-9]+", "-");
         slug = slug.Trim('-');
-        raceDto.Slug = slug;
+        raceDto = raceDto with{Slug = slug};
         if (await _raceRepository.GetRaceBySlug(raceDto.Slug) != null)
         {
             _logger.LogError("Cannot create race with that slug");

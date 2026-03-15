@@ -4,6 +4,7 @@ using ObstaRace.Application.Dto;
 using ObstaRace.Application.Interfaces.Services;
 
 namespace ObstaRace.API.Controllers;
+
 [Route("api/organisers")]
 [ApiController]
 public class OrganiserController : ControllerBase
@@ -24,17 +25,9 @@ public class OrganiserController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetPendingOrganisers()
     {
-        try
-        {
             _logger.LogInformation("Getting pending organisers");
             var organisers = await _organiserService.GetPendingOrganisers();
             return Ok(organisers);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving pending organisers");
-            return StatusCode(500, new { error = "Error retrieving pending organisers" });
-        }
     }
 
     [HttpPut("verify/{userId}")]
@@ -44,23 +37,11 @@ public class OrganiserController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> VerifyOrganiser(int userId)
     {
-        try
-        {
-            var result = await _organiserService.VerifyOrganiser(userId);
+
+        var result = await _organiserService.VerifyOrganiser(userId);
             if (!result) return BadRequest(new { error = "Could not verify organiser" });
             
             return Ok(new { message = "Organiser verified successfully" });
-        }
-        catch (ArgumentException ax)
-        {
-            _logger.LogError(ax, "Error verifying pending organisers");
-            return BadRequest(new { error = ax.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error verifying pending organisers");
-            return StatusCode(500, new { error = "Error verifying pending organisers" });
-        }
     }
 
     [HttpPut("reject/{userId}")]
@@ -70,22 +51,9 @@ public class OrganiserController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> RejectOrganiser(int userId)
     {
-        try
-        {
             var result = await _organiserService.RejectOrganiser(userId);
             if (!result) return BadRequest(new { error = "Could not reject organiser" });
             
             return Ok(new { message = "Organiser reject successfully" });
-        }
-        catch (ArgumentException ax)
-        {
-            _logger.LogError(ax, "Error rejecting pending organisers");
-            return BadRequest(new { error = ax.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error rejecting pending organisers");
-            return StatusCode(500, new { error = "Error rejecting pending organisers" });
-        }
     }
 }

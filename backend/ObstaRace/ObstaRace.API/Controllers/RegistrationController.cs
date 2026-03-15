@@ -26,8 +26,6 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetAllRegistrations([FromQuery]int page = 1, [FromQuery]int pageSize = 12)
     {
-        try
-        {
             if (pageSize > 50) pageSize = 50;
             if (page <= 0) page = 1;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -36,29 +34,15 @@ public class RegistrationController : ControllerBase
             _logger.LogInformation("Getting all registrations");
             var registrations = await _registrationService.GetAllRegistrations(userId,page,pageSize);
             return Ok(registrations);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving registrations");
-            return StatusCode(500, new { error = "Error retrieving registrations" });
-        }
     }
     [HttpGet("count/{raceId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RegistrationDto>))]
     [ProducesResponseType(500)]
     public async Task<IActionResult> CountRegistrations(int raceId)
     {
-        try
-        {
             _logger.LogInformation("Getting count participants on race {race}",raceId);
             var registrations = await _registrationService.CountRegistrations(raceId);
             return Ok(registrations);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving count participants on race");
-            return StatusCode(500, new { error = "Error retrieving count participants on race" });
-        }
     }
     [HttpGet("{id:int}")]
     [Authorize]
@@ -67,8 +51,6 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetRegistration(int id)
     {
-        try
-        {
             _logger.LogInformation("Getting registration with id {RegistrationId}", id);
             var registration = await _registrationService.GetRegistration(id);
             if (registration == null)
@@ -77,12 +59,6 @@ public class RegistrationController : ControllerBase
                 return NotFound(new { error = $"Registration with id {id} not found" });
             }
             return Ok(registration);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving registration");
-            return StatusCode(500, new { error = "Error retrieving registration" });
-        }
     }
 
     [HttpGet("registrations-on-race")]
@@ -92,8 +68,6 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetParticipantsForRace([FromQuery]int? raceId,[FromQuery]int page=1, [FromQuery]int pageSize=12)
     {
-        try
-        {
             if (pageSize > 50) pageSize = 50;
             if (page <= 0) page = 1;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -102,16 +76,6 @@ public class RegistrationController : ControllerBase
             _logger.LogInformation("Organiser {organiserId} requesting participants for race {RaceId}", organiserId, raceId);
             var participants = await _registrationService.GetParticipantsForRace(organiserId, raceId, page, pageSize);
             return Ok(participants);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching participants for race {RaceId}", raceId);
-            return StatusCode(500, new { error = "Internal server error" });
-        }
     }
     [HttpPost]
     [Authorize]
@@ -120,8 +84,6 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> CreateRegistration([FromBody] CreateRegistrationDto registrationDto)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -130,16 +92,6 @@ public class RegistrationController : ControllerBase
             _logger.LogInformation("Creating registration for race {RaceId} and user {UserId}", registrationDto.RaceId, userId);
             var registration = await _registrationService.CreateRegistration(registrationDto.RaceId,userId);
             return CreatedAtAction(nameof(GetRegistration), new {id = registration.Id}, registration);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error creating registration");
-            return StatusCode(500, new { error = "Error creating registration" });
-        }
     }
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Organiser")]
@@ -148,8 +100,6 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> UpdateRegistration([FromBody] UpdateRegistrationDto registrationDto, int id)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -161,16 +111,6 @@ public class RegistrationController : ControllerBase
             _logger.LogInformation("Updating registration with id {RegistrationId}", id);
             var registration = await _registrationService.UpdateRegistration(registrationDto, id,userId,userRole);
             return Ok(registration);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating registration");
-            return StatusCode(500, new { error = "Error updating registration" });
-        }
     }
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "User,Organiser")]
@@ -179,25 +119,12 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> DeleteRegistration(int id)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
             _logger.LogInformation("User {UserId} attempting to delete registration {RegistrationId}", userId, id);
             await _registrationService.DeleteRegistration(id,userId);
             return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error deleting registration");
-            return StatusCode(500, new { error = "Error deleting registration" });
-        }
-        
     }
     [HttpPut("confirm/{registrationId:int}")]
     [Authorize(Roles = "Organiser")]
@@ -206,22 +133,11 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> ConfirmUserRegistration(int registrationId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int organiserId = int.Parse(userIdClaim.Value);
             var result = await _registrationService.ConfirmUserRegistration(registrationId, organiserId);
             return Ok(result);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { error = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
     }
 
     [HttpPut("cancel/{registrationId:int}")]
@@ -231,39 +147,20 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> CancelUserRegistration(int registrationId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int organiserId = int.Parse(userIdClaim.Value);
             var result = await _registrationService.CancelUserRegistration(registrationId, organiserId);
             return Ok(result);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { error = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
     }
     [HttpGet("check/{raceId:int}")]
     [Authorize] 
     public async Task<IActionResult> IsUserRegistered(int raceId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
             bool isRegistered = await _registrationService.IsUserRegistered(raceId, userId);
             return Ok(isRegistered); 
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error checking registration status");
-            return StatusCode(500, new { error = "Internal server error" });
-        }
     }
 }

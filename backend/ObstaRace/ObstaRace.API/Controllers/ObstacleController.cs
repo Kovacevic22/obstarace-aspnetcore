@@ -24,8 +24,6 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetAllObstacle(string? search)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -35,11 +33,6 @@ public class ObstacleController : ControllerBase
             _logger.LogInformation("User {UserId} with role {Role} requesting obstacles", userId, userRole);
             var obstacles = await _obstacleService.GetAllObstacles(userId,userRole,search);
             return Ok(obstacles);   
-        }catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving all obstacles");
-            return StatusCode(500, new { error = "Error retrieving obstacles" });
-        }
     }
     [HttpGet("{obstacleId:int}")]
     [Authorize(Roles = "Admin,Organiser")]
@@ -48,8 +41,6 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetObstacle(int obstacleId)
     {
-        try
-        {
             _logger.LogInformation("Getting obstacle with id {ObstacleId}", obstacleId);
             var obstacle = await _obstacleService.GetObstacle(obstacleId);
             if (obstacle == null)
@@ -58,12 +49,7 @@ public class ObstacleController : ControllerBase
                 return NotFound(new { error = $"Obstacle with id {obstacleId} not found" });
             }
             return Ok(obstacle);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving obstacle with id {ObstacleId}", obstacleId);
-            return StatusCode(500, new { error = "Error retrieving obstacle" });
-        }
+        
     }
     
     [HttpPost]
@@ -73,8 +59,6 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> CreateObstacle([FromBody]CreateObstacleDto obstacleDto)
     {
-        try
-        {
             if (!ModelState.IsValid)
                 return BadRequest(new { error = "Invalid data", details = ModelState });
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -83,16 +67,6 @@ public class ObstacleController : ControllerBase
             _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
             var obstacle = await _obstacleService.CreateObstacle(obstacleDto,userId);
             return CreatedAtAction(nameof(GetObstacle), new { obstacleId = obstacle.Id }, obstacle);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error creating obstacle");
-            return StatusCode(500, new { error = "Error creating obstacle" });
-        }
     }
     [HttpPut("{obstacleId:int}")]
     [Authorize(Roles = "Admin,Organiser")]
@@ -101,8 +75,6 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> UpdateObstacle([FromBody]UpdateObstacleDto obstacleDto, int obstacleId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -114,16 +86,6 @@ public class ObstacleController : ControllerBase
             _logger.LogInformation("Updating obstacle {obstacleId}", obstacleId);
             var obstacle = await _obstacleService.UpdateObstacle(obstacleDto, obstacleId,userId, userRole);
             return Ok(obstacle);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error updating obstacle");
-            return StatusCode(500, new { error = "Error updating obstacle" });
-        }
     }
     [HttpDelete("{obstacleId:int}")]
     [Authorize(Roles = "Admin,Organiser")]
@@ -132,8 +94,6 @@ public class ObstacleController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> DeleteObstacle(int obstacleId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -150,19 +110,5 @@ public class ObstacleController : ControllerBase
             }
 
             return NoContent();
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return  Unauthorized(new { error = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error deleting obstacle");
-            return StatusCode(500, new { error = "Error deleting obstacle" });
-        }
     }
 }

@@ -13,14 +13,13 @@ public sealed record RegistrationDto
     [Required]
     public int RaceId { get; init; }
 
-    [Required]
-    public string BibNumber { get; init; }
+    [Required] public string BibNumber { get; init; } = null!;
 
     [Required]
     public RegistrationStatus Status { get; init; }
-    public RaceDto Race { get; init; }
-    public UserDto User { get; init; }
-    public ParticipantDto Participant { get; init; }
+    public RaceDto? Race { get; init; }
+    public UserDto? User { get; init; }
+    public ParticipantDto? Participant { get; init; }
 }
 
 public sealed record CreateRegistrationDto
@@ -34,7 +33,7 @@ public sealed record CreateRegistrationDto
 public sealed record UpdateRegistrationDto
 {
     public int RaceId { get; init; }
-    public string BibNumber { get; init; }
+    public string? BibNumber { get; init; }
     public RegistrationStatus Status { get; init; }
     public int Count { get; init; }
     public int UserId { get; init; }

@@ -3,6 +3,7 @@ using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ObstaRace.API.Middleware;
 using ObstaRace.Application.Interfaces.Repositories;
 using ObstaRace.Application.Interfaces.Services;
 using ObstaRace.Application.Services;
@@ -13,6 +14,9 @@ using ObstaRace.Infrastructure.Seeders;
 using ObstaRace.Infrastructure.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
@@ -106,6 +110,31 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 app.UseIpRateLimiting();
+app.UseExceptionHandler();
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+    if (response.StatusCode == 403)
+    {
+        response.ContentType = "application/json";
+        await response.WriteAsJsonAsync(new 
+        { 
+            status = 403, 
+            error = "Forbidden",
+            message = "You do not have permission to access this resource."
+        });
+    }
+    else if (response.StatusCode == 401)
+    {
+        response.ContentType = "application/json";
+        await response.WriteAsJsonAsync(new 
+        { 
+            status = 401, 
+            error = "Unauthorized",
+            message = "Authentication is required."
+        });
+    }
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

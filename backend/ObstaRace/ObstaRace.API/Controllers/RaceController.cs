@@ -27,19 +27,11 @@ public class RaceController : ControllerBase
     public async Task<IActionResult> GetAllRaces([FromQuery]string? difficulty, [FromQuery]string? distanceRange, 
         [FromQuery]string? search, [FromQuery]int page = 1, [FromQuery]int pageSize = 12)
     {
-        try
-        {
             if (pageSize > 50) pageSize = 50;
             if (page <= 0) page = 1;
             _logger.LogInformation("Getting races");
             var races = await _raceService.GetAllRaces(difficulty, distanceRange, search,page,pageSize);
             return Ok(races);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving races");
-            return StatusCode(500, new { error = "Error retrieving races" });
-        }
     }
 
     [HttpGet("my-races")]
@@ -48,9 +40,8 @@ public class RaceController : ControllerBase
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetMyRaces([FromQuery]int page = 1, int pageSize = 12)
-    {
-        try
-        {   if (pageSize > 50) pageSize = 50;
+    { 
+        if (pageSize > 50) pageSize = 50;
             if (page <= 0) page = 1;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
@@ -58,12 +49,6 @@ public class RaceController : ControllerBase
             _logger.LogInformation("Getting races");
             var races = await _raceService.GetMyRaces(userId, page, pageSize);
             return Ok(races);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving races");
-            return StatusCode(500, new { error = "Error retrieving races" });
-        }
     }
     [HttpGet("{raceId:int}")]
     [ProducesResponseType(200, Type = typeof(RaceDto))]
@@ -71,8 +56,6 @@ public class RaceController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetRace(int raceId)
     {
-        try
-        {
             _logger.LogInformation("Getting race with id {RaceId}", raceId);
             var race = await _raceService.GetRace(raceId);
             
@@ -83,12 +66,6 @@ public class RaceController : ControllerBase
             }
             
             return Ok(race);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving race with id {RaceId}", raceId);
-            return StatusCode(500, new { error = "Error retrieving race" });
-        }
     }
 
     [HttpGet("{slug}")]
@@ -97,8 +74,6 @@ public class RaceController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetRaceBySlug([FromRoute]string slug)
     {
-        try
-        {
             _logger.LogInformation("Getting race with slug {Slug}", slug);
             var race = await _raceService.GetRaceBySlug(slug);
             if (race == null)
@@ -107,12 +82,6 @@ public class RaceController : ControllerBase
                 return NotFound(new { error = $"Race with slug {slug} not found" });
             }
             return Ok(race);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving race");
-            return StatusCode(500, new { error = "Error retrieving race" });
-        }
     }
 
     [HttpGet("stats")]
@@ -121,17 +90,9 @@ public class RaceController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetRaceStats()
     {
-        try
-        {
             _logger.LogInformation("Retrieving dashboard statistics");
             var stats = await _raceService.GetRaceStats();
             return Ok(stats);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error retrieving race stats");
-            return StatusCode(500, new { error = "Error retrieving race stats" });
-        }
     }
     [HttpPost]
     [Authorize(Roles = "Admin,Organiser")]
@@ -140,8 +101,6 @@ public class RaceController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> CreateRace([FromBody]CreateRaceDto raceDto)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -150,16 +109,6 @@ public class RaceController : ControllerBase
             _logger.LogInformation("Creating race with name {RaceName}", raceDto.Name);
             var race = await _raceService.CreateRace(raceDto,userId);
             return Ok(race);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating race");
-            return StatusCode(500, new { error = "Error creating race" });
-        }
     }
     [HttpPut("{raceId:int}")]
     [Authorize(Roles = "Admin,Organiser")]
@@ -168,8 +117,6 @@ public class RaceController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> UpdateRace([FromBody]UpdateRaceDto raceDto,int raceId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -181,20 +128,6 @@ public class RaceController : ControllerBase
             _logger.LogInformation("Updating race with id {RaceId}", raceId);
             var race = await _raceService.UpdateRace(raceDto, raceId,userId,userRole);
             return Ok(race);
-        }
-        catch (UnauthorizedAccessException ux)
-        {
-            return BadRequest(new { error = ux.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error updating race");
-            return StatusCode(500, new { error = "Error updating race" });
-        }
     }
     [HttpDelete("{raceId:int}")]
     [Authorize(Roles = "Admin,Organiser")]
@@ -203,8 +136,6 @@ public class RaceController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> DeleteRace(int raceId)
     {
-        try
-        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
@@ -214,19 +145,5 @@ public class RaceController : ControllerBase
             _logger.LogInformation("Deleting race with id {RaceId}", raceId);
             await _raceService.DeleteRace(raceId, userId, userRole);
             return NoContent();
-        }
-        catch (UnauthorizedAccessException ux)
-        {
-            return BadRequest(new { error = ux.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,"Error deleting race");
-            return StatusCode(500, new { error = "Error deleting race" });
-        }
     }
 }
