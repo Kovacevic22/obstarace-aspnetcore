@@ -7,9 +7,10 @@ public class Organiser
 {
     [Key, ForeignKey("User")]
     public int UserId { get; set; }
-    public User User { get; set; } 
 
-    public string OrganisationName { get; set; }
-    public string Description { get; set; } 
+    public User User { get; set; } = null!;
+
+    public string OrganisationName { get; set; } = null!;
+    public string Description { get; set; } = null!;
     public OrganiserStatus Status { get; set; }
 }

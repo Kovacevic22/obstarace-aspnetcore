@@ -7,10 +7,11 @@ public class Participant
 {
     [Key, ForeignKey("User")]
     public int UserId { get; set; }
-    public User User { get; set; }
-    public string Name { get; set; }
-    public string Surname { get; set; }
+
+    public User User { get; set; } = null!;
+    public string Name { get; set; } = null!;
+    public string Surname { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
-    public string EmergencyContact { get; set; }
-    public IList<Registration> Registrations {get; set;}
+    public string? EmergencyContact { get; set; }
+    public IList<Registration>? Registrations {get; set;}
 }

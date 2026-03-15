@@ -16,22 +16,23 @@ public enum Status
 public class Race
 {
     public int Id { get; set; }
+
     [Required(ErrorMessage = "Race name is required.")]
     [MaxLength(100)]
-    public string Name { get; set; }
-    [Required]
-    [MaxLength(100)]
-    public string Slug { get; set; }
+    public string Name { get; set; } = null!;
+
+    [Required] [MaxLength(100)] public string Slug { get; set; } = null!;
     [Required]
     public DateTime Date  { get; set; }
     [MaxLength(500, ErrorMessage = "Description is too long.(<500 characters)")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
+
     [Required(ErrorMessage = "Location is required.")]
     [MaxLength(200)]
-    public string Location  { get; set; }
+    public string Location { get; set; } = null!;
     [Required]
     [Range(0.1, 1000.0, ErrorMessage = "Distance must be between 0.1 and 1000.")]
-    public double Distance { get; set; }
+    public double Distance { get; set; } 
     [Required(ErrorMessage = "Race difficulty is required.")]
     public Difficulty Difficulty { get; set; }
     [Required(ErrorMessage = "Registration deadline is required.")]
@@ -39,16 +40,16 @@ public class Race
     [Required(ErrorMessage = "Race image status is required.")]
     public Status Status { get; set; }
     [Url(ErrorMessage = "ImageUrl format is not valid.")]
-    public string ImageUrl { get; set; }
+    public string? ImageUrl { get; set; }
     [Range(0, 10000, ErrorMessage = "Elevation gain must be between 0 and 10000.")]
     public int ElevationGain { get; set; }
     [Required]
     [Range(1, 10000, ErrorMessage = "Max participants must be between 1 and 1000.")]
     public int MaxParticipants { get; set; }
-    public int CreatedById { get; set; } 
-    public User CreatedBy { get; set; }
+    public int CreatedById { get; set; }
+    public User CreatedBy { get; set; } = null!;
     public bool EmailsSent { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public IList<Registration> Registrations { get; set; }
-    public IList<RaceObstacle> RaceObstacles { get; set; }
+    public IList<Registration>? Registrations { get; set; }
+    public IList<RaceObstacle>? RaceObstacles { get; set; }
 }

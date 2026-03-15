@@ -13,9 +13,9 @@ public class Registration
     public int UserId { get; set; }
     public int RaceId { get; set; }
     public int ParticipantUserId { get; set; }
-    public Participant Participant { get; set; }
-    public User User { get; set; }
-    public Race Race { get; set; }
+    public Participant Participant { get; set; } = null!;
+    public User? User { get; set; }
+    public Race Race { get; set; } = null!;
     public int BibNumber { get; set; }
     public RegistrationStatus Status { get; set; }
     public bool ReminderSent  { get; set; }
