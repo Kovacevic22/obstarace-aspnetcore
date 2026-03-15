@@ -13,6 +13,7 @@ public interface IUserRepository
     Task<UserStatsDto> GetUserStats();
     Task<bool> BanUser(int userId);
     Task<bool> UnbanUser(int userId);
+    Task<bool> IsBanned(int userId);
     //LOGIN/REGISTER
     Task<bool> CreateUser(User user);
     //CRUD

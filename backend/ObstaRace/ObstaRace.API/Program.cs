@@ -114,6 +114,7 @@ app.UseExceptionHandler();
 app.UseStatusCodePages(async context =>
 {
     var response = context.HttpContext.Response;
+    if (response.HasStarted) return;
     if (response.StatusCode == 403)
     {
         response.ContentType = "application/json";
@@ -137,5 +138,6 @@ app.UseStatusCodePages(async context =>
 });
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<BanCheckMiddleware>();
 app.MapControllers();
 app.Run();
