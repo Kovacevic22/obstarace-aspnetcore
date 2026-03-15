@@ -53,6 +53,10 @@ A web application for managing and organizing obstacle races. Users can join rac
 - Email reminder system (7 days before race)
 - Completion notifications when race finishes
 
+**Error Handling:**
+- Global exception handler with ProblemDetails response format
+- Custom status code pages for 401/403 responses
+
 ---
 ## Project Structure
 The project is organized into two main parts:
@@ -61,6 +65,7 @@ The project is organized into two main parts:
 ├── backend/
 │   ├── ObstaRace.API/                # Presentation Layer
 │   │   ├── Controllers/              # API Endpoints
+│   │   ├── Middleware/               # Global Exception Handler
 │   │   ├── appsettings.json          # Configuration & JWT Settings
 │   │   └── Program.cs                # Dependency Injection & Middleware
 │   │
