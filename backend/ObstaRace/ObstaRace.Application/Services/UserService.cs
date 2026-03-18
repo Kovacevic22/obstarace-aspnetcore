@@ -58,7 +58,6 @@ public class UserService : IUserService
         if (user == null) return null;
         
         var userDto = _mapper.Map<UserDto>(user);
-
         if (user.Participant != null)
         {
             userDto.Participant.Activity = await _participantRepository.GetParticipantActivity(id);
@@ -87,6 +86,18 @@ public class UserService : IUserService
         if (result) _cache.Remove($"ban_{userId}"); 
         return result;
     }
+
+    public async Task<UserDto?> UpdateProfileImage(int userId, string key)
+    {
+        _logger.LogInformation("Updating profile image for user {UserId}", userId);
+        var user = await _userRepository.GetUser(userId);
+        if (user == null) throw new ArgumentException($"User with id {userId} does not exist");
+        user.ProfileImgKey = key;
+        if (!await _userRepository.UpdateUser(user))
+            throw new Exception("Failed to update profile image");
+        return _mapper.Map<UserDto>(user);    
+    }
+
     public async Task<UserDto?> RegisterUser(RegisterDto registerDto)
     {
         _logger.LogInformation("Creating user account.");

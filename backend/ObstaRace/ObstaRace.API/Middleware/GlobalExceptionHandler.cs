@@ -1,3 +1,4 @@
+using Amazon.S3;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +13,8 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
         {
             ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request"),
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
-            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error"),
+            AmazonS3Exception => (StatusCodes.Status502BadGateway, "Storage Service Error"), 
+            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
         };
         httpContext.Response.StatusCode = statusCode;
         httpContext.Response.ContentType = "application/problem+json";

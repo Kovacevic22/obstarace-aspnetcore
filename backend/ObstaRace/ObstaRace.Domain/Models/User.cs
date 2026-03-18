@@ -11,6 +11,7 @@ public class User
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
+    public string? ProfileImgKey { get; set; }
     public Role Role {get; set; }
     public bool Banned {get; set; }
     public Organiser? Organiser {get; set; }
