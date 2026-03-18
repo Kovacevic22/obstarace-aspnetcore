@@ -5,7 +5,7 @@ A web application for managing and organizing obstacle races. Users can join rac
 ## Tech Stack
 **Backend:**
 * C# / .NET 10 Web API
-* Entity Framework Core (SQL Database)
+* PostgreSQL
 * JWT Authentication (HttpOnly Cookies)
 * AWS S3 (Profile Image Storage)
 
@@ -122,7 +122,7 @@ The project is organized into two main parts:
 ### Prerequisites
 * .NET 10 SDK
 * Node.js and npm
-* SQL Server / SQL Server Express
+* PostgreSQL
 * AWS S3 Bucket
 * Git
 
@@ -136,7 +136,7 @@ cp appsettings.example.json appsettings.json
 ```
 
 Open `appsettings.json` and fill in:
-* **ConnectionStrings** - your SQL Server connection string
+* **ConnectionStrings** - your PostgreSQL connection string
 * **Jwt.Key** - a random secret key (min. 32 characters)
 * **EmailSettings** - your SMTP credentials
 * **AwsSettings** - your S3 bucket name, region, access key, secret key and base URL
