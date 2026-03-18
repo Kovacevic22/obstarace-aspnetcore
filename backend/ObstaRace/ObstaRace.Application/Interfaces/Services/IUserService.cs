@@ -11,6 +11,7 @@ public interface IUserService
     Task<UserStatsDto> GetUserStats();
     Task<bool> BanUser(int userId);
     Task<bool> UnbanUser(int userId);
+    Task<UserDto?> UpdateProfileImage(int userId, string key);
     //LOGIN/REGISTER
     Task<UserDto?> RegisterUser(RegisterDto registerDto);
     Task<LoginResponseDto?> LoginUser(LoginDto loginDto);

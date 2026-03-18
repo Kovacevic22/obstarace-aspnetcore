@@ -60,6 +60,15 @@ public class UserRepository : IUserRepository
         user.Banned = false;
         return await SaveChanges();
     }
+
+    public async Task<bool> IsBanned(int userId)
+    {
+        return await _context.Users.AsNoTracking()
+            .Where(u => u.Id == userId)
+            .Select(u => u.Banned == true)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<bool> CreateUser(User user)
     {
          await _context.Users.AddAsync(user);

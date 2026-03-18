@@ -1,11 +1,11 @@
 namespace ObstaRace.Infrastructure.Configuration;
 
-public class EmailSettings
+public sealed record EmailSettings
 {
-    public string SmtpServer { get; set; } = string.Empty;
-    public int SmtpPort { get; set; }
-    public string SenderName { get; set; } = string.Empty;
-    public string SenderEmail { get; set; } = string.Empty;
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    public string SmtpServer { get; init; } = string.Empty;
+    public int SmtpPort { get; init; }
+    public string SenderName { get; init; } = string.Empty;
+    public string SenderEmail { get; init; } = string.Empty;
+    public string Username { get; init; } = string.Empty;
+    public string Password { get; init; } = string.Empty;
 }

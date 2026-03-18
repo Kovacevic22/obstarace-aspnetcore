@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Caching.Memory;
 using ObstaRace.Application.Dto;
 using ObstaRace.Application.Interfaces.Repositories;
 using ObstaRace.Application.Interfaces.Services;
@@ -19,13 +20,15 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
     private readonly IParticipantRepository _participantRepository;
-    public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration, IParticipantRepository participantRepository)
+    private readonly IMemoryCache _cache;
+    public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration, IParticipantRepository participantRepository, IMemoryCache cache)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _logger = logger;
         _configuration = configuration;
         _participantRepository = participantRepository;
+        _cache = cache;
     }
     public async Task<ICollection<UserDto>> GetAllUsers(int? page, int? pageSize)
     {
@@ -55,7 +58,6 @@ public class UserService : IUserService
         if (user == null) return null;
         
         var userDto = _mapper.Map<UserDto>(user);
-
         if (user.Participant != null)
         {
             userDto.Participant.Activity = await _participantRepository.GetParticipantActivity(id);
@@ -70,16 +72,32 @@ public class UserService : IUserService
         return  _userRepository.GetUserStats();
     }
 
-    public Task<bool> BanUser(int userId)
-    {
+    public async Task<bool> BanUser(int userId)
+    {   
         _logger.LogInformation("Banning user with id {UserId}", userId);
-        return _userRepository.BanUser(userId);
+        var result = await _userRepository.BanUser(userId);
+        if (result) _cache.Remove($"ban_{userId}");
+        return result;
     }
-    public Task<bool> UnbanUser(int userId)
+    public async Task<bool> UnbanUser(int userId)
     {
         _logger.LogInformation("Unbanning user with id {UserId}", userId);
-        return _userRepository.UnbanUser(userId);
+        var result = await _userRepository.UnbanUser(userId);
+        if (result) _cache.Remove($"ban_{userId}"); 
+        return result;
     }
+
+    public async Task<UserDto?> UpdateProfileImage(int userId, string key)
+    {
+        _logger.LogInformation("Updating profile image for user {UserId}", userId);
+        var user = await _userRepository.GetUser(userId);
+        if (user == null) throw new ArgumentException($"User with id {userId} does not exist");
+        user.ProfileImgKey = key;
+        if (!await _userRepository.UpdateUser(user))
+            throw new Exception("Failed to update profile image");
+        return _mapper.Map<UserDto>(user);    
+    }
+
     public async Task<UserDto?> RegisterUser(RegisterDto registerDto)
     {
         _logger.LogInformation("Creating user account.");

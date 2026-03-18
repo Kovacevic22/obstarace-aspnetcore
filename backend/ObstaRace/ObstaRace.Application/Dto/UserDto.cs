@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using ObstaRace.Domain.Models;
 
 
@@ -11,6 +12,7 @@ public sealed record UserDto
     public int Id { get; init; }
     public string Email { get; init; } = null!;
     public string PhoneNumber { get; init; } = null!;
+    public string? ProfileImgKey { get; init; }
     public Role Role { get; init; }
     public bool Banned { get; init; }
     public OrganiserDto? Organiser { get; init; }

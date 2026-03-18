@@ -1,4 +1,5 @@
 using System.Text;
+using Amazon.S3;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is not configured");
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -40,7 +42,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "default_key_at_least_32_chars_long")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
         ClockSkew = TimeSpan.Zero
     };
     options.Events = new JwtBearerEvents
@@ -83,10 +85,18 @@ builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
 builder.Services.AddScoped<IOrganiserService, OrganiserService>();
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.Configure<AwsSettings>(builder.Configuration.GetSection("AwsSettings"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.Configure<ReminderSettings>(
-    builder.Configuration.GetSection("ReminderSettings")
-);
+builder.Services.Configure<ReminderSettings>(builder.Configuration.GetSection("ReminderSettings"));
+
+var awsSettings = builder.Configuration.GetSection("AwsSettings").Get<AwsSettings>();
+builder.Services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(
+    awsSettings!.AccessKey,
+    awsSettings!.SecretKey,
+    Amazon.RegionEndpoint.GetBySystemName(awsSettings!.Region)
+));
 
 builder.Services.AddHostedService<RaceReminderBgService>();
 builder.Services.AddHostedService<RaceStatusBgService>();
@@ -114,6 +124,7 @@ app.UseExceptionHandler();
 app.UseStatusCodePages(async context =>
 {
     var response = context.HttpContext.Response;
+    if (response.HasStarted) return;
     if (response.StatusCode == 403)
     {
         response.ContentType = "application/json";
@@ -137,5 +148,6 @@ app.UseStatusCodePages(async context =>
 });
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<BanCheckMiddleware>();
 app.MapControllers();
 app.Run();
