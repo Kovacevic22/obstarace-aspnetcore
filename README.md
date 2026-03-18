@@ -1,27 +1,33 @@
-# 🏃 ObstaRace
+# ObstaRace
 A web application for managing and organizing obstacle races. Users can join races, organizers can create events, and admins manage the system.
+
 ---
 ## Tech Stack
 **Backend:**
 * C# / .NET 10 Web API
 * Entity Framework Core (SQL Database)
 * JWT Authentication (HttpOnly Cookies)
+* AWS S3 (Profile Image Storage)
+
 **Frontend:**
 * React.js
 * Axios
 * Tailwind CSS
----
+
 ---
 ## Features
 ### For Participants
 * **Browse Races:** Find races by typing the name, or filter by difficulty and distance.
 * **Register:** Sign up for races easily.
 * **Stats:** Track your finished races.
+* **Profile Image:** Upload, update or delete your profile picture.
 * **Automated Notifications:** Receive email confirmations upon registration, status updates (Approved/Rejected) from organizers, and a reminder 7 days before the race.
+
 ### For Organisers
 * **Create Races:** Add new events and obstacles.
 * **Manage:** View and approve participants.
 * **Dashboard:** See stats for your races.
+
 ### For Admins
 * **Full Access:** Create and delete any race or obstacle.
 * **Control:** Approve new organizers.
@@ -53,6 +59,11 @@ A web application for managing and organizing obstacle races. Users can join rac
 - Email reminder system (7 days before race)
 - Completion notifications when race finishes
 
+**File Storage:**
+- Profile images stored on AWS S3
+- File type and size validation (JPEG, PNG, WEBP, max 5MB)
+- Old image automatically deleted on upload
+
 **Error Handling:**
 - Global exception handler with ProblemDetails response format
 - Custom status code pages for 401/403 responses
@@ -76,12 +87,12 @@ The project is organized into two main parts:
 │   │   └── Helper/                   # AutoMapper Profiles
 │   │
 │   ├── ObstaRace.Infrastructure/     # Infrastructure Layer (Data Access & External Services)
-│   │   ├── Configuration/            # Email and Reminder settings (IOptions)
+│   │   ├── Configuration/            # Email, Reminder and AWS settings (IOptions)
 │   │   ├── Data/                     # DbContext
 │   │   ├── EmailTemplates/           # HTML templates for automated emails
 │   │   ├── Migrations/               # Database Migrations
 │   │   ├── Repository/               # Repository Pattern Implementation
-│   │   └── Service/                  # EmailService & RaceReminderBgService
+│   │   └── Service/                  # EmailService, FileService & Background Services
 │   │
 │   └── ObstaRace.Domain/             # Domain Layer (Core)
 │       └── Models/                   # Database Entities
@@ -112,6 +123,7 @@ The project is organized into two main parts:
 * .NET 10 SDK
 * Node.js and npm
 * SQL Server / SQL Server Express
+* AWS S3 Bucket
 * Git
 
 ### Backend Setup
@@ -124,9 +136,10 @@ cp appsettings.example.json appsettings.json
 ```
 
 Open `appsettings.json` and fill in:
-* **ConnectionStrings** – your SQL Server connection string
-* **Jwt.Key** – a random secret key (min. 32 characters)
-* **EmailSettings** – your SMTP credentials
+* **ConnectionStrings** - your SQL Server connection string
+* **Jwt.Key** - a random secret key (min. 32 characters)
+* **EmailSettings** - your SMTP credentials
+* **AwsSettings** - your S3 bucket name, region, access key, secret key and base URL
 ```bash
 # Restore dependencies
 dotnet restore
