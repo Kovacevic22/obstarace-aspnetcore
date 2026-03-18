@@ -71,7 +71,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddOpenApi();
-builder.Services.AddAutoMapper(typeof(ObstaRace.Application.Helper.MappingProfiles));
+builder.Services.AddAutoMapper(cfg => {}, typeof(ObstaRace.Application.Helper.MappingProfiles).Assembly);
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRaceRepository, RaceRepository>();
@@ -102,7 +102,7 @@ builder.Services.AddHostedService<RaceReminderBgService>();
 builder.Services.AddHostedService<RaceStatusBgService>();
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("AdditionalConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())

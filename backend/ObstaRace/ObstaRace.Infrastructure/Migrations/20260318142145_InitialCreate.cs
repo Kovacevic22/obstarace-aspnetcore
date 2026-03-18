@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,13 +16,15 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    Role = table.Column<int>(type: "INTEGER", nullable: false),
-                    Banned = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                    ProfileImgKey = table.Column<string>(type: "text", nullable: true),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    Banned = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,12 +35,13 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "Obstacles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    Difficulty = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedById = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Difficulty = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,10 +58,10 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "Organisers",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrganisationName = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    OrganisationName = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,11 +78,11 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "Participants",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Surname = table.Column<string>(type: "TEXT", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Surname = table.Column<string>(type: "text", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "date", nullable: false),
-                    EmergencyContact = table.Column<string>(type: "TEXT", nullable: false)
+                    EmergencyContact = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,21 +99,23 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "Races",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Slug = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Slug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Date = table.Column<DateTime>(type: "date", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    Location = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Distance = table.Column<double>(type: "REAL", nullable: false),
-                    Difficulty = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Distance = table.Column<double>(type: "double precision", nullable: false),
+                    Difficulty = table.Column<int>(type: "integer", nullable: false),
                     RegistrationDeadLine = table.Column<DateTime>(type: "date", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    ImageUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    ElevationGain = table.Column<int>(type: "INTEGER", nullable: false),
-                    MaxParticipants = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedById = table.Column<int>(type: "INTEGER", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true),
+                    ElevationGain = table.Column<int>(type: "integer", nullable: false),
+                    MaxParticipants = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: false),
+                    EmailsSent = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -126,8 +132,9 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "RaceObstacles",
                 columns: table => new
                 {
-                    RaceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ObstacleId = table.Column<int>(type: "INTEGER", nullable: false)
+                    RaceId = table.Column<int>(type: "integer", nullable: false),
+                    ObstacleId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -150,13 +157,16 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "Registrations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    RaceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ParticipantUserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    BibNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    RaceId = table.Column<int>(type: "integer", nullable: false),
+                    ParticipantUserId = table.Column<int>(type: "integer", nullable: false),
+                    BibNumber = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ReminderSent = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,12 +216,6 @@ namespace ObstaRace.Infrastructure.Migrations
                 name: "IX_Races_Slug",
                 table: "Races",
                 column: "Slug",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Registrations_BibNumber",
-                table: "Registrations",
-                column: "BibNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
