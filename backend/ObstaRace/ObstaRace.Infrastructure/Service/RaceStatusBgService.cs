@@ -11,25 +11,22 @@ public class RaceStatusBgService:BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<RaceStatusBgService> _logger;
-    private Timer? _timer;
     public RaceStatusBgService(IServiceProvider serviceProvider, ILogger<RaceStatusBgService> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Race Status Background Service started");
-        _timer = new Timer(
-            DoWork,
-            null,
-            TimeSpan.Zero,           
-            TimeSpan.FromHours(1)  
-        );
-        return Task.CompletedTask;
+        using var timer = new PeriodicTimer(TimeSpan.FromHours(1));
+        do
+        {
+            await DoWork(stoppingToken);
+        }while(await timer.WaitForNextTickAsync(stoppingToken));
     }
 
-    private async void DoWork(object state)
+    private async Task DoWork(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Checking race statuses at {Time}", DateTime.UtcNow);
         try
@@ -37,7 +34,7 @@ public class RaceStatusBgService:BackgroundService
             await UpdateRaceStatuses();
             await FinishCompletedRaces();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating race statuses");
         }
@@ -63,21 +60,26 @@ public class RaceStatusBgService:BackgroundService
 
     private async Task FinishCompletedRaces()
     {
-        using var scope = _serviceProvider.CreateScope();
-        var raceRepo = scope.ServiceProvider.GetRequiredService<IRaceRepository>();
-        var registrationRepo = scope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
-        var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+        using var readScope = _serviceProvider.CreateScope();
+        
+        var raceRepo = readScope.ServiceProvider.GetRequiredService<IRaceRepository>();
+        var registrationRepo = readScope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
+        var emailService = readScope.ServiceProvider.GetRequiredService<IEmailService>();
         var completedRaces = await raceRepo.GetCompletedRaces();
+        
         _logger.LogInformation("Found {Count} completed races with pending registrations", completedRaces.Count);
         var totalProcessed = 0;
+        
+        using var writeScope = _serviceProvider.CreateScope();
+        var writeRepo = writeScope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
+        
         foreach (var race in completedRaces)
         {
+            await writeRepo.UpdateRegistrationStatus(race.Id);
             await foreach (var registration in registrationRepo.GetRegistrationsForCompletedRace(race.Id))
             {
                 try
                 {
-                    registration.Status = RegistrationStatus.Finished;
-                    await registrationRepo.UpdateRegistration(registration);
                     var participantName = registration.User.Participant != null
                         ? $"{registration.User.Participant.Name} {registration.User.Participant.Surname}"
                         : "Unknown name";
@@ -98,18 +100,5 @@ public class RaceStatusBgService:BackgroundService
             await raceRepo.MarkEmailsSent(race.Id);
             _logger.LogInformation("Completed race processing finished. Total processed: {Count}", totalProcessed);
         }
-    }
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Race Status Background Service is stopping");
-        _timer?.Change(Timeout.Infinite, 0);
-        return base.StopAsync(cancellationToken);
-    }
-
-    public override void Dispose()
-    {
-        _timer?.Dispose();
-        base.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

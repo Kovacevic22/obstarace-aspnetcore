@@ -13,7 +13,7 @@ namespace ObstaRace.Infrastructure.Service;
 public class EmailService:IEmailService
 {
     private readonly EmailSettings _emailSettings;
-    private ILogger<EmailService> _logger;
+    private readonly ILogger<EmailService> _logger;
     private readonly IConfiguration _config;
     public EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger, IConfiguration config)
     {

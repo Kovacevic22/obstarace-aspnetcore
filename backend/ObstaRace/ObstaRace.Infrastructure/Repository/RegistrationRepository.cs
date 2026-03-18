@@ -142,6 +142,18 @@ public class RegistrationRepository : IRegistrationRepository
     }
 
     //ADDITIONAL METHODS
+    public async Task UpdateRegistrationStatus(int raceId)
+    {
+        await _context.Registrations
+            .Where(r => r.RaceId == raceId && r.Status == RegistrationStatus.Confirmed)
+            .ExecuteUpdateAsync(s => s.SetProperty(r=>r.Status, RegistrationStatus.Finished));
+    }
+    public async Task MarkReminderAsSentForRegistration(int registrationId)
+    {
+        await _context.Registrations
+            .Where(r => r.Id == registrationId)
+            .ExecuteUpdateAsync(s => s.SetProperty(r => r.ReminderSent, true));
+    }
     public async Task<bool> SaveChanges()
     {
         var saved = await _context.SaveChangesAsync();

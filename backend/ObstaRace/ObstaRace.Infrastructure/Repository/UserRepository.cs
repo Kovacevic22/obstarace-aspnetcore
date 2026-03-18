@@ -65,7 +65,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users.AsNoTracking()
             .Where(u => u.Id == userId)
-            .Select(u => u.Banned == true)
+            .Select(u => u.Banned)
             .FirstOrDefaultAsync();
     }
 

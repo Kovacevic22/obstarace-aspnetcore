@@ -3,7 +3,7 @@ using ObstaRace.Domain.Models;
 
 namespace ObstaRace.Application.Dto;
 
-public sealed class ObstacleDto
+public sealed record ObstacleDto
 {
     public int Id { get; init; }
 

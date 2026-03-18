@@ -12,7 +12,6 @@ public class RaceReminderBgService:BackgroundService
 {
     private readonly ILogger<RaceReminderBgService> _logger;
     private readonly IServiceProvider _serviceProvider;
-    private Timer? _timer;
     private readonly ReminderSettings _settings;
     public RaceReminderBgService(IServiceProvider serviceProvider, ILogger<RaceReminderBgService> logger, IOptions<ReminderSettings> settings)
     {
@@ -21,9 +20,10 @@ public class RaceReminderBgService:BackgroundService
         _settings = settings.Value;
         
     }
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Race Reminder Background Service started");
+        await DoWork(stoppingToken);
         var now = DateTime.UtcNow;
         var scheduledTime = new DateTime(
             now.Year, 
@@ -44,25 +44,15 @@ public class RaceReminderBgService:BackgroundService
             _settings.RunAtMinute,
             scheduledTime
         );
-        _timer = new Timer(
-            DoWork,
-            null,
-            timeUntilFirstRun,
-            TimeSpan.FromHours(24)
-            );
-        return Task.CompletedTask;  
+        await Task.Delay(timeUntilFirstRun, stoppingToken);
+        using var timer = new PeriodicTimer(TimeSpan.FromHours(24));
+        do
+        {
+            await DoWork(stoppingToken);
+        } 
+        while (await timer.WaitForNextTickAsync(stoppingToken));
     }
-    // protected override Task ExecuteAsync(CancellationToken stoppingToken) //TEST MODE
-    // {
-    //     _timer = new Timer(
-    //         DoWork,
-    //         null,
-    //         TimeSpan.FromSeconds(10),   
-    //         TimeSpan.FromMinutes(1) 
-    //     );
-    //     return Task.CompletedTask;
-    // }
-    private async void DoWork(object? obj)
+    private async Task DoWork(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Race Reminder Background Service started");
         try
@@ -78,11 +68,17 @@ public class RaceReminderBgService:BackgroundService
     public async Task SendRaceReminders()
     {
         using var scope = _serviceProvider.CreateScope();
+        
         var registrationRepo = scope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
         var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+        
         _logger.LogInformation("Checking for races in 7 days...");
         var targetDate = DateTime.Today.AddDays(_settings.DaysBefore);
         var processedCount = 0;
+        
+        using var writeScope = _serviceProvider.CreateScope();
+        var writeRepo = writeScope.ServiceProvider.GetRequiredService<IRegistrationRepository>();
+        
         await foreach (var registration in registrationRepo.GetRegistrationsForReminderAsync(targetDate))
         {
             try
@@ -97,8 +93,7 @@ public class RaceReminderBgService:BackgroundService
                     raceDate: registration.Race.Date,
                     location: registration.Race.Location
                 );
-                registration.ReminderSent = true;
-                await registrationRepo.UpdateRegistration(registration);
+                await writeRepo.MarkReminderAsSentForRegistration(registration.Id);
                 processedCount++;
                 _logger.LogInformation("Reminder sent to {Email} ({Count})", registration.User.Email, processedCount);
             }
@@ -107,18 +102,5 @@ public class RaceReminderBgService:BackgroundService
                 _logger.LogError(ex, "Failed to send reminder for registration {RegistrationId}", registration.Id);
             }
         }
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Race Reminder Background Service is stopping");
-        _timer?.Change(Timeout.Infinite, 0);
-        return base.StopAsync(cancellationToken);
-    }
-    public override void Dispose()
-    {
-        _timer?.Dispose();
-        base.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

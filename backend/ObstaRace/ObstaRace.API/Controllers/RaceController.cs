@@ -68,7 +68,7 @@ public class RaceController : ControllerBase
             return Ok(race);
     }
 
-    [HttpGet("{slug}")]
+    [HttpGet("slug/{slug}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<RaceDto>))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]

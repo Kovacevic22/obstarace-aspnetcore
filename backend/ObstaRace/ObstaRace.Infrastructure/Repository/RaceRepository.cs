@@ -148,20 +148,17 @@ public class RaceRepository : IRaceRepository
             .Where(r => r.Status == Status.Completed && r.Date < DateTime.UtcNow && !r.EmailsSent)
             .ToListAsync();
     }
-
+    
     public async Task<bool> UpdateRaceStatus(int raceId, Status status)
     {
-        var race = await _context.Races.FindAsync(raceId);
-        if (race == null) return false;
-    
-        race.Status = status;
-        return await SaveChanges();
+        return await _context.Races
+            .Where(r => r.Id == raceId)
+            .ExecuteUpdateAsync(s => s.SetProperty(r => r.Status, status)) > 0;
     }
     public async Task<bool> MarkEmailsSent(int raceId)
     {
-        var race = await _context.Races.FindAsync(raceId);
-        if (race == null) return false;
-        race.EmailsSent = true;
-        return await SaveChanges();
+        return await _context.Races
+            .Where(r => r.Id == raceId)
+            .ExecuteUpdateAsync(s => s.SetProperty(r => r.EmailsSent, true)) > 0;
     }
 }

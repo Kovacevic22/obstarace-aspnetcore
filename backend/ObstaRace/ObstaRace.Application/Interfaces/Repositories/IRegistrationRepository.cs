@@ -15,6 +15,8 @@ public interface IRegistrationRepository
     IAsyncEnumerable<Registration> GetRegistrationsForReminderAsync(DateTime targetDate);
     IAsyncEnumerable<Registration> GetRegistrationsForCompletedRace(int raceId);
     //ADDITIONAL METHODS
+    Task UpdateRegistrationStatus(int raceId);
+    Task MarkReminderAsSentForRegistration(int registrationId);
     Task<bool> UserRegistered(int userId, int raceId);
     Task<int> CountRegistrations(int raceId);
 }
