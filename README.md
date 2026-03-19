@@ -8,6 +8,7 @@ A web application for managing and organizing obstacle races. Users can join rac
 * PostgreSQL
 * JWT Authentication (HttpOnly Cookies)
 * AWS S3 (Profile Image Storage)
+* MailKit / SMTP (Email handling via Mailtrap)
 
 **Frontend:**
 * React.js
@@ -18,6 +19,7 @@ A web application for managing and organizing obstacle races. Users can join rac
 ## Features
 ### For Participants
 * **Browse Races:** Find races by typing the name, or filter by difficulty and distance.
+* **Email Confirmation:** Verify your account through a link sent to your inbox.
 * **Register:** Sign up for races easily.
 * **Stats:** Track your finished races.
 * **Profile Image:** Upload, update or delete your profile picture.
@@ -67,6 +69,13 @@ A web application for managing and organizing obstacle races. Users can join rac
 **Error Handling:**
 - Global exception handler with ProblemDetails response format
 - Custom status code pages for 401/403 responses
+
+**Email Verification Flow**
+- Registration: When you sign up, your account starts as "Unverified" and you can't log in yet.
+- The Token: The system sends an email with a unique link.
+- The 5-Minute Rule: The link is valid for 5 minutes.
+- Expired Links: If you don't click the link in time, the app will let you know it's expired
+- Resend: You can simply enter your email and hit "Resend" to get a fresh link and activate your account.
 
 ---
 ## Project Structure
