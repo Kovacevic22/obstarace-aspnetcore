@@ -69,6 +69,20 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<bool> VerifyEmail(string token)
+    {
+        var user = await _context.Users
+            .Include(p => p.Participant)
+            .FirstOrDefaultAsync(u=>u.Participant!=null &&
+                                    u.Participant.EmailVerificationToken==token &&
+                                    u.Participant.EmailVerificationTokenExpiry > DateTime.UtcNow);
+        if (user?.Participant == null) return false;
+        user.Participant.EmailVerified = true;
+        user.Participant.EmailVerificationToken = null;
+        user.Participant.EmailVerificationTokenExpiry = null;
+        return await SaveChanges();
+    }
+
     public async Task<bool> CreateUser(User user)
     {
          await _context.Users.AddAsync(user);

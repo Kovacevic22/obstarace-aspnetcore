@@ -83,8 +83,14 @@ public class EmailService:IEmailService
             .Replace("{{RaceDate}}", raceDate.ToString("dd/MM/yyyy - HH:mm"));
         await SendEmailAsync(recipientEmail, subject, htmlBody);
     }
-    public async Task SendGenericEmailAsync(string recipientEmail, string subject, string htmlBody)
+
+    public async Task SendVerificationEmailAsync(string recipientEmail, string verificationToken)
     {
+        var subject = "ObstaRace: Verify your email";
+        var htmlBody = await LoadTemplateAsync("EmailVerification.html");
+        var apiUrl = _config["AppSettings:BaseUrl"];
+        var verificationUrl = $"{apiUrl}/api/auth/verify-email?token={verificationToken}";
+        htmlBody = htmlBody.Replace("{{VerificationUrl}}", verificationUrl);
         await SendEmailAsync(recipientEmail, subject, htmlBody);
     }
     private async Task<string> LoadTemplateAsync(string templateName)

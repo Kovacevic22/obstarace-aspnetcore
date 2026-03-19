@@ -13,5 +13,8 @@ public class Participant
     public string Surname { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
     public string? EmergencyContact { get; set; }
+    public bool EmailVerified { get; set; } = false;
+    public string? EmailVerificationToken { get; set; }
+    public DateTime? EmailVerificationTokenExpiry { get; set; }
     public IList<Registration>? Registrations {get; set;}
 }

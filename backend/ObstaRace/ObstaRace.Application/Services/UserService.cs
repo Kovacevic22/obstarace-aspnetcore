@@ -21,7 +21,9 @@ public class UserService : IUserService
     private readonly IConfiguration _configuration;
     private readonly IParticipantRepository _participantRepository;
     private readonly IMemoryCache _cache;
-    public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration, IParticipantRepository participantRepository, IMemoryCache cache)
+    private readonly IEmailService _emailService;
+    public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration,
+        IParticipantRepository participantRepository, IMemoryCache cache, IEmailService emailService)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -29,6 +31,7 @@ public class UserService : IUserService
         _configuration = configuration;
         _participantRepository = participantRepository;
         _cache = cache;
+        _emailService = emailService;
     }
     public async Task<ICollection<UserDto>> GetAllUsers(int? page, int? pageSize)
     {
@@ -98,6 +101,33 @@ public class UserService : IUserService
         return _mapper.Map<UserDto>(user);    
     }
 
+    public Task<bool> VerifyEmail(string token)
+    {
+        return _userRepository.VerifyEmail(token);
+    }
+
+    public async Task<bool> ResendVerificationEmail(string email)
+    {
+        var user = await _userRepository.GetUserByEmail(email);
+    
+        if (user == null || user.Participant == null) return false;
+        if (user.Participant.EmailVerified) return false; 
+        if (user.Participant.EmailVerificationTokenExpiry > DateTime.UtcNow)
+            throw new ArgumentException("Verification email already sent. Please check your inbox or wait for it to expire.");
+        var token = Guid.NewGuid().ToString();
+        user.Participant.EmailVerificationToken = token;
+        user.Participant.EmailVerificationTokenExpiry = DateTime.UtcNow.AddMinutes(5);
+    
+        await _userRepository.UpdateUser(user);
+    
+        await _emailService.SendVerificationEmailAsync(
+            recipientEmail: user.Email,
+            verificationToken: token
+        );
+    
+        return true;
+    }
+
     public async Task<UserDto?> RegisterUser(RegisterDto registerDto)
     {
         _logger.LogInformation("Creating user account.");
@@ -126,6 +156,13 @@ public class UserService : IUserService
         {
             user.Role = Role.User;
             if (user.Participant == null) throw new ArgumentException("Participant data is required.");
+            var token = Guid.NewGuid().ToString();
+            user.Participant.EmailVerificationToken = token;
+            user.Participant.EmailVerificationTokenExpiry = DateTime.UtcNow.AddMinutes(5);
+            await _emailService.SendVerificationEmailAsync(
+                recipientEmail: user.Email,
+                verificationToken: token
+            );
         }
         _logger.LogInformation("User account created successfully");
         await _userRepository.CreateUser(user);
@@ -147,6 +184,15 @@ public class UserService : IUserService
             _logger.LogWarning("Login failed for {Email}", loginDto.Email);
             throw new ArgumentException("Invalid email or password");
         }
+
+        if (user is { Role: Role.User, Participant.EmailVerified: false })
+        {
+            _logger.LogWarning("User {userId} is not verified", user.Id);
+            if (user.Participant.EmailVerificationTokenExpiry < DateTime.UtcNow)
+                throw new ArgumentException("Your verification link has expired. Please request a new one.");
+            throw new ArgumentException("Please verify your email before logging in.");
+        } 
+
         if (user.Banned)
         {
             var displayName = user.Participant != null 

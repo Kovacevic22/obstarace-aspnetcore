@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0c0b;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #1a2420;
+            border: 2px solid #a67c52;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #a67c52;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+        .accent { color: #a67c52; }
+        .status-badge {
+            display: inline-block;
+            background-color: #a67c52;
+            color: #0a0c0b;
+            padding: 8px 24px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+        .content {
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        .info-box {
+            background-color: #0a0c0b;
+            border-left: 4px solid #a67c52;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #a67c52;
+            color: #0a0c0b;
+            padding: 15px 40px;
+            text-decoration: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        .warning {
+            background-color: #0a0c0b;
+            border: 1px solid #a67c52;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+    <title></title>
+</head>
+<body>
+<div class='container'>
+    <div class='header'>
+        <div class='title'>OBSTA<span class='accent'>RACE</span></div>
+        <div class='status-badge'>✉ VERIFY EMAIL</div>
+    </div>
+
+    <div class='content'>
+        <p style='font-size: 18px; font-weight: bold; color: #a67c52;'>
+            One Step Away From The Starting Line
+        </p>
+
+        <p style='font-size: 16px;'>Welcome to <strong>ObstaRace</strong>!</p>
+
+        <p>
+            You're almost ready to conquer your first obstacle.
+            Please verify your email address to activate your account and start your journey.
+        </p>
+
+        <div class='info-box'>
+            <span class='accent'>▸</span> This link expires in <strong>5 minutes</strong>
+        </div>
+
+        <p style='background-color: #a67c52; color: #0a0c0b; padding: 15px; font-weight: bold; margin-top: 20px;'>
+            💪 Every champion starts with a single step. Yours starts here.
+        </p>
+
+        <p style='text-align: center;'>
+            <a href='{{VerificationUrl}}' class='cta-button'>
+                VERIFY MY EMAIL
+            </a>
+        </p>
+
+        <div class='warning'>
+            <strong>⚠ Didn't create an account?</strong><br/>
+            If you didn't register on ObstaRace, you can safely ignore this email.
+            Your email address will not be used without verification.
+        </div>
+    </div>
+
+    <div class='footer'>
+        <p>© 2025 ObstaRace | Born in the mud</p>
+        <p style='margin-top: 5px; font-size: 9px;'>
+            Having trouble? Copy and paste this link into your browser:<br/>
+            {{VerificationUrl}}
+        </p>
+    </div>
+</div>
+</body>
+</html>

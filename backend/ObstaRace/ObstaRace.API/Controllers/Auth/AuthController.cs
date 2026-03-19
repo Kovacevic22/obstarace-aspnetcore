@@ -11,12 +11,28 @@ public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ILogger<AuthController> _logger;
-    public AuthController(IUserService userService, ILogger<AuthController> logger)
+    private readonly IConfiguration _config;
+    public AuthController(IUserService userService, ILogger<AuthController> logger, IConfiguration config)
     {
         _userService = userService;
         _logger = logger;
+        _config = config;
     }
-
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+    {
+        var result = await _userService.VerifyEmail(token);
+        var frontendUrl = _config["FrontendSettings:BaseUrl"];
+        if (!result) return Redirect($"{frontendUrl}/verify-email?success=false");
+        return Redirect($"{frontendUrl}/verify-email?success=true");
+    }
+    [HttpPost("resend-verification")]
+    public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationDto dto)
+    {
+        var result = await _userService.ResendVerificationEmail(dto.Email);
+        if (!result) return BadRequest(new { error = "User not found or already verified" });
+        return Ok(new { message = "Verification email sent" });
+    }
     [HttpPost("register")]
     [ProducesResponseType(200, Type = typeof(UserDto))]
     [ProducesResponseType(400)]

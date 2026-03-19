@@ -15,6 +15,7 @@ public interface IUserRepository
     Task<bool> UnbanUser(int userId);
     Task<bool> IsBanned(int userId);
     //LOGIN/REGISTER
+    Task<bool> VerifyEmail(string token);
     Task<bool> CreateUser(User user);
     //CRUD
     Task<bool> UpdateUser(User user);
