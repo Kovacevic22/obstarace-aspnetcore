@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_backend
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend/ObstaRace
+    container_name: dotnet_backend
+    ports:
+      - "5235:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      - AppSettings__BaseUrl={APP_BASE_URL}
+      - FrontendSettings__BaseUrl={FRONTEND_BASE_URL}
+      - FrontendSettings__AllowedOrigins__0={FRONTEND_ALLOWED_ORIGIN}
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=JwtIssuer
+      - Jwt__Audience=JwtAudience
+      - EmailSettings__SmtpServer=${SMTP_SERVER}
+      - EmailSettings__SmtpPort=${SMTP_PORT}
+      - EmailSettings__SenderName=${SENDER_NAME}
+      - EmailSettings__SenderEmail=${SENDER_EMAIL}
+      - EmailSettings__Username=${SMTP_USERNAME}
+      - EmailSettings__Password=${SMTP_PASSWORD}
+      - AwsSettings__BucketName=${AWS_BUCKET}
+      - AwsSettings__AccessKey=${AWS_ACCESS_KEY}
+      - AwsSettings__SecretKey=${AWS_SECRET_KEY}
+      - AwsSettings__Region=${AWS_REGION}
+      - AwsSettings__BaseUrl=${AWS_BASE_URL}
+
+volumes:
+  postgres_data:
