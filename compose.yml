@@ -31,9 +31,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
-      - AppSettings__BaseUrl={APP_BASE_URL}
-      - FrontendSettings__BaseUrl={FRONTEND_BASE_URL}
-      - FrontendSettings__AllowedOrigins__0={FRONTEND_ALLOWED_ORIGIN}
+      - AppSettings__BaseUrl=${APP_BASE_URL}
+      - FrontendSettings__BaseUrl=${FRONTEND_BASE_URL}
+      - FrontendSettings__AllowedOrigins__0=${FRONTEND_ALLOWED_ORIGIN}
       - Jwt__Key=${JWT_KEY}
       - Jwt__Issuer=JwtIssuer
       - Jwt__Audience=JwtAudience
