@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using ObstaRace.Application.Interfaces.Repositories;
 
 namespace ObstaRace.API.Middleware;
@@ -17,13 +17,22 @@ internal sealed class BanCheckMiddleware(RequestDelegate next, ILogger<BanCheckM
             if (userIdClaim != null)
             {
                 int userId = int.Parse(userIdClaim.Value);
-                var cache = httpContext.RequestServices.GetRequiredService<IMemoryCache>();
+                var cache = httpContext.RequestServices.GetRequiredService<IDistributedCache>();
                 var cacheKey = $"ban_{userId}";
-                if (!cache.TryGetValue(cacheKey, out bool isBanned))
+                var cachedBan = await cache.GetStringAsync(cacheKey);
+                bool isBanned;
+                if (cachedBan == null)
                 {
                     var userRepo = httpContext.RequestServices.GetRequiredService<IUserRepository>();
                     isBanned = await userRepo.IsBanned(userId);
-                    cache.Set(cacheKey, isBanned, TimeSpan.FromMinutes(5));
+                    await cache.SetStringAsync(cacheKey, isBanned.ToString(), new DistributedCacheEntryOptions()
+                    {
+                        AbsoluteExpirationRelativeToNow   = TimeSpan.FromMinutes(5)
+                    });
+                }
+                else
+                {
+                    isBanned = bool.Parse(cachedBan);
                 }
                 if (isBanned)
                 {

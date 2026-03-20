@@ -14,7 +14,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+  redis:
+    image: redis:alpine
+    container_name: obstarace_redis
+    ports:
+      - "6379:6379"
   backend:
     build:
       context: ./backend/ObstaRace
@@ -44,6 +48,5 @@ services:
       - AwsSettings__SecretKey=${AWS_SECRET_KEY}
       - AwsSettings__Region=${AWS_REGION}
       - AwsSettings__BaseUrl=${AWS_BASE_URL}
-
 volumes:
   postgres_data:

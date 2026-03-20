@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -20,10 +21,10 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
     private readonly IParticipantRepository _participantRepository;
-    private readonly IMemoryCache _cache;
+    private readonly IDistributedCache _cache;
     private readonly IEmailService _emailService;
     public UserService(ILogger<UserService> logger, IUserRepository userRepository, IMapper mapper, IConfiguration configuration,
-        IParticipantRepository participantRepository, IMemoryCache cache, IEmailService emailService)
+        IParticipantRepository participantRepository, IDistributedCache cache, IEmailService emailService)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -79,14 +80,14 @@ public class UserService : IUserService
     {   
         _logger.LogInformation("Banning user with id {UserId}", userId);
         var result = await _userRepository.BanUser(userId);
-        if (result) _cache.Remove($"ban_{userId}");
+        if (result) await _cache.RemoveAsync($"ban_{userId}");
         return result;
     }
     public async Task<bool> UnbanUser(int userId)
     {
         _logger.LogInformation("Unbanning user with id {UserId}", userId);
         var result = await _userRepository.UnbanUser(userId);
-        if (result) _cache.Remove($"ban_{userId}"); 
+        if (result) await _cache.RemoveAsync($"ban_{userId}"); 
         return result;
     }
 
