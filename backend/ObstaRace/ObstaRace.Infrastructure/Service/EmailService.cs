@@ -15,6 +15,8 @@ public class EmailService:IEmailService
     private readonly EmailSettings _emailSettings;
     private readonly ILogger<EmailService> _logger;
     private readonly IConfiguration _config;
+    private static readonly Dictionary<string, string> _templateCache = new();
+    private static readonly SemaphoreSlim _lock = new(1, 1);
     public EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger, IConfiguration config)
     {
         _emailSettings = emailSettings.Value;
@@ -95,16 +97,30 @@ public class EmailService:IEmailService
     }
     private async Task<string> LoadTemplateAsync(string templateName)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = $"ObstaRace.Infrastructure.EmailTemplates.{templateName}";
-        await using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null)
+        if (_templateCache.TryGetValue(templateName, out var cached))
+            return cached;
+        await _lock.WaitAsync();
+        try
         {
-            _logger.LogError("Email template not found: {templateName}", templateName);
-            throw new FileNotFoundException($"Email template not found: {templateName}");
+            if (_templateCache.TryGetValue(templateName, out cached)) return cached;
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = $"ObstaRace.Infrastructure.EmailTemplates.{templateName}";
+            await using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                _logger.LogError("Email template not found: {templateName}", templateName);
+                throw new FileNotFoundException($"Email template not found: {templateName}");
+            }
+
+            using var reader = new StreamReader(stream);
+            var content = await reader.ReadToEndAsync();
+            _templateCache[templateName] = content;
+            return content;
         }
-        using var reader = new StreamReader(stream);
-        return await reader.ReadToEndAsync();
+        finally
+        {
+            _lock.Release();
+        }
     }
     private async Task SendEmailAsync(string recipientEmail, string subject, string htmlBody)
     {

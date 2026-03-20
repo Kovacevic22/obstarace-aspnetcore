@@ -147,6 +147,7 @@ public class UserService : IUserService
 
         var user = _mapper.Map<User>(registerDto);
         user.PasswordHash = PasswordHash(registerDto.Password);
+        string? token = null;
         if (registerDto.Organiser != null)
         {
             user.Role = Role.Organiser;
@@ -157,16 +158,18 @@ public class UserService : IUserService
         {
             user.Role = Role.User;
             if (user.Participant == null) throw new ArgumentException("Participant data is required.");
-            var token = Guid.NewGuid().ToString();
+            token = Guid.NewGuid().ToString();
             user.Participant.EmailVerificationToken = token;
             user.Participant.EmailVerificationTokenExpiry = DateTime.UtcNow.AddMinutes(5);
+        }
+        _logger.LogInformation("User account created successfully");
+        await _userRepository.CreateUser(user);
+        if (!string.IsNullOrEmpty(token))
             await _emailService.SendVerificationEmailAsync(
                 recipientEmail: user.Email,
                 verificationToken: token
             );
-        }
-        _logger.LogInformation("User account created successfully");
-        await _userRepository.CreateUser(user);
+        
         return _mapper.Map<UserDto>(user);
     }
 

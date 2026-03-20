@@ -19,7 +19,7 @@ public class FileService:IFileService
         _logger = logger;
         _settings = settings.Value;
     }
-    public async Task<string> UploadFileAsync(IFormFile file, string folder)
+    public async Task<string> UploadFileAsync(IFormFile file, string folder, CancellationToken cancellationToken = default)
     {
         var fileName = Path.GetFileName(file.FileName).Replace(" ", "-").ToLower();
         var key = $"{folder}/{Guid.NewGuid()}-{fileName}";
@@ -31,7 +31,7 @@ public class FileService:IFileService
             ContentType = file.ContentType,
             InputStream = stream,
         }; 
-        await _s3Client.PutObjectAsync(putObjectRequest);
+        await _s3Client.PutObjectAsync(putObjectRequest, cancellationToken);
         _logger.LogInformation("Uploaded image {FileName} to bucket {BucketName}", fileName, _settings.BucketName);
         return key;
         
@@ -42,15 +42,23 @@ public class FileService:IFileService
         return Task.FromResult($"{_settings.BaseUrl}/{key}");
     }
 
-    public async Task<bool> DeleteFileAsync(string key)
+    public async Task<bool> DeleteFileAsync(string key, CancellationToken cancellationToken = default)
     {
-        var deleteObject = new DeleteObjectRequest 
+        try
         {
-            BucketName = _settings.BucketName, 
-            Key = key
-        }; 
-        await _s3Client.DeleteObjectAsync(deleteObject); 
-        _logger.LogInformation("Deleted image {FileName}", key); 
-        return true;
+            var deleteObject = new DeleteObjectRequest
+            {
+                BucketName = _settings.BucketName,
+                Key = key
+            };
+            await _s3Client.DeleteObjectAsync(deleteObject, cancellationToken);
+            _logger.LogInformation("Deleted image {FileName}", key);
+            return true;
+        }
+        catch (AmazonS3Exception asx)
+        {
+            _logger.LogError(asx, "Error deleting image {FileName}", key);
+            return false;
+        }
     }
 }

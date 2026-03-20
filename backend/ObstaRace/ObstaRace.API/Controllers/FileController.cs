@@ -37,9 +37,9 @@ public class FileController:ControllerBase
         var user = await _userService.GetUser(userId);
         if (!string.IsNullOrEmpty(user?.ProfileImgKey))
         {
-            await _fileService.DeleteFileAsync(user.ProfileImgKey);
+            await _fileService.DeleteFileAsync(user.ProfileImgKey, HttpContext.RequestAborted);
         }
-        var key = await _fileService.UploadFileAsync(image.Image,"profile-images");
+        var key = await _fileService.UploadFileAsync(image.Image,"profile-images", HttpContext.RequestAborted);
         await _userService.UpdateProfileImage(userId, key);
         return Ok(new { key });
     }
@@ -52,7 +52,7 @@ public class FileController:ControllerBase
         var user = await _userService.GetUser(userId);
         if (user == null || string.IsNullOrEmpty(user.ProfileImgKey))
             return BadRequest(new { error = "User don't have profile image" });
-        await _fileService.DeleteFileAsync(user.ProfileImgKey);
+        await _fileService.DeleteFileAsync(user.ProfileImgKey, HttpContext.RequestAborted);
         await _userService.UpdateProfileImage(userId, null!);
         return NoContent();
     }
