@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObstaRaceChat.API", "ObstaRaceChat.API\ObstaRaceChat.API.csproj", "{926FACEE-1CFD-466F-867E-244B70AC4E70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObstaRaceChat.Domain", "ObstaRaceChat.Domain\ObstaRaceChat.Domain.csproj", "{86AA3078-4AEB-452F-AA56-DFCE63A2B970}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObstaRaceChat.Application", "ObstaRaceChat.Application\ObstaRaceChat.Application.csproj", "{53E95C23-3FCA-4309-90EA-DA1C5166D19E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObstaRaceChat.Infrastructure", "ObstaRaceChat.Infrastructure\ObstaRaceChat.Infrastructure.csproj", "{637D02D9-D56B-4ED8-A53B-07D2045698ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +18,17 @@ Global
 		{926FACEE-1CFD-466F-867E-244B70AC4E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{926FACEE-1CFD-466F-867E-244B70AC4E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{926FACEE-1CFD-466F-867E-244B70AC4E70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86AA3078-4AEB-452F-AA56-DFCE63A2B970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86AA3078-4AEB-452F-AA56-DFCE63A2B970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86AA3078-4AEB-452F-AA56-DFCE63A2B970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86AA3078-4AEB-452F-AA56-DFCE63A2B970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53E95C23-3FCA-4309-90EA-DA1C5166D19E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53E95C23-3FCA-4309-90EA-DA1C5166D19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53E95C23-3FCA-4309-90EA-DA1C5166D19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53E95C23-3FCA-4309-90EA-DA1C5166D19E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{637D02D9-D56B-4ED8-A53B-07D2045698ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{637D02D9-D56B-4ED8-A53B-07D2045698ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{637D02D9-D56B-4ED8-A53B-07D2045698ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{637D02D9-D56B-4ED8-A53B-07D2045698ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
