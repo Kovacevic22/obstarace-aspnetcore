@@ -9,13 +9,23 @@ internal sealed class BanCheckMiddleware(RequestDelegate next, ILogger<BanCheckM
 {
     public async Task InvokeAsync(HttpContext httpContext)
     {
+        if (httpContext.User.Identity?.IsAuthenticated != true)
+        {
+            await next(httpContext);
+            return;
+        }
         logger.LogInformation("BanCheck middleware triggered, IsAuthenticated: {IsAuth}", 
-            httpContext.User.Identity?.IsAuthenticated);
+            httpContext.User.Identity.IsAuthenticated);
         if (httpContext.User.Identity?.IsAuthenticated == true)
         {
             var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim != null)
+            if (userIdClaim == null)
             {
+                await next(httpContext);
+                return;
+            }
+            try
+            { 
                 int userId = int.Parse(userIdClaim.Value);
                 var cache = httpContext.RequestServices.GetRequiredService<IDistributedCache>();
                 var cacheKey = $"ban_{userId}";
@@ -27,26 +37,28 @@ internal sealed class BanCheckMiddleware(RequestDelegate next, ILogger<BanCheckM
                     isBanned = await userRepo.IsBanned(userId);
                     await cache.SetStringAsync(cacheKey, isBanned.ToString(), new DistributedCacheEntryOptions()
                     {
-                        AbsoluteExpirationRelativeToNow   = TimeSpan.FromMinutes(5)
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
                     });
-                }
-                else
+                }else
                 {
                     isBanned = bool.Parse(cachedBan);
                 }
                 if (isBanned)
                 {
-                    logger.LogWarning("Banned user {UserId} attempted to access the server", userId);
-                    httpContext.Response.Cookies.Delete("X-Access-Token");
-                    httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
-                    {
-                        Status = StatusCodes.Status401Unauthorized,
-                        Title = "Unauthorized",
+                    logger.LogWarning("Banned user {UserId} attempted to access the server", userId); 
+                    httpContext.Response.Cookies.Delete("X-Access-Token"); 
+                    httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized; 
+                    await httpContext.Response.WriteAsJsonAsync(new ProblemDetails 
+                    { 
+                        Status = StatusCodes.Status401Unauthorized, 
+                        Title = "Unauthorized", 
                         Detail = "You are banned from this server"
                     });
                     return;
                 }
+            }catch(Exception ex)
+            {
+                logger.LogError(ex, "Error in BanCheckMiddleware for user {UserId}", userIdClaim.Value);
             }
         }
         await next(httpContext);

@@ -12,11 +12,6 @@ public interface IUserService
     Task<bool> BanUser(int userId);
     Task<bool> UnbanUser(int userId);
     Task<UserDto?> UpdateProfileImage(int userId, string key);
-    //LOGIN/REGISTER
-    Task<bool> VerifyEmail(string token);
-    Task<bool> ResendVerificationEmail(string email);
-    Task<UserDto?> RegisterUser(RegisterDto registerDto);
-    Task<LoginResponseDto?> LoginUser(LoginDto loginDto);
     Task<UserDto?> UpdateUser(UpdateParticipantDto updateUserDto, int userId);
     
 }

@@ -1,8 +1,10 @@
 using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using ObstaRace.Application.Dto;
 using ObstaRace.Application.Interfaces.Repositories;
 using ObstaRace.Application.Interfaces.Services;
+using ObstaRace.Application.Validators;
 using ObstaRace.Domain.Models;
 
 namespace ObstaRace.Application.Services;
@@ -12,11 +14,17 @@ public class ObstacleService : IObstacleService
     private readonly ILogger<ObstacleService> _logger;
     private readonly IMapper _mapper;
     private readonly IObstacleRepository _obstacleRepository;
-    public ObstacleService(IObstacleRepository obstacleRepository, IMapper mapper, ILogger<ObstacleService> logger)
+    
+    private readonly IValidator<CreateObstacleDto> _createValidator;
+    private readonly IValidator<UpdateObstacleDto> _updateValidator;
+    public ObstacleService(IObstacleRepository obstacleRepository, IMapper mapper
+        , ILogger<ObstacleService> logger, IValidator<CreateObstacleDto> createValidator,  IValidator<UpdateObstacleDto> updateValidator)
     {
         _obstacleRepository = obstacleRepository;
         _mapper = mapper;
         _logger = logger;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
     }
 
     public async Task<ICollection<ObstacleDto>> GetAllObstacles(int userId, Role role, string? search)
@@ -40,6 +48,9 @@ public class ObstacleService : IObstacleService
     }
     public async Task<ObstacleDto> CreateObstacle(CreateObstacleDto obstacleDto, int userId)
     {
+        var validationResult = await _createValidator.ValidateAsync(obstacleDto);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
         _logger.LogInformation("Creating obstacle {ObstacleDto.Name}", obstacleDto.Name);
         var obstacle = _mapper.Map<Obstacle>(obstacleDto);
         obstacle.CreatedById = userId;
@@ -50,9 +61,12 @@ public class ObstacleService : IObstacleService
         }
         return _mapper.Map<ObstacleDto>(obstacle);
     }
-    public async Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacle, int id, int userId, Role role)
+    public async Task<ObstacleDto> UpdateObstacle(UpdateObstacleDto obstacleDtp, int id, int userId, Role role)
     {
-        _logger.LogInformation("Updating obstacle {ObstacleDto.Name}", obstacle.Name);
+        var validationResult = await _updateValidator.ValidateAsync(obstacleDtp);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+        _logger.LogInformation("Updating obstacle {ObstacleDto.Name}", obstacleDtp.Name);
         var existingObstacle = await _obstacleRepository.GetObstacle(id);
         if (existingObstacle == null)
         {
@@ -63,7 +77,7 @@ public class ObstacleService : IObstacleService
         {
             throw new UnauthorizedAccessException("You can only edit your own obstacles.");
         }
-        _mapper.Map(obstacle, existingObstacle);
+        _mapper.Map(obstacleDtp, existingObstacle);
         if (!await _obstacleRepository.UpdateObstacle(existingObstacle))
         {
             _logger.LogError("Failed to update obstacle in database");

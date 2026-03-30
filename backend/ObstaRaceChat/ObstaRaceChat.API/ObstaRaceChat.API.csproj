@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ObstaRaceChat.Application\ObstaRaceChat.Application.csproj" />
+      <ProjectReference Include="..\ObstaRaceChat.Infrastructure\ObstaRaceChat.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
