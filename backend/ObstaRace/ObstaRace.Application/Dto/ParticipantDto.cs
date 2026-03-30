@@ -4,8 +4,8 @@ namespace ObstaRace.Application.Dto;
 public  sealed record ParticipantDto
 {
     public int UserId { get; init; }
-    public string Name { get; init; } = null!;
-    public string Surname { get; init; } = null!;
+    public string? Name { get; init; }
+    public string? Surname { get; init; }
     public DateOnly DateOfBirth { get; init; }
     public string? EmergencyContact { get; init; }
     public ParticipantActivityDto? Activity { get; set; }

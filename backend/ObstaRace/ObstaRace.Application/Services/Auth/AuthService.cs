@@ -95,6 +95,7 @@ public class AuthService : IAuthService
         else
         {
             user.Role = Role.User;
+            user.Organiser = null;
             if (user.Participant == null) throw new ArgumentException("Participant data is required.");
             token = Guid.NewGuid().ToString();
             user.Participant.EmailVerificationToken = token;

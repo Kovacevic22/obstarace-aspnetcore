@@ -8,9 +8,6 @@ public class OrganiserDtoValidator : AbstractValidator<OrganiserDto>
     public OrganiserDtoValidator()
     {
         RuleFor(x => x.UserId).GreaterThan(0);
-        RuleFor(x => x.UserName).NotEmpty();
-        RuleFor(x => x.UserSurname).NotEmpty();
-        RuleFor(x => x.UserEmail).NotEmpty().EmailAddress();
         RuleFor(x => x.OrganisationName).NotEmpty();
         RuleFor(x => x.Status).IsInEnum();
     }

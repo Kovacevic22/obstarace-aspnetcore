@@ -28,13 +28,7 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
         RuleFor(x => x.Password)
             .NotEmpty()
             .MinimumLength(8).WithMessage("Password must be at least 8 characters long.");
-        RuleFor(x => x)
-            .Must(x => !(x.Organiser != null && x.Participant != null))
-            .WithMessage("Cannot register as both organiser and participant.");
-
-        RuleFor(x => x)
-            .Must(x => x.Organiser != null || x.Participant != null)
-            .WithMessage("Must provide either participant or organiser data.");
+        
         RuleFor(x => x.Participant)
             .SetValidator(new RegisterParticipantDtoValidator()!)
             .When(x => x.Participant != null);

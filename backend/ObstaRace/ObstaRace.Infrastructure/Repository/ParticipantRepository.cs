@@ -19,9 +19,9 @@ public class ParticipantRepository : IParticipantRepository
     public async Task<ParticipantActivityDto> GetParticipantActivity(int userId)
     {
         var totalRaces = await _context.Registrations
-            .CountAsync(r => r.UserId == userId);
+            .CountAsync(r => r.ParticipantUserId == userId);
         var finishedRaces = await _context.Registrations
-            .CountAsync(r => r.UserId == userId && r.Status == RegistrationStatus.Finished);
+            .CountAsync(r => r.ParticipantUserId == userId && r.Status == RegistrationStatus.Finished);
             
         return new ParticipantActivityDto
         {
@@ -39,8 +39,8 @@ public class ParticipantRepository : IParticipantRepository
     public async Task<Dictionary<int, ParticipantActivityDto>> GetActivitiesForUsers(List<int> userIds)
     {
         return await _context.Registrations
-            .Where(r => userIds.Contains(r.UserId))
-            .GroupBy(r => r.UserId)
+            .Where(r => userIds.Contains(r.ParticipantUserId))
+            .GroupBy(r => r.ParticipantUserId)
             .Select(g => new
             {
                 UserId = g.Key,
