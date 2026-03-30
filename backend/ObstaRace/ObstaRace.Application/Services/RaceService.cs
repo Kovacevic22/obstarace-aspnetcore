@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using ObstaRace.Application.Dto;
 using ObstaRace.Application.Interfaces.Repositories;
@@ -13,11 +14,17 @@ public class RaceService : IRaceService
     private readonly IRaceRepository _raceRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<RaceService> _logger;
-    public RaceService(IRaceRepository raceRepository, IMapper mapper, ILogger<RaceService> logger)
+
+    private readonly IValidator<CreateRaceDto> _validatorCreate;
+    private readonly IValidator<UpdateRaceDto> _validatorUpdate;
+    public RaceService(IRaceRepository raceRepository, IMapper mapper, 
+        ILogger<RaceService> logger, IValidator<CreateRaceDto> validatorCreate, IValidator<UpdateRaceDto> validatorUpdate)
     {
         _raceRepository = raceRepository;
         _mapper = mapper;
         _logger = logger;
+        _validatorCreate =  validatorCreate;
+        _validatorUpdate = validatorUpdate;
     }
     public async Task<ICollection<RaceDto>> GetAllRaces(string? difficulty, string? distanceRange, string? search, int? page, int? pageSize)
     {
@@ -28,6 +35,7 @@ public class RaceService : IRaceService
     {
         var race = await _raceRepository.GetRace(id);
         if (race == null) return null;
+        if (race.RaceObstacles == null) return null;
         var raceDto = _mapper.Map<RaceDto>(race) with 
         {
             ObstacleIds = race.RaceObstacles.Select(ro => ro.ObstacleId).ToList()
@@ -51,6 +59,9 @@ public class RaceService : IRaceService
 
     public async Task<RaceDto> CreateRace(CreateRaceDto raceDto, int userId)
     {
+        var validatorResponse = await _validatorCreate.ValidateAsync(raceDto);
+        if(!validatorResponse.IsValid)
+            throw new ValidationException(validatorResponse.Errors);
         var slug = raceDto.Slug.ToLower().Trim();
         slug = Regex.Replace(slug,@"[^a-z0-9]+", "-");
         slug = slug.Trim('-');
@@ -104,6 +115,9 @@ public class RaceService : IRaceService
     }
     public async Task<RaceDto> UpdateRace(UpdateRaceDto raceDto, int id,int userId, Role role)
     {
+        var validateResponse = await _validatorUpdate.ValidateAsync(raceDto);
+        if (!validateResponse.IsValid)
+            throw new ValidationException(validateResponse.Errors);
         _logger.LogInformation("Updating race {raceDto}", raceDto.Name);
         var existingRace = await _raceRepository.GetRace(id);
         if (existingRace == null)
@@ -130,6 +144,9 @@ public class RaceService : IRaceService
         {
             throw new ArgumentException("Race with this URL identifier already exists!");
         }
+
+        if (existingRace == null || existingRace.RaceObstacles==null)
+            throw new ArgumentException("Race with id {id} does not exist or race must have obstacles");
         var currentObstacleIds = existingRace.RaceObstacles
             .Select(ro => ro.ObstacleId)
             .ToList();

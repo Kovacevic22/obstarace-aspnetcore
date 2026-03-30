@@ -71,13 +71,13 @@ public class DataSeeder
         );
         await context.SaveChangesAsync();
 
-        var participantData = new (string Name, string Surname, DateTime Dob, string Emergency)[]
+        var participantData = new (string Name, string Surname, DateOnly Dob, string Emergency)[]
         {
-            ("Marko",  "Petrović",  new DateTime(1995, 3,  12), "+381641111111"),
-            ("Ana",    "Jovanović", new DateTime(1998, 7,  24), "+381641111112"),
-            ("Nikola", "Nikolić",   new DateTime(1993, 11,  5), "+381641111113"),
-            ("Milica", "Stanić",    new DateTime(2000, 1,  18), "+381641111114"),
-            ("Stefan", "Đorđević",  new DateTime(1997, 6,  30), "+381641111115"),
+            ("Marko",  "Petrović",  new DateOnly(1995, 3,  12), "+381641111111"),
+            ("Ana",    "Jovanović", new DateOnly(1998, 7,  24), "+381641111112"),
+            ("Nikola", "Nikolić",   new DateOnly(1993, 11,  5), "+381641111113"),
+            ("Milica", "Stanić",    new DateOnly(2000, 1,  18), "+381641111114"),
+            ("Stefan", "Đorđević",  new DateOnly(1997, 6,  30), "+381641111115"),
         };
 
         await context.Participants.AddRangeAsync(

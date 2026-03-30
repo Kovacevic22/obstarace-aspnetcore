@@ -1,19 +1,23 @@
 using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ObstaRace.Application.Dto;
 using ObstaRace.Application.Interfaces.Services;
+using ObstaRace.Application.Interfaces.Services.Auth;
 
 namespace ObstaRace.API.Controllers.Auth;
 [Route("api/auth")]
 [ApiController]
 public class AuthController : ControllerBase
 {
+    private readonly IAuthService _authService;
     private readonly IUserService _userService;
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _config;
-    public AuthController(IUserService userService, ILogger<AuthController> logger, IConfiguration config)
+    public AuthController(IAuthService authService,IUserService userService , ILogger<AuthController> logger, IConfiguration config)
     {
+        _authService = authService;
         _userService = userService;
         _logger = logger;
         _config = config;
@@ -21,7 +25,7 @@ public class AuthController : ControllerBase
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery] string token)
     {
-        var result = await _userService.VerifyEmail(token);
+        var result = await _authService.VerifyEmail(token);
         var frontendUrl = _config["FrontendSettings:BaseUrl"];
         if (!result) return Redirect($"{frontendUrl}/verify-email?success=false");
         return Redirect($"{frontendUrl}/verify-email?success=true");
@@ -29,7 +33,7 @@ public class AuthController : ControllerBase
     [HttpPost("resend-verification")]
     public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationDto dto)
     {
-        var result = await _userService.ResendVerificationEmail(dto.Email);
+        var result = await _authService.ResendVerificationEmail(dto.Email);
         if (!result) return BadRequest(new { error = "User not found or already verified" });
         return Ok(new { message = "Verification email sent" });
     }
@@ -39,7 +43,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
-            var user = await _userService.RegisterUser(registerDto);
+            var user = await _authService.RegisterUser(registerDto);
             if (user == null)
             {
                 _logger.LogError("Error registering user");
@@ -57,7 +61,7 @@ public class AuthController : ControllerBase
             if (User.Identity.IsAuthenticated) return BadRequest(new { error = "You are already signed in with a valid session." });
             
             _logger.LogInformation("Logging in user");
-            var response = await _userService.LoginUser(loginDto);
+            var response = await _authService.LoginUser(loginDto);
             if (response != null)
             {
                 Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-using ObstaRace.Domain.Models;
+﻿using ObstaRace.Domain.Models;
 
 
 namespace ObstaRace.Application.Dto;
@@ -21,17 +19,16 @@ public sealed record UserDto
 
 public sealed record RegisterDto
 {
-    [Required] [EmailAddress] public string Email { get; init; } = null!;
-    [Required] [Phone] public string PhoneNumber { get; init; } = null!;
-    [Required] [MinLength(8)] public string Password { get; init; } = null!;
+    public string Email { get; init; } = null!;
+    public string PhoneNumber { get; init; } = null!;
+    public string Password { get; init; } = null!;
     public RegisterParticipantDto? Participant { get; init; }
     public RegisterOrganiserDto? Organiser { get; init; }
 }
 
 public sealed record LoginDto
 {
-    [Required] public string Email { get; init; } = null!;
-    [Required]
+    public string Email { get; init; } = null!;
     public string Password { get; init; } = null!;
 }
 public sealed record LoginResponseDto

@@ -1,13 +1,18 @@
 using System.Text;
 using Amazon.S3;
 using AspNetCoreRateLimit;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ObstaRace.API.Middleware;
+using ObstaRace.Application.Helper;
 using ObstaRace.Application.Interfaces.Repositories;
 using ObstaRace.Application.Interfaces.Services;
+using ObstaRace.Application.Interfaces.Services.Auth;
 using ObstaRace.Application.Services;
+using ObstaRace.Application.Services.Auth;
+using ObstaRace.Application.Validators;
 using ObstaRace.Infrastructure.Configuration;
 using ObstaRace.Infrastructure.Data;
 using ObstaRace.Infrastructure.Repository;
@@ -15,6 +20,8 @@ using ObstaRace.Infrastructure.Seeders;
 using ObstaRace.Infrastructure.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddValidatorsFromAssembly(typeof(RaceDtoValidator).Assembly);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -77,7 +84,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddOpenApi();
-builder.Services.AddAutoMapper(cfg => {}, typeof(ObstaRace.Application.Helper.MappingProfiles).Assembly);
+builder.Services.AddAutoMapper(cfg => {}, typeof(MappingProfiles).Assembly);
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRaceRepository, RaceRepository>();
@@ -86,6 +93,7 @@ builder.Services.AddScoped<IObstacleRepository, ObstacleRepository>();
 builder.Services.AddScoped<IObstacleService, ObstacleService>();
 builder.Services.AddScoped<IRaceService, RaceService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganiserRepository, OrganiserRepository>();
 builder.Services.AddScoped<IOrganiserService, OrganiserService>();
@@ -125,8 +133,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
-app.UseIpRateLimiting();
 app.UseExceptionHandler();
+app.UseIpRateLimiting();
 app.UseStatusCodePages(async context =>
 {
     var response = context.HttpContext.Response;
