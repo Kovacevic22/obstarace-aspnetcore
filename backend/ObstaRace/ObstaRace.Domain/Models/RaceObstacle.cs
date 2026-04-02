@@ -2,9 +2,9 @@
 
 public class RaceObstacle
 {
-    public int RaceId { get; set; }
-    public int ObstacleId { get; set; }
-    public Race Race { get; set; } = null!;
-    public Obstacle? Obstacle { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int RaceId { get; init; }
+    public int ObstacleId { get; init; }
+    public Race Race { get; init; } = null!;
+    public Obstacle? Obstacle { get; init; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 }

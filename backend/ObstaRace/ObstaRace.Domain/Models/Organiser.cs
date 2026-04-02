@@ -6,11 +6,11 @@ public enum OrganiserStatus { Pending = 0, Approved = 1, Rejected = 2 }
 public class Organiser
 {
     [Key, ForeignKey("User")]
-    public int UserId { get; set; }
+    public int UserId { get; init; }
 
-    public User User { get; set; } = null!;
+    public User User { get; init; } = null!;
 
-    public string OrganisationName { get; set; } = null!;
-    public string Description { get; set; } = null!;
+    public string OrganisationName { get; init; } = null!;
+    public string Description { get; init; } = null!;
     public OrganiserStatus Status { get; set; }
 }

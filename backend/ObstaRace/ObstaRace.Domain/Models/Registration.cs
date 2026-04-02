@@ -9,15 +9,15 @@ public enum RegistrationStatus
 }
 public class Registration
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public int RaceId { get; set; }
-    public int ParticipantUserId { get; set; }
-    public Participant Participant { get; set; } = null!;
-    public User? User { get; set; }
-    public Race Race { get; set; } = null!;
+    public int Id { get; init; }
+    public int UserId { get; init; }
+    public int RaceId { get; init; }
+    public int ParticipantUserId { get; init; }
+    public Participant Participant { get; init; } = null!;
+    public User? User { get; init; }
+    public Race Race { get; init; } = null!;
     public int BibNumber { get; set; }
     public RegistrationStatus Status { get; set; }
-    public bool ReminderSent  { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool ReminderSent  { get; init; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 }

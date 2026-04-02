@@ -15,20 +15,21 @@ public class RegistrationRepository : IRegistrationRepository
 
     public async Task<ICollection<Registration>> GetAllRegistrations(int? userId, int? page, int? pageSize)
     {
-        var query = userId!=null? _context.Registrations
-                .AsNoTracking()
+        IQueryable<Registration> query = _context.Registrations
+            .AsNoTracking()
             .Include(r => r.Race)
             .Include(r => r.Participant)
-            .Where(r => r.UserId == userId)
-            .OrderByDescending(r=>r.CreatedAt):
-            _context.Registrations
-                .AsNoTracking()
-                .Include(r => r.Race)
-                .Include(r => r.Participant)
-                .OrderByDescending(r=>r.CreatedAt);
+            .ThenInclude(p => p.User);
+        if (userId != null)
+        {
+            query = query.Where(r => r.ParticipantUserId == userId);
+        }
+
+        query = query.OrderByDescending(r => r.CreatedAt);
+
         if (page.HasValue && pageSize.HasValue)
         {
-            query = (IOrderedQueryable<Registration>)query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+            query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
         }
         return await query.ToListAsync();
     }
@@ -40,19 +41,19 @@ public class RegistrationRepository : IRegistrationRepository
             .Include(r => r.Race)
             .ThenInclude(ra => ra.RaceObstacles)
             .ThenInclude(ro => ro.Obstacle)
-            .Include(r => r.User)
             .Include(r => r.Participant)
-            .Where(r => r.Race.CreatedById == organiserId && r.Status == RegistrationStatus.Pending)
-            .OrderByDescending(r => r.CreatedAt); 
+            .ThenInclude(p => p.User) 
+            .Where(r => r.Race.CreatedById == organiserId && r.Status == RegistrationStatus.Pending);
         
         if (raceId.HasValue && raceId > 0)
         {
-            query = (IOrderedQueryable<Registration>)query.Where(r => r.RaceId == raceId.Value);
+            query = query.Where(r => r.RaceId == raceId.Value);
         }
+        query = query.OrderByDescending(r => r.CreatedAt);
 
         if (page.HasValue && pageSize.HasValue)
         {
-            query = (IOrderedQueryable<Registration>)query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+            query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
         }
         return await query.ToListAsync();
     }
@@ -60,8 +61,8 @@ public class RegistrationRepository : IRegistrationRepository
     public async Task<Registration?> GetRegistration(int id)
     {
         return await _context.Registrations
-            .Include(r => r.User)
             .Include(r => r.Participant)
+            .ThenInclude(p => p.User) 
             .Include(r => r.Race)
             .ThenInclude(ra => ra.RaceObstacles)
             .ThenInclude(ro => ro.Obstacle)

@@ -24,13 +24,13 @@ public class DataContext : DbContext
         modelBuilder.Entity<RaceObstacle>().HasOne(p => p.Obstacle).WithMany(p => p.RaceObstacles).HasForeignKey(po => po.ObstacleId).OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<Registration>().HasOne(p => p.Race).WithMany(p => p.Registrations).HasForeignKey(po => po.RaceId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Registration>().HasOne(p => p.User).WithMany().HasForeignKey(po => po.UserId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Registration>()
-            .HasOne<Participant>() 
-            .WithMany(p => p.Registrations) 
-            .HasForeignKey(r => r.UserId);
+            .HasOne(r => r.Participant) 
+            .WithMany(p => p.Registrations)
+            .HasForeignKey(r => r.ParticipantUserId) 
+            .OnDelete(DeleteBehavior.Cascade);
         
-        modelBuilder.Entity<Registration>() .HasIndex(r => new { r.UserId, r.RaceId }).IsUnique();
+        modelBuilder.Entity<Registration>() .HasIndex(r => new { r.ParticipantUserId, r.RaceId }).IsUnique();
         modelBuilder.Entity<Registration>().Property(r => r.BibNumber).ValueGeneratedOnAdd();
         
         modelBuilder.Entity<Race>().Property(r => r.Date).HasColumnType("date");

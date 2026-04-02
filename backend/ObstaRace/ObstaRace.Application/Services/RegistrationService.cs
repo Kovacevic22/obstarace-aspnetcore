@@ -59,7 +59,7 @@ public class RegistrationService : IRegistrationService
         await  _registrationRepository.UpdateRegistration(registration);
         try
         {
-            var user = await _userRepository.GetUser(registration.UserId);
+            var user = await _userRepository.GetUser(registration.ParticipantUserId);
             if (user != null)
             {
                 var participantName = user.Participant != null ? $"{user.Participant.Name} {user.Participant.Surname}" : user.Email;
@@ -93,7 +93,7 @@ public class RegistrationService : IRegistrationService
         await  _registrationRepository.UpdateRegistration(registration);
         try
         {
-            var user = await _userRepository.GetUser(registration.UserId);
+            var user = await _userRepository.GetUser(registration.ParticipantUserId);
             if (user != null)
             {
                 var participantName = user.Participant != null ? $"{user.Participant.Name} {user.Participant.Surname}" : user.Email;
@@ -155,7 +155,6 @@ public class RegistrationService : IRegistrationService
         }
         var registration = new Registration
         {
-            UserId = userId,
             RaceId = raceId,
             ParticipantUserId = userId,
             Status = RegistrationStatus.Pending
@@ -209,7 +208,7 @@ public class RegistrationService : IRegistrationService
             _logger.LogWarning("Registration with id {RegistrationId} not found", registrationId);
             throw new ArgumentException("Registration not found");
         }
-        if (registration.UserId != currentUserId)
+        if (registration.ParticipantUserId != currentUserId)
         {
             throw new UnauthorizedAccessException("You can only delete your own registrations.");
         }

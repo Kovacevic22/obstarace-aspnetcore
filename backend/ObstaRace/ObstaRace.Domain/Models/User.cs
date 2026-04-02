@@ -7,14 +7,14 @@ public enum Role
 }
 public class User
 {
-    public int Id {get; set; }
-    public string Email { get; set; } = null!;
+    public int Id { get; init; }
+    public string Email { get; init; } = null!;
     public string PasswordHash { get; set; } = null!;
-    public string PhoneNumber { get; set; } = null!;
+    public string PhoneNumber { get; init; } = null!;
     public string? ProfileImgKey { get; set; }
     public Role Role {get; set; }
     public bool Banned {get; set; }
     public Organiser? Organiser {get; set; }
     public Participant? Participant { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 }

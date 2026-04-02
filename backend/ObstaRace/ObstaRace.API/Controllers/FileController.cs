@@ -11,12 +11,10 @@ public class FileController:ControllerBase
 {
     private readonly IFileService _fileService;
     private readonly IUserService _userService;
-    private readonly ILogger<FileController> _logger;
 
-    public FileController(IFileService fileService, ILogger<FileController> logger, IUserService userService)
+    public FileController(IFileService fileService, IUserService userService)
     {
         _fileService = fileService;
-        _logger = logger;
         _userService = userService;
     }
     //--------PROFILE IMAGES------------//

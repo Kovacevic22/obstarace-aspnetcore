@@ -58,7 +58,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-            if (User.Identity.IsAuthenticated) return BadRequest(new { error = "You are already signed in with a valid session." });
+            if (User.Identity is {IsAuthenticated: true}) return BadRequest(new { error = "You are already signed in with a valid session." });
             
             _logger.LogInformation("Logging in user");
             var response = await _authService.LoginUser(loginDto);

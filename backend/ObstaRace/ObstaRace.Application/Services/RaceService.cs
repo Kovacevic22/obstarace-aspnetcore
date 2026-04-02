@@ -35,7 +35,6 @@ public class RaceService : IRaceService
     {
         var race = await _raceRepository.GetRace(id);
         if (race == null) return null;
-        if (race.RaceObstacles == null) return null;
         var raceDto = _mapper.Map<RaceDto>(race) with 
         {
             ObstacleIds = race.RaceObstacles.Select(ro => ro.ObstacleId).ToList()
