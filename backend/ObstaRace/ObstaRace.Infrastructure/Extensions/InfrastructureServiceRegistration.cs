@@ -20,9 +20,9 @@ public static class InfrastructureServiceRegistration
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         // Settings
-        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-        services.Configure<AwsSettings>(configuration.GetSection("AwsSettings"));
-        services.Configure<ReminderSettings>(configuration.GetSection("ReminderSettings"));
+        services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+        services.Configure<AwsSettings>(configuration.GetSection(nameof(AwsSettings)));
+        services.Configure<ReminderSettings>(configuration.GetSection(nameof(ReminderSettings)));
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();

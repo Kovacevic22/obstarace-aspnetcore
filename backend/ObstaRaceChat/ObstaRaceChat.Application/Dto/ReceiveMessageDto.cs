@@ -1,4 +1,4 @@
-namespace ObstaRaceChat.Application;
+namespace ObstaRaceChat.Application.Dto;
 
 public sealed record ReceiveMessageDto
 {
