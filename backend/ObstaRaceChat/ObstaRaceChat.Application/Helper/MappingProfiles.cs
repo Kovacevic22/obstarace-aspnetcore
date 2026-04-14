@@ -1,5 +1,7 @@
 using AutoMapper;
+using ObstaRaceChat.Application.Dto;
 using ObstaRaceChat.Domain;
+using ObstaRaceChat.Domain.Models;
 
 namespace ObstaRaceChat.Application.Helper;
 

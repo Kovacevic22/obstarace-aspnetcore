@@ -1,4 +1,4 @@
-namespace ObstaRaceChat.Infrastructure.Persistence;
+namespace ObstaRaceChat.Infrastructure.Configuration;
 
 public sealed record MongoDbSettings
 {

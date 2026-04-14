@@ -14,6 +14,14 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  mongodb:
+    image: mongo:latest
+    container_name: obstarace_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
   redis:
     image: redis:alpine
     container_name: obstarace_redis
@@ -50,6 +58,22 @@ services:
       - AwsSettings__AccessKey=${AWS_ACCESS_KEY}
       - AwsSettings__SecretKey=${AWS_SECRET_KEY}
       - AwsSettings__Region=${AWS_REGION}
-      - AwsSettings__BaseUrl=${AWS_BASE_URL}
+      - AwsSettings__BaseUrl=${AWS_BASE_URL} 
+  chat-backend:
+    build:
+      context: "backend/ObstaRaceChat"
+      dockerfile: Dockerfile
+    container_name: obstarace_chat_api
+    ports:
+      - "5078:8080"
+    depends_on:
+      - mongodb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
+      - MongoDbSettings__DatabaseName={MDB_NAME}
+      - FrontendSettings__BaseUrl=${FRONTEND_BASE_URL}
+      - FrontendSettings__AllowedOrigins__0=${FRONTEND_ALLOWED_ORIGIN}
 volumes:
   postgres_data:
+  mongo_data:

@@ -1,6 +1,9 @@
-﻿namespace ObstaRaceChat.Application;
+﻿namespace ObstaRaceChat.Application.Dto;
 
 public sealed record SendMessageDto
 {
-    public string Content { get; init; } = string.Empty;
+        public int SenderId { get; init; }
+        public string SenderName { get; init; } = string.Empty;
+        public string SenderSurname { get; init; } = string.Empty;
+        public string Content { get; init; } = string.Empty; 
 }
