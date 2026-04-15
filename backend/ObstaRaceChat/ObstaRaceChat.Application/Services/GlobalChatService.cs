@@ -26,13 +26,15 @@ public class GlobalChatService:IGlobalChatService
         return _mapper.Map<ICollection<ReceiveMessageDto>>(result);
     }
 
-    public async Task<bool> AddGlobalMessage(SendMessageDto content)
+    public async Task<ReceiveMessageDto> AddGlobalMessage(SendMessageDto content)
     {
         _logger.LogInformation("Adding new global message from user {SenderId}", content.SenderId);
         
         var message = _mapper.Map<GlobalMessage>(content);
         
-        return await  _globalChatRepository.AddGlobalMessage(message);
+        var receiveMessage =  await  _globalChatRepository.AddGlobalMessage(message);
+        
+        return _mapper.Map<ReceiveMessageDto>(receiveMessage);
     }
 
     public async Task<bool> DeleteGlobalMessage(string messageId)

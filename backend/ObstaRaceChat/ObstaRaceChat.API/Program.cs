@@ -1,9 +1,9 @@
 using MongoDB.Driver;
+using ObstaRaceChat.API.Hubs;
 using ObstaRaceChat.Application.Helper;
 using ObstaRaceChat.Application.Interfaces.Repository;
 using ObstaRaceChat.Infrastructure.Configuration;
 using ObstaRaceChat.Infrastructure.Repository;
-using ObstaRaceChat.API.Extensions;
 using ObstaRaceChat.Application.Interfaces.Service;
 using ObstaRaceChat.Application.Services;
 
@@ -18,7 +18,10 @@ builder.Services.AddSingleton<IMongoClient>(
     sp => new MongoClient(builder.Configuration[$"{nameof(MongoDbSettings)}:ConnectionString"]));
 
 builder.Services.AddOpenApi();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(opt =>
+{
+    opt.EnableDetailedErrors = true;
+});
 builder.Services.AddAutoMapper(cfg => {},typeof(MappingProfiles).Assembly);
 
 //
@@ -58,6 +61,6 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
-app.MapChatEndpoints().WithTags("Chat API");
+app.MapHub<GlobalChatHub>("/hubs/global");
 
 app.Run();
