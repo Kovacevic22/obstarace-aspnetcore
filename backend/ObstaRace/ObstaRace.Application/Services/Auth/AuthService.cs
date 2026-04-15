@@ -148,7 +148,7 @@ public class AuthService : IAuthService
             _logger.LogWarning("Login failed for banned user {Email}", loginDto.Email);
             throw new ArgumentException($"{displayName} is banned!");
         }
-        if (user.Role == Role.Organiser && user.Organiser != null)
+        if (user is { Role: Role.Organiser, Organiser: not null })
         {
             if (user.Organiser.Status == OrganiserStatus.Rejected)
             {
@@ -179,11 +179,17 @@ public class AuthService : IAuthService
             _logger.LogError("JWT Key is not configured");
             throw new InvalidOperationException("JWT configuration is missing");
         }
+
+        string displayName = user.Email;
+        if (user.Role == Role.Admin) displayName = "Admin";
+        else if (user is { Organiser: not null, Role: Role.Organiser }) displayName = user.Organiser.OrganisationName;
+        else if(user is {Participant: not null, Role: Role.User}) displayName = $"{user.Participant.Name} {user.Participant.Surname}";
         var claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new Claim(ClaimTypes.Name, displayName)
         };
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);

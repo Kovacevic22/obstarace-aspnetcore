@@ -1,3 +1,5 @@
+using System;
+
 namespace ObstaRaceChat.Application.Dto;
 
 public sealed record ReceiveMessageDto

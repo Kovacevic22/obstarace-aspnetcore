@@ -22,7 +22,6 @@ public class GlobalChatRepository : IGlobalChatRepository
             .Limit(50)
             .ToListAsync();
     }
-
     public async Task<GlobalMessage> AddGlobalMessage(GlobalMessage message)
     {
         await _messages.InsertOneAsync(message);
@@ -33,5 +32,10 @@ public class GlobalChatRepository : IGlobalChatRepository
     {
         var result = await _messages.DeleteOneAsync(m => m.Id == messageId);
         return result.DeletedCount > 0;
+    }
+
+    public async Task<GlobalMessage> GetMessageById(string messageId)
+    {
+        return await _messages.Find(m => m.Id == messageId).FirstOrDefaultAsync();
     }
 }
