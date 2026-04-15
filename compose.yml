@@ -18,7 +18,7 @@ services:
     image: mongo:latest
     container_name: obstarace_mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
     restart: always
@@ -71,9 +71,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
-      - MongoDbSettings__DatabaseName={MDB_NAME}
+      - MongoDbSettings__DatabaseName=${MDB_NAME}
       - FrontendSettings__BaseUrl=${FRONTEND_BASE_URL}
       - FrontendSettings__AllowedOrigins__0=${FRONTEND_ALLOWED_ORIGIN}
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=JwtIssuer
+      - Jwt__Audience=JwtAudience
 volumes:
   postgres_data:
   mongo_data:

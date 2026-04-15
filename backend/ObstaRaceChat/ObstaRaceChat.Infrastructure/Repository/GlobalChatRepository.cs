@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using ObstaRaceChat.Application.Dto;
 using ObstaRaceChat.Application.Interfaces.Repository;
 using ObstaRaceChat.Domain.Models;
 using ObstaRaceChat.Infrastructure.Configuration;
@@ -21,16 +22,20 @@ public class GlobalChatRepository : IGlobalChatRepository
             .Limit(50)
             .ToListAsync();
     }
-
-    public async Task<bool> AddGlobalMessage(GlobalMessage message)
+    public async Task<GlobalMessage> AddGlobalMessage(GlobalMessage message)
     {
         await _messages.InsertOneAsync(message);
-        return true;
+        return message;
     }
 
     public async Task<bool> DeleteGlobalMessage(string messageId)
     {
         var result = await _messages.DeleteOneAsync(m => m.Id == messageId);
         return result.DeletedCount > 0;
+    }
+
+    public async Task<GlobalMessage> GetMessageById(string messageId)
+    {
+        return await _messages.Find(m => m.Id == messageId).FirstOrDefaultAsync();
     }
 }

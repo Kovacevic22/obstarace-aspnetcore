@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using ObstaRaceChat.Application.Dto;
@@ -26,17 +28,35 @@ public class GlobalChatService:IGlobalChatService
         return _mapper.Map<ICollection<ReceiveMessageDto>>(result);
     }
 
-    public async Task<bool> AddGlobalMessage(SendMessageDto content)
+    public async Task<ReceiveMessageDto> AddGlobalMessage(SendMessageDto content)
     {
         _logger.LogInformation("Adding new global message from user {SenderId}", content.SenderId);
         
         var message = _mapper.Map<GlobalMessage>(content);
         
-        return await  _globalChatRepository.AddGlobalMessage(message);
+        var receiveMessage =  await  _globalChatRepository.AddGlobalMessage(message);
+        
+        return _mapper.Map<ReceiveMessageDto>(receiveMessage);
     }
 
-    public async Task<bool> DeleteGlobalMessage(string messageId)
+    public async Task<bool> DeleteGlobalMessage(string messageId, int userId)
     {
+        _logger.LogInformation("Attempting to delete message {MessageId} by user {UserId}", messageId, userId);
+        
+        var message = await _globalChatRepository.GetMessageById(messageId);
+
+        if (message == null)
+        {
+            _logger.LogInformation("Message {MessageId} not found", messageId);
+            return false;
+        }
+        
+        if (message.SenderId != userId)
+        {
+            _logger.LogWarning("User {UserId} tried to delete message {MessageId} owned by {OwnerId}", 
+                userId, messageId, message.SenderId);
+            return false; 
+        }
         _logger.LogInformation("Deleting global message with {MessageId} id", messageId);
         return await  _globalChatRepository.DeleteGlobalMessage(messageId);
     }

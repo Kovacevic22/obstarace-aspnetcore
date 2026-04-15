@@ -11,8 +11,6 @@ public class MappingProfiles:Profile
     {
         CreateMap<SendMessageDto, GlobalMessage>();
 
-        CreateMap<GlobalMessage, ReceiveMessageDto>()
-            .ForMember(dest => dest.SenderFullName, 
-                opt => opt.MapFrom(src=>$"{src.SenderName} {src.SenderSurname}")); 
+        CreateMap<GlobalMessage, ReceiveMessageDto>();
     }      
 }
